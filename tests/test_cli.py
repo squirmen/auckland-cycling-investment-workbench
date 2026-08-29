@@ -4,24 +4,32 @@ import copy
 import json
 from dataclasses import replace
 from pathlib import Path
+from types import SimpleNamespace
 
+import pytest
 import yaml
 
+from cycling_investment_workbench import cli as cli_module
 from cycling_investment_workbench.cli import (
     EXIT_INPUT,
     EXIT_OK,
+    EXIT_PIPELINE,
+    EXIT_VALIDATION,
     _run_manifest_path,
     _run_output_path,
     main,
 )
 from cycling_investment_workbench.config import PipelineStageConfig, load_config
 from cycling_investment_workbench.pipeline import (
+    MissingSourcesError,
+    PipelineError,
     _stage_fingerprint,
     demo_project_config,
     demo_stage_registry,
     run_project,
     validate_run_manifest,
 )
+from cycling_investment_workbench.sources import SourceError, SourceRecord, SourceSpec
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -173,3 +181,216 @@ def test_cli_reports_invalid_run_reference_without_traceback(tmp_path: Path, cap
 
     assert main(["validate", "--config", str(config_path), "--run", "not-a-run-id"]) == EXIT_INPUT
     assert "run id must use the form" in capsys.readouterr().err
+
+
+@pytest.mark.parametrize(
+    ("error", "expected"),
+    [
+        (SourceError("bad source"), EXIT_INPUT),
+        (MissingSourcesError("missing source"), EXIT_INPUT),
+        (PipelineError("failed stage"), EXIT_PIPELINE),
+    ],
+)
+def test_cli_maps_operational_errors_to_stable_exit_codes(
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+    error: Exception,
+    expected: int,
+) -> None:
+    def fail(_args) -> int:
+        raise error
+
+    monkeypatch.setattr(cli_module, "_dispatch", fail)
+
+    assert main(["validate", "--config-only"]) == expected
+    assert "error:" in capsys.readouterr().err.lower()
+
+
+def test_cli_debug_mode_preserves_pipeline_traceback(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fail(_args) -> int:
+        raise PipelineError("failed stage")
+
+    monkeypatch.setattr(cli_module, "_dispatch", fail)
+
+    with pytest.raises(PipelineError, match="failed stage"):
+        main(["--debug", "validate", "--config-only"])
+
+
+def test_cli_reports_counter_preparation_and_pipeline_run(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    counter_payload = {
+        "locations": {"sha256": "a" * 64},
+        "observations": {"sha256": "b" * 64},
+    }
+    counter_result = SimpleNamespace(
+        location_count=3,
+        observation_days=7,
+        excluded_count=1,
+        to_dict=lambda: counter_payload,
+    )
+    monkeypatch.setattr(cli_module, "prepare_at_cycle_counters", lambda **_kwargs: counter_result)
+    assert (
+        main(
+            [
+                "data",
+                "prepare-at-counters",
+                "--config",
+                str(PROJECT_ROOT / "configs/auckland.yml"),
+                "--workbook",
+                "publisher.xlsx",
+                "--coordinate-registry",
+                "coordinates.csv",
+            ]
+        )
+        == EXIT_OK
+    )
+    assert "Prepared 3 counter sites across 7 days" in capsys.readouterr().out
+
+    run_result = SimpleNamespace(
+        run_id="run-0123456789abcdef",
+        status="succeeded",
+        executed_stages=("prepare-demand",),
+        resumed_stages=("build-topology",),
+        to_dict=lambda **_kwargs: {
+            "run_id": "run-0123456789abcdef",
+            "status": "succeeded",
+            "manifest": "runs/run-0123456789abcdef/manifest.json",
+        },
+    )
+    monkeypatch.setattr(cli_module, "run_project", lambda *_args, **_kwargs: run_result)
+    assert main(["run", "--config", str(PROJECT_ROOT / "configs/auckland.yml")]) == EXIT_OK
+    output = capsys.readouterr().out
+    assert "Executed: prepare-demand" in output
+    assert "Resumed: build-topology" in output
+
+
+def test_source_validation_reports_required_integrity_and_licence_issues(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def source(
+        source_id: str,
+        *,
+        acquisition: str,
+        required: bool,
+        sha256: str | None,
+        redistribution: str,
+    ) -> SourceSpec:
+        return SourceSpec.from_mapping(
+            {
+                "id": source_id,
+                "title": source_id,
+                "acquisition": acquisition,
+                "role": "test",
+                "destination": f"raw/{source_id}.bin",
+                "required": required,
+                "sha256": sha256,
+                "homepage": None,
+                "url": "https://example.test/source" if acquisition == "download" else None,
+                "license": "Test licence",
+                "license_url": None,
+                "attribution": "Test custodian",
+                "redistribution": redistribution,
+            },
+            context=source_id,
+        )
+
+    specs = (
+        source(
+            "required_missing",
+            acquisition="manual",
+            required=True,
+            sha256="1" * 64,
+            redistribution="restricted",
+        ),
+        source(
+            "download_mismatch",
+            acquisition="download",
+            required=False,
+            sha256=None,
+            redistribution="unknown",
+        ),
+    )
+    records = {
+        "required_missing": SourceRecord(
+            "required_missing", tmp_path / "missing.bin", True, "missing", None, None, "1" * 64
+        ),
+        "download_mismatch": SourceRecord(
+            "download_mismatch", tmp_path / "wrong.bin", False, "mismatch", 1, "2" * 64, None
+        ),
+    }
+
+    class FixtureRegistry:
+        def __init__(self, _sources, _data_dir: Path) -> None:
+            pass
+
+        def inventory(self):
+            return records
+
+    monkeypatch.setattr(cli_module, "SourceRegistry", FixtureRegistry)
+    config = replace(
+        load_config(PROJECT_ROOT / "configs/auckland.yml"),
+        root_dir=tmp_path,
+        sources=specs,
+    )
+
+    issues = cli_module._source_validation_issues(config)
+
+    assert {(issue.severity, issue.code) for issue in issues} == {
+        ("error", "source-missing"),
+        ("error", "source-mismatch"),
+        ("warning", "source-unpinned"),
+        ("warning", "licence-unconfirmed"),
+    }
+
+
+def test_cli_json_validation_and_offline_fetch_contracts(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    class FetchRegistry:
+        def __init__(self, _sources, data_dir: Path) -> None:
+            self.data_dir = data_dir
+
+        def fetch(self, *_args, **_kwargs):
+            return {
+                "required_fixture": SourceRecord(
+                    "required_fixture",
+                    self.data_dir / "raw/required-fixture.bin",
+                    True,
+                    "missing",
+                    None,
+                    None,
+                    None,
+                )
+            }
+
+    monkeypatch.setattr(cli_module, "SourceRegistry", FetchRegistry)
+    assert (
+        main(
+            [
+                "data",
+                "fetch",
+                "--config",
+                str(PROJECT_ROOT / "configs/auckland.yml"),
+                "--offline",
+            ]
+        )
+        == EXIT_INPUT
+    )
+    assert "required_fixture: missing" in capsys.readouterr().out
+
+    monkeypatch.setattr(cli_module, "verify_web_export", lambda *_args, **_kwargs: ["corrupt"])
+    assert (
+        main(
+            [
+                "validate",
+                "--config",
+                str(PROJECT_ROOT / "configs/auckland.yml"),
+                "--config-only",
+                "--web",
+                "--json",
+            ]
+        )
+        == EXIT_VALIDATION
+    )
+    assert '"code": "web-export"' in capsys.readouterr().out

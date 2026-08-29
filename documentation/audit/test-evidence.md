@@ -9,7 +9,7 @@ Auckland regression run.
 
 | Check | Result | Release interpretation |
 | --- | --- | --- |
-| Locked Python suite, 2026-08-29 | Python 3.11.16; 176 tests passed | Current-tree local evidence including counter-source, fail-closed appraisal, and deterministic-release-asset tests; repeat in clean CI and container |
+| Locked Python suite, 2026-08-30 | Python 3.11.16; 185 tests passed; branch coverage 80.27% against the enforced 80% floor | Current-tree local evidence including counter-source, fail-closed appraisal, deterministic-release-asset, complete miniature candidate-stage, complete routing-orchestration, and CLI contract tests; repeat in clean CI and container |
 | Python quality checks, 2026-08-29 | Ruff format check and lint passed across the complete Python source/test tree | Current-tree local evidence |
 | Python package build, 2026-08-24 | Locked build produced both `auckland_cycling_investment_workbench-0.1.0.tar.gz` and a `py3-none-any` wheel in an external temporary directory | Installable-package evidence; repeat from a clean checkout in CI |
 | Frontend static and unit checks, 2026-08-29 | ESLint and TypeScript `--noEmit` passed; 15 Vitest assertions passed; Vite production build completed with a 246.27 kB JavaScript bundle (69.71 kB gzip) | Exact Node 24 evidence remains the container/CI gate |

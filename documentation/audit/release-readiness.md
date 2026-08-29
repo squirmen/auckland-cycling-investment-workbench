@@ -110,7 +110,8 @@ remaining gaps are recorded in
 - [x] Pass the complete Python, schema, frontend, browser, keyboard,
   accessibility, hostile-string, console-error, responsive-layout, Docker, and
   Auckland regression suites in the isolated local release environment. The
-  exact staged archive passes 176 Python tests, Ruff format/lint, package build,
+  exact staged archive passes 185 Python tests with 80.27% branch coverage,
+  Ruff format/lint, package build,
   configuration validation, 15 frontend unit tests, type/lint/build, 13
   applicable Playwright cases, axe checks, and a zero-vulnerability production
   dependency audit. Hosted CI remains a separate post-push gate.
