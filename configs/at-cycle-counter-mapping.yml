@@ -1,0 +1,91 @@
+schema_version: 1
+coordinate_registry_sha256: 6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf
+
+# Publisher workbook header -> reviewed coordinate-registry name.  Matching is
+# deliberately explicit: the preparation command performs no fuzzy matching.
+mappings:
+  Albany Highway Cyclist: Albany Highway
+  Archibald Park Cyclist: Archibald Park
+  Beach Rd: Beach Rd
+  Carlton Gore Rd: Carlton Gore Rd
+  Coronation Rd Cyclist: Coronation Rd
+  Curran St Cyclist: Curran St
+  Dominion Rd: Dominion Rd
+  East Coast Rd: East Coast Rd
+  Franklin Rd: Franklin Rd
+  GI TO TAMAKI DR SECTION-1 Cyclist: GI to Tamaki Dr Section-1
+  GI to Tamaki Dr Section-2 Cyclist: GI to Tamaki Dr Section-2
+  Grafton Bridge Cyclist: Grafton Bridge
+  Grafton Gully Cyclist: Grafton Gully
+  Grafton Rd Cyclist: Grafton Rd
+  Green Lane West: Green Lane West
+  Hendry Avenue Cyclist: Hendry Avenue
+  Highbrook Dr: Highbrook Dr
+  Hobsonville Point Road: Hobsonville Point Rd
+  Hobsonville Rd: Hobsonville Rd
+  Hopetoun St Cyclist: Hopetoun St
+  Karangahape Rd Cyclist: Karangahape Rd
+  Lagoon Drive Cyclist: Lagoon Dr
+  Lake Rd: Lake Rd
+  Lake Rd Northcote: Lake Rd Northcote
+  Leigh Rd Cyclist: Leigh Rd
+  Lightpath Cyclist: Lightpath
+  Mahia Road Cyclist: Mahia Rd
+  Mangere Foot Bridge Cyclist: Mangere Bridge
+  Mangere Safe Routes Cyclist: Mangere Safe Routes
+  Manukau Rd: Manukau Rd
+  Meadowbank SUP Cyclist: Meadowbank SUP
+  Meola Road Cyclist: Meola Rd
+  Mount Albert Rd: Mount Albert Rd
+  Mount Eden Rd: Mount Eden Rd
+  Mt Smart Rd: Mt Smart Rd
+  Mt Wellington Hwy: Mt Wellington Hwy
+  Nelson St: Nelson St
+  New Lynn to Avondale SUP Cyclist: New Lynn to Avondale SUP
+  Ngapipi Rd SUP Cyclist: Ngapipi Rd SUP
+  Northern Pathway SH1 Cyclist: Northern Pathway SH1
+  Northern Pathway SH18 Cyclist: Northern Pathway SH18
+  NW Cycleway Kingsland Cyclist: NW Cycleway Kingsland
+  NW Cycleway TeAtatu: NW Cycleway TeAtatu
+  Ocean View Rd: Ocean View Rd
+  Orewa Path Cyclist: Orewa Path
+  Ormiston Rd: Ormiston Rd
+  Oteha Valley Road Cyclist: Oteha Valley Rd
+  Puhinui Road Cyclist: Puhinui Rd
+  Putney Way, Manukau Cyclist: Putney Way, Manukau
+  Quay St - Spark Arena: Quay St - Spark Arena
+  Quay St Eco Display Classic: Quay St Eco Display Classic
+  Queen St Pukekohe: Queen St Pukekohe
+  Rathgar Road Cyclist: Rathgar Rd
+  Remuera Rd: Remuera Rd
+  Roscommon Road Cyclist: Roscommon Rd
+  Saint Lukes Rd: Saint Lukes Rd
+  Sandringham Rd: Sandringham Rd
+  SH1 Karaka Cyclist: SH1 Karaka
+  SH18 Upper Harbour Dr Cyclist: SH18 Upper Harbour Dr
+  SW SH20 Cyclist: SW SH20
+  Symonds St: Symonds St
+  Tamaki Dr - Parnell Cyclist: Tamaki Dr
+  Taniwha St Cyclist: Taniwha St
+  Te Wero Bridge Cyclist: TeWero Bridge
+  TeAtatu Peninsula: TeAtatu Peninsula
+  Ti Rakau - Near 180 Cyclist: Ti Rakau - Near 180
+  Twin Streams Cyclist: Twin Streams
+  Upper Queen St: Upper Queen St
+  Victoria St West: Victoria St West
+  Waterview Unitec Cyclist: Waterview Unitec
+  West End Rd: West End Rd
+  Westhaven Dr Cyclist: Westhaven Dr
+  Whangaparoa Rd: Whangaparoa Rd
+
+exclusions:
+  Great North Rd: publisher column contains no observations in July 2026
+  Great South Rd Manukau: legacy Great South Rd coordinate resolves near Grafton and is not the named Manukau site
+  Gt Sth Rd - Ellerslie: no distinct coordinate in the reviewed registry
+  Line Road (Northern End) Cyclist: registry has one unsuffixed Line Rd point and cannot distinguish ends
+  Line Road (Southern End) Cyclist: registry has one unsuffixed Line Rd point and cannot distinguish ends
+  Merton Rd Cyclist: no coordinate in the reviewed registry
+  SH20A Cyclist: legacy registry duplicates the SH20B coordinate and has no bearing or screenline identifier
+  SH20B Cyclist: legacy registry duplicates the SH20A coordinate and has no bearing or screenline identifier
+  Ti Rakau - Near 210 Cyclist: publisher column contains no observations in July 2026 and has no exact registry point
+  Ti Rakau - Roseburn Place Cyclist: multiple nearby registry points make the site ambiguous

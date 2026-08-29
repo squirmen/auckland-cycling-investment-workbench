@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <meta
+      name="description"
+      content="A transparent research workbench for screening low-stress cycling investments in Auckland."
+    />
+    <meta name="theme-color" content="#073f45" />
+    <title>Auckland Cycling Investment Workbench</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to the workbench</a>
+    <div id="app" aria-busy="true">
+      <header class="masthead">
+        <div class="brand-block">
+          <p class="eyebrow">Research screening tool</p>
+          <h1>Auckland Cycling Investment Workbench</h1>
+          <div class="run-line">
+            <span id="data-status" class="data-status">Loading</span>
+            <p id="run-summary" class="run-summary">Loading a verified model run…</p>
+          </div>
+        </div>
+        <div id="headline-kpis" class="headline-kpis" aria-live="polite"></div>
+      </header>
+
+      <nav class="mobile-jump-nav" aria-label="Workbench sections">
+        <a href="#controls-panel">Set up</a>
+        <a href="#map-panel">Map</a>
+        <a href="#analysis-panel">Results</a>
+      </nav>
+
+      <main id="main-content" class="workspace">
+        <aside id="controls-panel" class="controls" aria-label="Model controls">
+          <div class="workflow-intro">
+            <p class="eyebrow">Start here</p>
+            <h2>Build a screening view</h2>
+            <ol>
+              <li>Choose a demand scenario and planning lens.</li>
+              <li>Set an illustrative capital budget.</li>
+              <li>Compare corridors, then inspect the evidence.</li>
+            </ol>
+          </div>
+
+          <section class="workflow-step">
+            <div class="step-heading">
+              <span aria-hidden="true">1</span>
+              <h2>Define the question</h2>
+            </div>
+            <label for="scenario-select">Scenario</label>
+            <select id="scenario-select"></select>
+            <p id="scenario-note" class="help"></p>
+
+            <label for="purpose-select">Planning lens</label>
+            <select id="purpose-select"></select>
+            <p id="purpose-note" class="help"></p>
+            <details class="method-note">
+              <summary>How this view is calculated</summary>
+              <p id="connectivity-context" class="help context-note"></p>
+            </details>
+          </section>
+
+          <section class="workflow-step">
+            <div class="section-title-row">
+              <div class="step-heading">
+                <span aria-hidden="true">2</span>
+                <h2><label id="budget-heading" for="budget-slider">Set a budget</label></h2>
+              </div>
+              <output id="budget-output" for="budget-slider"></output>
+            </div>
+            <input id="budget-slider" type="range" min="0" max="250" step="5" value="100" aria-labelledby="budget-heading" aria-describedby="budget-help" />
+            <div class="range-labels" aria-hidden="true"><span>$0</span><span id="budget-maximum"></span></div>
+            <p id="budget-help" class="help">Filters the precomputed cumulative portfolio; it is not a funding recommendation.</p>
+          </section>
+
+          <section class="action-panel" aria-label="View actions">
+            <button id="download-button" type="button">Export portfolio (.geojson)</button>
+            <div class="button-row equal">
+              <button id="share-button" class="secondary" type="button">Copy view link</button>
+              <button id="reset-button" class="secondary" type="button">Reset</button>
+            </div>
+            <button id="print-button" class="quiet-button" type="button">Print / save PDF</button>
+          </section>
+
+          <details id="layers-disclosure" class="advanced-panel">
+            <summary>Map layers</summary>
+            <div id="layer-controls" class="check-list"></div>
+            <p class="help">Only verified local layers are loaded; no external map tiles are requested.</p>
+          </details>
+
+          <details id="sketch-disclosure" class="advanced-panel">
+            <summary>Sketch a custom corridor</summary>
+            <p id="sketch-help" class="help">Select points to route a contiguous corridor over exported network edges.</p>
+            <div class="button-row">
+              <button id="sketch-toggle" type="button">Start sketch</button>
+              <button id="sketch-clear" class="secondary" type="button">Clear</button>
+            </div>
+            <div id="sketch-result" class="result-card" aria-live="polite"></div>
+          </details>
+        </aside>
+
+        <section id="map-panel" class="map-panel" aria-label="Investment map">
+          <div id="map" role="region" aria-label="Interactive map of cycling demand and candidate corridors"></div>
+          <div id="mobile-map-status" class="mobile-map-status" aria-live="polite"></div>
+          <div id="loading-panel" class="loading-panel" role="status">
+            <span class="loading-mark" aria-hidden="true"></span>
+            <strong>Loading verified model outputs</strong>
+            <span>Checking the manifest and map-layer hashes…</span>
+          </div>
+          <div id="overlay-context" class="overlay-context" aria-live="polite" hidden></div>
+          <details id="map-provenance" class="map-provenance">
+            <summary>Sources: Stats NZ · OpenStreetMap · AT · LINZ</summary>
+            <p id="map-provenance-text"></p>
+          </details>
+          <details id="map-legend" class="map-legend" open>
+            <summary>Legend</summary>
+            <div id="map-legend-items" aria-label="Map legend"></div>
+          </details>
+          <div id="status-message" class="status-message" role="status"></div>
+        </section>
+
+        <aside id="analysis-panel" class="analysis" aria-label="Portfolio analysis">
+          <nav class="tabs" role="tablist" aria-label="Analysis views">
+            <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Portfolio</button>
+            <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Trade-offs</button>
+            <button id="control-evidence" class="tab" role="tab" type="button" data-tab="evidence" aria-controls="tab-evidence" aria-selected="false" tabindex="-1">Evidence</button>
+          </nav>
+
+          <section id="tab-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="control-portfolio">
+            <div class="section-title-row">
+              <div>
+                <p class="eyebrow">Cumulative screen</p>
+                <h2>Portfolio</h2>
+              </div>
+              <span id="portfolio-count" class="badge"></span>
+            </div>
+            <p class="panel-intro">This sequence fits the selected budget and lens. Select a corridor to see its assumptions and uncertainty.</p>
+            <div id="portfolio-summary" class="summary-grid"></div>
+            <label class="search-label" for="candidate-search">Find within this portfolio</label>
+            <input id="candidate-search" class="candidate-search" type="search" placeholder="Search corridor, facility, or status" autocomplete="off" />
+            <p id="candidate-search-status" class="list-status" aria-live="polite"></p>
+            <ol id="candidate-list" class="candidate-list"></ol>
+            <button id="show-more-button" class="secondary show-more" type="button" hidden>Show 100 more</button>
+          </section>
+
+          <section id="tab-pareto" class="tab-panel hidden" role="tabpanel" aria-labelledby="control-pareto" hidden>
+            <p class="eyebrow">Non-dominated choices</p>
+            <h2 id="pareto-heading">Cost and selected objective</h2>
+            <p id="pareto-description" class="help">Frontier projects are not dominated on the selected planning dimensions.</p>
+            <div class="chart-key" aria-label="Chart key"><span><i class="frontier-key"></i>Pareto frontier</span><span><i></i>Other candidates</span></div>
+            <p id="pareto-plot-status" class="list-status"></p>
+            <div id="pareto-chart" class="pareto-chart"></div>
+            <div id="pareto-list" class="compact-list"></div>
+          </section>
+
+          <section id="tab-evidence" class="tab-panel hidden" role="tabpanel" aria-labelledby="control-evidence" hidden>
+            <p class="eyebrow">Selected candidate</p>
+            <h2 id="candidate-title">Choose a corridor</h2>
+            <p class="panel-intro">Review the corridor’s modelled effect, evidence coverage, uncertainty, and warnings before using or exporting it.</p>
+            <div id="candidate-detail" class="candidate-detail"></div>
+          </section>
+        </aside>
+      </main>
+
+      <footer>
+        <p>Indicative research screening only — not an investment business case.</p>
+        <p><a id="methodology-link" href="./documentation/methodology.md">Methodology</a> · <span id="attribution"></span></p>
+      </footer>
+      <p id="view-announcement" class="visually-hidden" aria-live="polite"></p>
+    </div>
+    <noscript>This tool requires JavaScript to load verified model outputs.</noscript>
+    <script type="module" src="/src/app.ts"></script>
+  </body>
+</html>

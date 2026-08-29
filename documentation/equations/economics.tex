@@ -1,0 +1,52 @@
+Let $\Delta Q_{ikt}$ be candidate-attributable incremental quantity in benefit
+category $k$ for OD relation $i$ and appraisal year $t$, and let $v_{kt}$ be the
+corresponding real unit value in the common price base. Annual benefit is
+\begin{equation}
+B_t=\sum_{i\in\ODset}\sum_k \Delta Q_{ikt}v_{kt}.
+\label{eq:annual-benefit}
+\end{equation}
+For bicycle type $b\in\{\mathrm{conventional},\mathrm{e\mbox{-}bike}\}$, let
+$\Delta K_{bt}$ be eligible incremental cycle-kilometres, $U_{bt}$ incremental
+users, $v_b^H$ the health value per kilometre, and $H_b^{\max}$ the annual cap
+per user. Type-specific health benefit is
+\begin{equation}
+B_{bt}^{H}
+=\min\!\left(\Delta K_{bt}v_b^H,\ U_{bt}H_b^{\max}\right).
+\label{eq:health-cap}
+\end{equation}
+Conventional and e-bike values and caps are applied separately before
+aggregation and discounting; the same user-kilometre cannot enter both types.
+For year-specific real discount rate $r_t$, define the cumulative discount
+factor $D_0=1$ and $D_t=\prod_{u=1}^{t}(1+r_u)$. For horizon $T$, capital cost
+$K_t$, operations and maintenance $M_t$, renewal $R_t$, and terminal residual
+value $S_T$,
+\begin{align}
+\PV(B)
+ &=\sum_{t=0}^{T}\frac{B_t}{D_t},
+\label{eq:pv-benefit}\\
+\PV(C)
+ &=\sum_{t=0}^{T}\frac{K_t+M_t+R_t}{D_t}
+ -\frac{S_T}{D_T},
+\label{eq:pv-cost}\\
+\BCR^{\mathrm{life}}
+ &=\frac{\PV(B)}{\PV(C)}.
+\label{eq:lifecycle-bcr}
+\end{align}
+For a non-commercial public-sector activity under NZTA General Circular 25/01,
+the principal schedule is
+\begin{equation}
+r_t=
+\begin{cases}
+0.02, & 1\le t\le30,\\
+0.015, & 31\le t\le100,\\
+0.01, & t\ge101,
+\end{cases}
+\label{eq:discount-schedule}
+\end{equation}
+with a constant 8% sensitivity. The default workbench horizon is 40 years, so
+only the first two principal-rate bands enter that calculation.
+
+Opening-year demand ramp, asset life, renewals, residual value, price base, and
+the applicable appraisal manual version must be declared. Benefit categories
+are included only when their incremental quantities and values are compatible
+and non-overlapping.

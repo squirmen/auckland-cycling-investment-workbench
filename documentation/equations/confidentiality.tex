@@ -1,0 +1,42 @@
+For count field $X\in\{E,O\}$ in OD relation $i$, let $r_{Xi}$ be an
+unsuppressed numeric 2023 Census release and $s_{Xi}$ indicate that the
+publisher supplied an explicit suppression marker in a sensitive table. Here
+$E$ is the total stated journey-to-work count in the OD cell and $O$ is its
+bicycle subset. Stats NZ's fixed-random-rounding rule gives
+$r_{Xi}\in3\mathbb{Z}_{\ge0}$ and
+\begin{equation}
+  |r_{Xi}-X_i^{\mathrm{true}}|\le2
+  \quad\text{when }s_{Xi}=0.
+\label{eq:frr3-bound}
+\end{equation}
+Define the conservative field interval
+\begin{equation}
+[X_i^L,X_i^U]=
+\begin{cases}
+[0,5], & s_{Xi}=1,\\
+[\max(0,r_{Xi}-2),r_{Xi}+2], & s_{Xi}=0.
+\end{cases}
+\label{eq:censored-count-interval}
+\end{equation}
+Thus an unsuppressed numeric zero has interval $[0,2]$; it is not
+interchangeable with a suppression marker. Eligible and bicycle counts are not
+selected independently. Their joint feasible set and declared selector are
+\begin{equation}
+\mathcal J_i=
+\left\{(E,O):E_i^L\le E\le E_i^U,\;
+O_i^L\le O\le O_i^U,\;0\le O\le E\right\},
+\qquad
+(E_i^*,O_i^*)=g_{\boldsymbol\kappa}(\mathcal J_i).
+\label{eq:censored-count-point}
+\end{equation}
+An empty $\mathcal J_i$ is an import error. Uncertainty draws also have support
+only on $\mathcal J_i$. Neither the intervals nor the selected pair recover the
+confidential source values. Table sensitivity, both suppression states, the
+joint selection rule, and any product-specific exception must be retained in
+provenance.
+
+These equations apply only to a published OD row. A pair omitted under the
+source product's below-six row-removal rule, or because workplace address is not
+available at SA2, has no released cell and is not assigned $[0,5]$ or $[0,2]$.
+Its mass remains unresolved source coverage unless a separate compatible
+publisher total supplies a defensible bound.

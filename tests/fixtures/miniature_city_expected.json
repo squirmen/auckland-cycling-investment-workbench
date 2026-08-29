@@ -1,0 +1,103 @@
+{
+  "connectivity": {
+    "all_projects": 1.0,
+    "baseline": 0.284792
+  },
+  "decision_support": {
+    "pareto_frontier": [
+      "central_crossing",
+      "main_street"
+    ],
+    "preset": "network",
+    "weights": {
+      "connectivity": 0.6,
+      "demand": 0.25,
+      "equity": 0.1,
+      "value": 0.05
+    }
+  },
+  "demand": {
+    "eligible": 1800,
+    "observed_cycle": 51,
+    "scenario_cycle": 144.0
+  },
+  "main_street": {
+    "additional_cycle_trips_per_day": 69.233634,
+    "indicative_bcr": 2.577396,
+    "npv": 4429118.61
+  },
+  "model": "miniature_city_v1",
+  "network": {
+    "components": 1,
+    "edges": 7,
+    "nodes": 6
+  },
+  "sequence": [
+    {
+      "candidate_id": "main_street",
+      "cumulative_cost": 2000000.0,
+      "cumulative_score": 0.850931,
+      "marginal_score": 0.566139,
+      "pareto_member": true,
+      "preset_score": 1.0,
+      "rank": 1
+    },
+    {
+      "candidate_id": "central_crossing",
+      "cumulative_cost": 2800000.0,
+      "cumulative_score": 1.0,
+      "marginal_score": 0.149069,
+      "pareto_member": true,
+      "preset_score": 0.0,
+      "rank": 2
+    }
+  ],
+  "uncertainty": {
+    "baseline_order": [
+      "main_street",
+      "central_crossing"
+    ],
+    "candidates": [
+      {
+        "bcr_p5": 0.616399,
+        "bcr_p50": 1.313459,
+        "bcr_p95": 2.940479,
+        "id": "central_crossing",
+        "rank_stability": 0.0
+      },
+      {
+        "bcr_p5": 0.953592,
+        "bcr_p50": 2.066664,
+        "bcr_p95": 4.12802,
+        "id": "main_street",
+        "rank_stability": 1.0
+      }
+    ],
+    "draws": 32,
+    "parameter_count": 12,
+    "parameters": [
+      "suppression_factor",
+      "pct_uptake_factor",
+      "route_choice_factor",
+      "stress_penalty_factor",
+      "topology_coverage_factor",
+      "capital_cost_factor",
+      "maintenance_cost_factor",
+      "renewal_cost_factor",
+      "benefit_value_factor",
+      "discount_rate",
+      "ebike_share",
+      "demand_response_elasticity"
+    ]
+  },
+  "validation": {
+    "calibration_slope": 0.617072,
+    "coverage": 1.0,
+    "mae": 21.232971,
+    "matched": 2,
+    "pearson_r": 1.0,
+    "r_squared": -2.270462,
+    "rmse": 22.605523,
+    "unmatched": []
+  }
+}

@@ -1,0 +1,54 @@
+% q is a declared commute-cycling modelling sensitivity. It is not the verbatim
+% TERP cycling-and-micromobility all-trip target.
+% Superscript (b) identifies a joint confidentiality point or draw. The target
+% denominator is the declared source-compatible published OD universe, not an
+% unmatched full-origin transport margin or invented structurally absent pairs.
+\begin{align}
+T_b^{+}
+ &= \max\!\left\{0,
+ q\sum_{i\in\ODset}E_i^{(b)}
+ -\sum_{i\in\ODset}O_i^{(b)}\right\},
+\label{eq:target-additional}\\
+K_i^{(b)}
+ &= \max\{0,E_i^{(b)}-O_i^{(b)}\},
+\label{eq:allocation-capacity}\\
+W_i^{(b)}
+ &= K_i^{(b)} p_i^{\mathrm{PCT}} f(d_i),
+\qquad
+f(d)=
+\begin{cases}
+1, & d\le d_0,\\
+\exp[-(d-d_0)/\lambda_d], & d>d_0,
+\end{cases}
+\label{eq:allocation-weight}
+\end{align}
+
+At water-filling iteration $r$, let $\mathcal{U}^{(r)}\subseteq\RoutableOD$
+contain routable OD relations with unused capacity, and let $R^{(r)}$ be the
+target remaining. The provisional and accepted allocations are
+\begin{align}
+\widetilde A_i^{(r)}
+ &= R^{(r)}\frac{W_i^{(b)}}
+ {\sum_{j\in\mathcal{U}^{(r)}}W_j^{(b)}},
+\label{eq:allocation-provisional}\\
+\Delta A_i^{(r)}
+ &= \min\!\left\{K_i^{(b)}-A_i^{(r)},\widetilde A_i^{(r)}\right\},
+\label{eq:allocation-capped}\\
+A_i^{(r+1)}
+ &= A_i^{(r)}+\Delta A_i^{(r)},
+\qquad
+R^{(r+1)}=R^{(r)}-\sum_i\Delta A_i^{(r)}.
+\label{eq:allocation-update}
+\end{align}
+If $T_b^{+}\le\sum_{i\in\RoutableOD}K_i^{(b)}$ and positive weights remain,
+the terminal allocation
+satisfies
+\begin{equation}
+0\le A_i\le K_i^{(b)},
+\qquad
+\sum_{i\in\RoutableOD}A_i=T_b^{+}.
+\label{eq:allocation-conservation}
+\end{equation}
+Otherwise the shortfall is reported explicitly. All records in $\ODset$ remain
+in the demand ledger with scope and route status; routing failure never changes
+the declared target denominator silently.

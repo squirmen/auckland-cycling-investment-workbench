@@ -1,0 +1,60 @@
+% gradient g_e is signed rise/run in the permitted traversal direction.
+\begin{align}
+c_e
+ &= \ell_e\,m_{s(e)}
+ \left[1+w_{+}\max(0,g_e)+w_{-}\max(0,-g_e)\right]
+ m_e^{\mathrm{structure}},
+\label{eq:routing-cost}\\
+m_e^{\mathrm{structure}}
+ &= m_{\mathrm{tunnel}}^{I(e\ \mathrm{is\ tunnel})}
+    m_{\mathrm{bridge}}^{I(e\ \mathrm{is\ bridge})}.
+\label{eq:structure-cost}
+\end{align}
+For OD relation $i$ with feasible directed paths $\Paths_i$, the deterministic
+least-generalized-cost path is
+\begin{equation}
+P_i^{0}
+=\arg\min_{P\in\Paths_i}\sum_{e\in P}c_e,
+\label{eq:least-cost-path}
+\end{equation}
+with equal-cost paths resolved by a documented stable identifier rule.
+
+For the retained loopless plausible path set $\Paths_i^K$, let $n_{ie}$ be the
+number of retained paths containing edge $e$, and let
+$L_{ir}=\sum_{e\in P_{ir}}\ell_e$. The path-size factor, utility, and assignment
+probability are
+\begin{align}
+\operatorname{PS}_{ir}
+ &=\sum_{e\in P_{ir}}\frac{\ell_e}{L_{ir}}\frac{1}{n_{ie}},
+\label{eq:path-size-factor}\\
+V_{ir}
+ &=-\theta C_{ir}+\gamma\log(\operatorname{PS}_{ir}),
+\label{eq:path-utility}\\
+\Pr(P_{ir}\mid\Paths_i^K)
+ &=\frac{\exp(V_{ir})}{\sum_{s\in\Paths_i^K}\exp(V_{is})}.
+\label{eq:path-size-logit}
+\end{align}
+The retained set is generated using a documented repeated link-penalty search,
+then screened by generalized-cost ratio, physical detour, exact-edge identity,
+and shared-edge ratio. It is not asserted to be the complete perceived route
+set or a $K$-shortest-path enumeration. These probabilities are conditional on
+that generated set and are not locally estimated choice shares unless
+calibration evidence is supplied.
+
+Let stratum $h$ contain $N_h$ spatial disaggregation records and let $m_h$ be
+selected by simple random sampling without replacement. For record $i$ in
+stratum $h$, the inclusion probability and Horvitz--Thompson weight are
+\begin{equation}
+\pi_i=\frac{m_h}{N_h},\qquad w_i=\frac{1}{\pi_i}=\frac{N_h}{m_h}.
+\label{eq:route-sample-weight}
+\end{equation}
+If $q_i$ is demand and $I(e\in P_{ir})$ indicates exact membership of edge $e$
+in retained path $r$, estimated edge flow is
+\begin{equation}
+\widehat F_e
+=\sum_{i\in s}w_i q_i
+  \sum_{r\in\Paths_i^K}\Pr(P_{ir}\mid\Paths_i^K)I(e\in P_{ir}).
+\label{eq:sampled-edge-flow}
+\end{equation}
+Every sampled and unsampled record remains in the OD ledger, so $\pi_i$ and the
+route-status denominator are auditable.

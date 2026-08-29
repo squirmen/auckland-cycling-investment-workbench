@@ -1,0 +1,551 @@
+schema_version: 1
+
+project:
+  id: auckland-cycling-investment-workbench
+  title: Auckland Cycling Investment Workbench
+  region: Auckland, New Zealand
+  crs: EPSG:2193
+  timezone: Pacific/Auckland
+
+paths:
+  data: data
+  cache: .cache/ciw
+  runs: runs
+  exports: exports
+  web_source: web
+
+sources:
+  - id: stats_nz_journey_to_work
+    title: 2023 Census journey-to-work origin-destination table 121988 version 410594
+    acquisition: manual
+    role: upstream
+    destination: raw/auckland/census/statsnz-2023-census-main-means-of-travel-to-work-by-statistical-area-CSV/2023-census-main-means-of-travel-to-work-by-statistical-area.csv
+    required: true
+    sha256: e7e52537a33167add084d504dcd9e0f7f37dd00302fac9be5fd7998b3f107192
+    homepage: https://datafinder.stats.govt.nz/table/121988-2023-census-main-means-of-travel-to-work-by-statistical-area-2/
+    url: https://datafinder.stats.govt.nz/table/121988-2023-census-main-means-of-travel-to-work-by-statistical-area-2/
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: This work includes Stats NZ data licensed for reuse under CC BY 4.0; table 121988 version 410594 published 2025-03-30
+    redistribution: permitted
+    expected_record_count: 65056
+    source_version: "410594"
+    published_at: "2025-03-30"
+
+  - id: stats_nz_sa2_transport_margins
+    title: 2023 Census SA2 transport margins for commute and education travel
+    acquisition: arcgis_query
+    role: confidentiality-margin
+    destination: raw/auckland/census/statsnz_census_transport_margins_sa2_2023.json
+    required: true
+    sha256: 1fdf3aa304c77c31856d97e56095ca50f44c2273f47cd7b6b3df78bf023a159d
+    homepage: https://www.stats.govt.nz/2023-census/
+    url: https://services2.arcgis.com/vKb0s8tBIA3bdocZ/ArcGIS/rest/services/2023_Census_totals_by_topic_for_individuals_by_SA2/FeatureServer/3
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: This work includes Stats NZ data licensed for reuse under CC BY 4.0
+    redistribution: permitted
+    where: 1=1
+    out_fields: SA22023_V1_00,SA22023_V1_00_NAME,VAR_2_172,VAR_2_181,VAR_2_780,VAR_2_786,VAR_2_822,VAR_2_828
+    page_size: 2000
+    include_geometry: false
+    expected_record_count: 2395
+
+  - id: stats_nz_sa1_geography
+    title: 2023 Census Statistical Area 1 geography and usually resident population
+    acquisition: arcgis_query
+    role: origin-disaggregation-weight
+    destination: raw/auckland/census/statsnz_census_sa1_population_2023.geojson
+    required: true
+    sha256: 6b0fca1c162d38505a147b0a0971571da55fb138d98df473125a29ac6b4c5d75
+    homepage: https://www.arcgis.com/home/item.html?id=407355b6bd46494498cd760787178ab3
+    url: https://services2.arcgis.com/vKb0s8tBIA3bdocZ/ArcGIS/rest/services/2023_Census_totals_by_topic_for_individuals_by_SA1/FeatureServer/1
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: This work includes Stats NZ data licensed for reuse under CC BY 4.0
+    redistribution: permitted
+    where: 1=1
+    out_fields: SA12023_V1_00,VAR_1_3
+    page_size: 2000
+    include_geometry: true
+    expected_record_count: 33164
+
+  - id: stats_nz_sa2_geography
+    title: Statistical Area 2 2023 geography
+    acquisition: arcgis_query
+    role: geography-join
+    destination: raw/auckland/census/statsnz_statistical_area_2_2023.geojson
+    required: true
+    sha256: null
+    homepage: https://www.arcgis.com/home/item.html?id=a5166616764c4499a42d1f45627d69b0
+    url: https://services2.arcgis.com/vKb0s8tBIA3bdocZ/ArcGIS/rest/services/Statistical_Area_2_2023/FeatureServer/0
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: This work includes Stats NZ data licensed for reuse under CC BY 4.0
+    redistribution: permitted
+    where: 1=1
+    out_fields: SA22023_V1_00,SA22023_V1_00_NAME
+    page_size: 2000
+    include_geometry: true
+    expected_record_count: 2395
+
+  - id: stats_nz_auckland_boundary
+    title: Auckland territorial authority boundary 2023
+    acquisition: arcgis_query
+    role: analysis-boundary
+    destination: raw/auckland/geography/statsnz_auckland_territorial_authority_2023.geojson
+    required: true
+    sha256: null
+    homepage: https://www.arcgis.com/home/item.html?id=82b6052534854a8abe3870a08d497d3f
+    url: https://services2.arcgis.com/vKb0s8tBIA3bdocZ/ArcGIS/rest/services/Territorial_Authority_2023/FeatureServer/0
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: This work includes Stats NZ data licensed for reuse under CC BY 4.0
+    redistribution: permitted
+    where: "TA2023_V1_00 = '076'"
+    out_fields: TA2023_V1_00,TA2023_V1_00_NAME
+    page_size: 100
+    include_geometry: true
+    expected_record_count: 1
+
+  - id: nzdep2023_sa1
+    title: NZDep2023 Statistical Area 1 data
+    acquisition: download
+    role: optional-equity-context
+    destination: raw/auckland/equity/NZDep2023_SA1.txt
+    required: false
+    sha256: null
+    homepage: https://www.otago.ac.nz/wellington/research/groups/research-groups-in-the-department-of-public-health/hirp/socioeconomic-deprivation-indexes
+    url: https://www.otago.ac.nz/__data/assets/text_file/0028/593137/NZDep2023_SA1-text.txt
+    license: Exact dataset redistribution terms unresolved; research report is CC BY 4.0
+    license_url: null
+    attribution: University of Otago NZDep2023
+    redistribution: unknown
+
+  - id: educationcounts_schools_auckland
+    title: Auckland school directory and indicative rolls
+    acquisition: ckan_datastore
+    role: school-demand
+    destination: raw/auckland/education/educationcounts_schools_auckland.json
+    required: true
+    sha256: cab8cbfd70e5ea4ac2a7554fcc1a0c11870ebe19557f8a9dbd9245a0f2f2daa4
+    homepage: https://www.educationcounts.govt.nz/directories/list-of-nz-schools
+    url: https://catalogue.data.govt.nz/api/3/action/datastore_search_sql
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Ministry of Education / Education Counts; contact and named-person fields excluded
+    redistribution: permitted
+    resource_id: 4b292323-9fcc-41f8-814b-3c7b19cf14b3
+    where: "\"Regional_Council\" = 'Auckland Region'"
+    out_fields: School_Id,Org_Name,Org_Type,Authority,Statistical_Area_2_Code,Latitude,Longitude,Roll_Date,Total,Status
+    page_size: 5000
+    include_geometry: false
+    expected_record_count: 573
+    source_version: "roll snapshot 2026-07-01"
+    published_at: "2026-08-19"
+
+  - id: stats_nz_business_demography_sa2_2024
+    title: 2024 Business Demography employment counts by SA2
+    acquisition: arcgis_query
+    role: employment-weight
+    destination: raw/auckland/jobs/statsnz_business_demography_sa2_2024.json
+    required: true
+    sha256: 0528d2e70b41771ccbed8aaf3ae6fb021456024e2ee68fea49188c32209c02be
+    homepage: https://www.stats.govt.nz/information-releases/new-zealand-business-demography-statistics-at-february-2024/
+    url: https://services2.arcgis.com/vKb0s8tBIA3bdocZ/ArcGIS/rest/services/2024_Business_Demography_business_count_by_SA2/FeatureServer/0
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: This work includes Stats NZ data licensed for reuse under CC BY 4.0
+    redistribution: permitted
+    where: 1=1
+    out_fields: SA22023_V1_00,SA22023_V1_00_NAME,gc2019,ec2019,gc2024,ec2024,ec_avperinc,gc_avperinc
+    page_size: 2000
+    include_geometry: false
+    expected_record_count: 2301
+
+  - id: geofabrik_new_zealand_osm
+    title: New Zealand OpenStreetMap extract
+    acquisition: download
+    role: upstream
+    destination: raw/supporting/new-zealand-latest.osm.pbf
+    required: true
+    sha256: 278d4a4e71c7903bfb17ba5cf9587b197b39a0317b25f8bba6260f527b576cb6
+    homepage: https://download.geofabrik.de/australia-oceania/new-zealand.html
+    url: https://download.geofabrik.de/australia-oceania/new-zealand-latest.osm.pbf
+    license: Open Data Commons Open Database License 1.0
+    license_url: https://opendatacommons.org/licenses/odbl/1-0/
+    attribution: © OpenStreetMap contributors; data available under ODbL 1.0
+    redistribution: permitted
+
+  - id: auckland_transport_cycle_network
+    title: Auckland cycle and micromobility facility network
+    acquisition: arcgis_query
+    role: facility-evidence
+    destination: raw/auckland/cycling/at_cycling_network.geojson
+    required: true
+    sha256: af33d930bb3d31831680043e7527eb7b3bd8ea8d87a45f3ce447d5470375a301
+    homepage: https://data-atgis.opendata.arcgis.com/
+    url: https://services2.arcgis.com/JkPEgZJGxhSjYOo0/arcgis/rest/services/CyclingService/FeatureServer/0
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Auckland Transport
+    redistribution: permitted
+    where: 1=1
+    out_fields: "*"
+    page_size: 2000
+    include_geometry: true
+    expected_record_count: 2166
+
+  - id: auckland_transport_future_connect
+    title: Future Connect strategic cycling network
+    acquisition: arcgis_query
+    role: programme-overlay
+    destination: raw/auckland/cycling/at_future_connect_cycle.geojson
+    required: false
+    sha256: 1bc9c3f01a635f106c9b932eabd89b2999709947b641e642efa601ba1889ddf3
+    homepage: https://at.govt.nz/about-us/transport-plans-strategies/future-connect-auckland-transports-network-plan/
+    url: https://mahere.at.govt.nz/server/rest/services/FutureConnect/FutureConnect_Network_FirstDecade/MapServer/3
+    license: Exact Future Connect service redistribution terms not published
+    license_url: null
+    attribution: Auckland Transport (Future Connect 2024-2034)
+    redistribution: unknown
+    where: 1=1
+    out_fields: "*"
+    page_size: 2000
+    include_geometry: true
+    expected_record_count: 7414
+
+  - id: auckland_transport_rltp
+    title: Regional Land Transport Plan active-mode project snapshot
+    acquisition: manual
+    role: programme-overlay
+    destination: raw/auckland/cycling/at_rltp_active_modes.geojson
+    required: false
+    sha256: 325b9aac3cd3f0cef96f8b0fce604f8c3033f7786b4e4a664b1fb36ac31ecc82
+    homepage: https://at.govt.nz/about-us/transport-plans-strategies/regional-land-transport-plan
+    url: null
+    license: Exact derived-snapshot redistribution terms and source endpoint unresolved
+    license_url: null
+    attribution: Auckland Transport (immutable local snapshot; former endpoint is stale)
+    redistribution: unknown
+
+  - id: cycle_counter_locations
+    title: Cycle counter site locations
+    acquisition: manual
+    role: validation
+    destination: raw/auckland/cycling/counters/at_cycle_counter_locations.json
+    required: false
+    sha256: b0ddc052b851b1302cf622d8b018b2c51b29ef1cc127a4b97eb930d830b2bf09
+    homepage: https://at.govt.nz/cycling-walking/research-monitoring/monthly-cycle-monitoring/
+    url: https://at.govt.nz/media/zj0lgcmg/at-daily-cycle-count-data-july-2026.xlsx
+    license: CC BY 4.0 observations joined to a reviewed legacy coordinate registry whose exact publisher-file lineage is unresolved
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Auckland Transport; location coordinates remain local validation evidence only
+    redistribution: unknown
+
+  - id: cycle_counter_observations
+    title: Cycle counter observations
+    acquisition: manual
+    role: validation
+    destination: raw/auckland/cycling/counters/at_cycle_counter_stats.json
+    required: false
+    sha256: 7e1ef887f223d7e516a5825d2eb10c74af250b16ac3183a1cb25f3679bf947b8
+    homepage: https://at.govt.nz/cycling-walking/research-monitoring/monthly-cycle-monitoring/
+    url: https://at.govt.nz/media/zj0lgcmg/at-daily-cycle-count-data-july-2026.xlsx
+    license: CC BY 4.0; exact July 2026 workbook SHA-256 f0488b5fd5f315ea71ab2532a5ac402f7194741fb62c2ed9fc8e2d264c64d210
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Auckland Transport, Daily Cycle Count Data July 2026
+    redistribution: permitted
+
+  - id: crash_hazard
+    title: Cycling crash-hazard observations
+    acquisition: manual
+    role: safety
+    destination: raw/auckland/crash/crash_Untitled_query.2026-04-02.12-50.csv
+    required: true
+    sha256: fa599644c87d020edf9bd9646fe9ceb0e0d88b76b86e05431fc75f89035f69ba
+    homepage: https://www.nzta.govt.nz/partners/data-and-tools/crash-analysis-system/
+    url: null
+    license: CAS Map is CC BY 4.0; exact configured-export item and terms unresolved
+    license_url: null
+    attribution: NZ Transport Agency Waka Kotahi; publish aggregates only after exact export provenance is verified
+    redistribution: unknown
+
+  - id: linz_auckland_dem
+    title: Auckland extract of the NZ 8m Digital Elevation Model (2012)
+    acquisition: manual
+    role: terrain
+    destination: raw/auckland/elevation/linz_8m_dem_auckland/auckland_linz_8m_dem.vrt
+    required: true
+    sha256: 7630ae6947154f86175e5d064d26eeb8a8b678c417e29843bc69f55bf2699e80
+    homepage: https://data.linz.govt.nz/layer/51768-nz-8m-digital-elevation-model-2012/
+    url: https://data.linz.govt.nz/layer/51768-nz-8m-digital-elevation-model-2012/
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Contains data sourced from the LINZ Data Service licensed for reuse under CC BY 4.0
+    redistribution: permitted
+
+  - id: linz_auckland_dem_manifest
+    title: Auckland NZ 8m DEM tile integrity manifest
+    acquisition: manual
+    role: terrain-manifest
+    destination: raw/auckland/elevation/linz_8m_dem_auckland/manifest.json
+    required: true
+    sha256: 3176824c30b177015b3641872c78e9686f8b2498000c49921a314a0c4dd3c347
+    homepage: https://data.linz.govt.nz/layer/51768-nz-8m-digital-elevation-model-2012/
+    url: null
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Land Information New Zealand; exact tile files are pinned in the manifest
+    redistribution: permitted
+
+  - id: major_transit_nodes
+    title: Major public-transport nodes derived from archived AT GTFS
+    acquisition: manual
+    role: transit
+    destination: raw/auckland/gtfs/at_major_transit_nodes.geojson
+    required: true
+    sha256: 6ac0599dc3f019ddec07f4e82e3e22ca8582f2eff769e5ae7d289dc8858062fa
+    homepage: https://at.govt.nz/about-us/at-data-sources/general-transit-feed-specification
+    url: https://gtfs.at.govt.nz/gtfs.zip
+    license: Creative Commons Attribution 4.0 International
+    license_url: https://creativecommons.org/licenses/by/4.0/
+    attribution: Auckland Transport; archived feed vintage must be recorded before release
+    redistribution: unknown
+
+pipeline:
+  resume: true
+  stages:
+    - name: source-inventory
+      version: "2"
+      depends_on: []
+      options:
+        profile: auckland-v1
+    - name: prepare-demand
+      version: "4"
+      depends_on: [source-inventory, build-topology]
+      options:
+        profile: auckland-v1
+    - name: build-topology
+      version: "3"
+      depends_on: [source-inventory]
+      options:
+        profile: auckland-v1
+    - name: assign-routes
+      version: "6"
+      depends_on: [prepare-demand, build-topology]
+      options:
+        profile: auckland-v1
+    - name: generate-candidates
+      version: "5"
+      depends_on: [assign-routes, build-topology]
+      options:
+        profile: auckland-v1
+    - name: evaluate-portfolios
+      version: "5"
+      depends_on: [assign-routes, generate-candidates]
+      options:
+        profile: auckland-v1
+    - name: appraisal-uncertainty-validation
+      version: "4"
+      depends_on: [evaluate-portfolios, assign-routes, build-topology]
+      options:
+        profile: auckland-v1
+    - name: export-outputs
+      version: "3"
+      depends_on: [assign-routes, generate-candidates, evaluate-portfolios, appraisal-uncertainty-validation]
+      options:
+        profile: auckland-v1
+    - name: export-web
+      version: "3"
+      depends_on: [export-outputs]
+      options:
+        profile: auckland-v1
+
+export:
+  public_data_dir: web/public/data
+  manifest_filename: manifest.json
+  layer_filenames:
+    cells: cells.geojson
+    network: network.geojson
+    candidates: candidates.geojson
+    programmes: programmes.geojson
+    counters: counters.geojson
+
+parameters:
+  network:
+    analysis_bounds_wgs84: [174.25, -37.35, 175.35, -36.05]
+    honour_oneway: true
+    maximum_snap_distance_m: 1800
+    candidate_matching: exact_edge_ids
+    low_stress_threshold_lts: 2
+    comfort_impedance:
+      lts_1: 1.0
+      lts_2: 1.25
+      lts_3: 1.8
+      lts_4: 3.0
+      uphill_gradient_weight: 4.0
+      downhill_gradient_weight: 0.5
+      tunnel_multiplier: 1.25
+      bridge_multiplier: 1.05
+  routing:
+    od_selection: stratified_probability_sample
+    sampling:
+      design: stratified_simple_random_without_replacement
+      stratum: source_cell_id
+      records_per_stratum_by_purpose:
+        commute: 1
+        school: 3
+        everyday: 3
+        transit: 3
+      seed: 20260301
+      estimator: Horvitz-Thompson
+    chunk_size: 250
+    bicycle_speed_kph: 15
+    maximum_bicycle_lts: 4
+    unmapped_edge_multiplier: 3.0
+    plausible_paths: 5
+    maximum_cost_ratio: 1.5
+    maximum_detour_ratio: 1.5
+    maximum_shared_edge_ratio: 0.95
+    alternative_penalty_multiplier: 2.0
+    maximum_alternative_attempts: 4
+    engine_link_tolerance_m: 1.0
+    path_size_logit_cost_scale: 0.002
+    path_size_coefficient: 1.0
+  demand:
+    propensity:
+      model: pct_2020_published_manual_equations
+      maximum_distance_km: 30
+    confidentiality:
+      method: joint-fixed-random-rounding-base-3-intervals
+      numeric_maximum_error: 2
+      suppression_upper: 5
+      joint_constraint: bicycle_not_greater_than_eligible
+      origin_margin_role: soft_bounded_evidence_different_universe
+      destination_margin_role: soft_bounded_evidence_different_universe
+    disaggregation:
+      origin_weight: sa1_usually_resident_population
+      destination_weight: sa2_employee_count_with_poi_fallback
+      retain_intrazonal: true
+      samples_per_od: 25
+      seed: 20260301
+    purpose_markets:
+      school:
+        maximum_distance_m: 10000
+        distance_decay_m: 3000
+        samples_per_school: 25
+        seed: 20260301
+        interpretation: population-distance allocation of observed roll, not observed cycling
+      everyday:
+        maximum_distance_m: 7500
+        category_weights:
+          civic: 1
+          grocery: 1
+          health: 1
+          recreation: 1
+          retail: 1
+          services: 1
+        interpretation: person-equivalent opportunity access index, not daily trips
+      transit:
+        maximum_distance_m: 5000
+        interpretation: person-equivalent access to nearest major node, not patronage
+  demand_response:
+    minimum_probability: 0.00001
+    cost_elasticity:
+      distribution: triangular
+      lower: 0.5
+      mode: 1.0
+      upper: 2.0
+    target_scenario:
+      target_share: 0.08
+      distance_decay:
+        neutral_through_km: 12
+        exponential_scale_km: 5
+  candidates:
+    minimum_length_m: 100
+    maximum_length_m: 9000
+    matching: exact_edge_ids
+    connectivity_max_lts: 2
+    maximum_detour_ratio: 1.5
+    screening_cost:
+      currency: NZD
+      price_base_year: 2021
+      lower_nzd_per_m: 3000
+      base_nzd_per_m: 6000
+      upper_nzd_per_m: 12000
+      evidence_status: provisional_screening_assumption
+      interpretation: configurable corridor screening range, not a project cost estimate
+    facility_matching:
+      minimum_overlap_ratio: 0.6
+      maximum_bearing_difference_degrees: 30
+      maximum_offset_m: 20
+      require_layer_compatibility: true
+  portfolios:
+    maximum_precomputed_budget_nzd: 500000000
+    budget_checkpoints_nzd: [50000000, 100000000, 250000000, 500000000]
+    interpretation: precomputed cumulative screening range; not a funding recommendation
+  appraisal:
+    standard: Monetised Benefits and Costs Manual v1.7.5
+    price_base_year: 2021
+    selected_scenario: commute_8pct
+    appraisal_years: 40
+    ramp_up_years: 3
+    commute_operating_days_per_year: 220
+    commute_legs_per_day: 2
+    ebike_share: 0.35
+    annual_maintenance_capital_share: 0.0125
+    renewal_year: 20
+    renewal_capital_share: 0.125
+    residual_value_capital_share: 0.05
+    non_commercial_discount_schedule:
+      - start_year: 1
+        end_year: 30
+        rate: 0.02
+      - start_year: 31
+        end_year: 100
+        rate: 0.015
+      - start_year: 101
+        end_year: null
+        rate: 0.01
+    sensitivity_discount_rate: 0.08
+    conventional_health_per_km_nzd: 4.9
+    ebike_health_per_km_nzd: 2.5
+    conventional_health_cap_per_user_nzd: 6200
+    ebike_health_cap_per_user_nzd: 4600
+    explicit_inputs:
+      - maintenance_nzd
+      - renewals_nzd
+      - residual_value_nzd
+      - emissions_nzd_per_km
+      - carbon_nzd_per_km
+      - other_vehicle_benefit_nzd_per_km
+  uncertainty:
+    method: latin-hypercube
+    sample_count: 1000
+    seed: 20260301
+    rank_top_k: 50
+    parameters:
+      - {name: suppression_factor, lower: 0.8, mode: 1.0, upper: 1.2, distribution: triangular}
+      - {name: pct_uptake_factor, lower: 0.8, mode: 1.0, upper: 1.2, distribution: triangular}
+      - {name: route_choice_factor, lower: 0.85, mode: 1.0, upper: 1.15, distribution: triangular}
+      - {name: stress_penalty_factor, lower: 0.85, mode: 1.0, upper: 1.25, distribution: triangular}
+      - {name: topology_coverage_factor, lower: 0.9, mode: 0.98, upper: 1.0, distribution: triangular}
+      - {name: capital_cost_factor, lower: 0.8, mode: 1.0, upper: 1.25, distribution: triangular}
+      - {name: maintenance_cost_factor, lower: 0.75, mode: 1.0, upper: 1.5, distribution: triangular}
+      - {name: renewal_cost_factor, lower: 0.75, mode: 1.0, upper: 1.5, distribution: triangular}
+      - {name: benefit_value_factor, lower: 0.8, mode: 1.0, upper: 1.2, distribution: triangular}
+      - {name: discount_rate, lower: 0.015, mode: 0.02, upper: 0.08, distribution: triangular}
+      - {name: ebike_share, lower: 0.2, mode: 0.35, upper: 0.6, distribution: triangular}
+      - {name: demand_response_elasticity, lower: 0.5, mode: 1.0, upper: 2.0, distribution: triangular}
+  validation:
+    maximum_counter_match_distance_m: 100
+    minimum_counter_pairs: 20
+    source_regression_minimum_records:
+      stats_nz_sa1_geography: 33164
+      stats_nz_sa2_geography: 2395
+      stats_nz_auckland_boundary: 1
+      stats_nz_sa2_transport_margins: 2395
+      stats_nz_business_demography_sa2_2024: 2301
+      auckland_transport_cycle_network: 2166
+      auckland_transport_future_connect: 7414

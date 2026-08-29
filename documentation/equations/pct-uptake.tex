@@ -1,0 +1,17 @@
+% d_i is route distance in kilometres and g_i is route gradient in percent.
+\begin{align}
+\eta_i
+ &= \beta_0 + \beta_1 d_i + \beta_2 \sqrt{d_i}
+  + \beta_3 d_i^2 + \beta_4 (g_i-g_0) \notag\\
+ &\quad + \beta_5 d_i(g_i-g_0)
+  + \beta_6 \sqrt{d_i}(g_i-g_0),
+\label{eq:pct-predictor}\\
+p_i^{\mathrm{PCT}}
+ &= \expit(\eta_i)
+  = \frac{1}{1+\exp(-\eta_i)}.
+\label{eq:pct-probability}
+\end{align}
+
+% The coefficient set identifies a named PCT scenario. In this workbench the
+% probability is a transferable spatial propensity prior, not an Auckland-
+% estimated causal response or forecast.
