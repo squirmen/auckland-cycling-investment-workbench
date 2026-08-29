@@ -1,0 +1,33 @@
+For a disclosure-controlled observed count, the end-to-end result envelope is
+\begin{equation}
+\mathcal{R}^{\mathrm{DC}}
+=\left\{R(\mathbf O^{L}),R(\mathbf O^{*}),R(\mathbf O^{U})\right\},
+\label{eq:confidentiality-envelope}
+\end{equation}
+where the three runs differ only in the declared count interpretation.
+
+For uncertain parameter $j$ in a Latin-hypercube design with $M$ draws, let
+$\pi_{mj}$ be a seeded random permutation of strata and $u_{mj}\sim U(0,1)$.
+The unit-interval design and transformed parameter draw are
+\begin{align}
+q_{mj}
+ &=\frac{\pi_{mj}+u_{mj}}{M},
+\label{eq:lhs-stratum}\\
+\psi_{mj}
+ &=F_j^{-1}(q_{mj}),
+\label{eq:lhs-transform}\\
+\widehat{\mathbf y}^{(m)}
+ &=\mathcal{M}\!\left(G,S,\boldsymbol\psi_m\right).
+\label{eq:parameter-ensemble}
+\end{align}
+The marginal distributions or bounded ranges $F_j$, dependencies, network $G$,
+and scenario $S$ are declared. Ensemble quantiles are not universal confidence
+limits unless the parameter distributions have empirical probability meaning.
+
+Across $M$ declared parameter or structural sensitivity runs, candidate $C$'s
+top-$k$ rank acceptability is
+\begin{equation}
+\pi_C^{(k)}
+=\frac{1}{M}\sum_{m=1}^{M}I\!\left(\operatorname{rank}_m(C)\le k\right).
+\label{eq:rank-acceptability}
+\end{equation}

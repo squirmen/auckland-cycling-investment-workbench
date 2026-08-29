@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ciw.tfwelch.com/schemas/web-export.schema.json",
+  "title": "Cycling Investment Workbench browser manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "modelVersion", "runId", "configSha256", "generatedAtUtc",
+    "title", "dataStatus", "dataStatusLabel", "defaultScenario", "defaultPurpose",
+    "defaultBudgetNzd", "maxBudgetNzd", "scenarios", "purposes", "summaries",
+    "portfolios", "validation", "capabilities", "limitations", "layers", "attribution",
+    "methodologyUrl", "sourceDecisions"
+  ],
+  "properties": {
+    "schemaVersion": {"const": "2.0.0"},
+    "modelVersion": {"type": "string", "minLength": 1},
+    "runId": {"type": "string", "minLength": 1},
+    "configSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "generatedAtUtc": {"type": "string", "format": "date-time"},
+    "title": {"type": "string", "minLength": 1},
+    "dataStatus": {"enum": ["synthetic_demo", "research_snapshot", "validated_release"]},
+    "dataStatusLabel": {"type": "string", "minLength": 1},
+    "defaultScenario": {"$ref": "#/$defs/scenarioId"},
+    "defaultPurpose": {"$ref": "#/$defs/purposeId"},
+    "defaultBudgetNzd": {"type": "number", "minimum": 0},
+    "maxBudgetNzd": {"type": "number", "exclusiveMinimum": 0},
+    "scenarios": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"$ref": "#/$defs/scenario"}
+    },
+    "purposes": {
+      "type": "array", "minItems": 6, "maxItems": 6,
+      "items": {"$ref": "#/$defs/purpose"}
+    },
+    "summaries": {"$ref": "#/$defs/summaries"},
+    "portfolios": {"$ref": "#/$defs/portfolios"},
+    "validation": {"$ref": "#/$defs/validation"},
+    "capabilities": {"$ref": "#/$defs/capabilities"},
+    "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "layers": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {"$ref": "#/$defs/layer"}
+    },
+    "attribution": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "methodologyUrl": {"type": "string", "minLength": 1},
+    "sourceDecisions": {"type": "array", "items": {"$ref": "#/$defs/sourceDecision"}}
+  },
+  "$defs": {
+    "scenarioId": {
+      "enum": ["baseline", "government_target", "go_dutch", "ebike", "commute_8pct"]
+    },
+    "purposeId": {
+      "enum": ["network", "equity", "school", "everyday", "transit", "appraisal"]
+    },
+    "scenario": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "label", "description"],
+      "properties": {
+        "id": {"$ref": "#/$defs/scenarioId"},
+        "label": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "purpose": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "label", "description", "objectiveLabel"],
+      "properties": {
+        "id": {"$ref": "#/$defs/purposeId"},
+        "label": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "objectiveLabel": {"type": "string", "minLength": 1}
+      }
+    },
+    "validation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["periodLabel", "counterCount", "matchedCount", "coverage", "purposeAlignment"],
+      "properties": {
+        "periodLabel": {"type": "string", "minLength": 1},
+        "counterCount": {"type": "integer", "minimum": 0},
+        "matchedCount": {"type": "integer", "minimum": 0},
+        "coverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "purposeAlignment": {"type": "string", "minLength": 1}
+      }
+    },
+    "summaryMetric": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "purpose", "activityValue", "activityUnit", "odLowStressShare",
+        "odLowStressConnectedWeight", "odLowStressDenominatorWeight", "routingCoverage",
+        "maximumLts", "maximumDetourRatio", "candidateCount", "validationCoverage", "warnings"
+      ],
+      "properties": {
+        "purpose": {"$ref": "#/$defs/purposeId"},
+        "activityValue": {"type": "number", "minimum": 0},
+        "activityUnit": {"type": "string", "minLength": 1},
+        "odLowStressShare": {"$ref": "#/$defs/nullableShare"},
+        "odLowStressConnectedWeight": {"$ref": "#/$defs/nullableNonNegative"},
+        "odLowStressDenominatorWeight": {"$ref": "#/$defs/nullableNonNegative"},
+        "routingCoverage": {"type": "number", "minimum": 0, "maximum": 1},
+        "maximumLts": {"type": "integer", "minimum": 1, "maximum": 4},
+        "maximumDetourRatio": {"type": "number", "minimum": 1},
+        "candidateCount": {"type": "integer", "minimum": 0},
+        "validationCoverage": {"$ref": "#/$defs/nullableShare"},
+        "warnings": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "portfolioStep": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "candidateId", "step", "cumulativeCostNzd", "marginalObjective",
+        "cumulativeObjective", "objectiveUnit", "paretoMember"
+      ],
+      "properties": {
+        "candidateId": {"type": "string", "minLength": 1},
+        "step": {"type": "integer", "minimum": 1},
+        "cumulativeCostNzd": {"type": "number", "minimum": 0},
+        "marginalObjective": {"type": "number", "minimum": 0},
+        "cumulativeObjective": {"type": "number", "minimum": 0},
+        "objectiveUnit": {"type": "string", "minLength": 1},
+        "paretoMember": {"type": "boolean"}
+      }
+    },
+    "summaryByPurpose": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network", "equity", "school", "everyday", "transit", "appraisal"],
+      "properties": {
+        "network": {"$ref": "#/$defs/summaryMetric"},
+        "equity": {"$ref": "#/$defs/summaryMetric"},
+        "school": {"$ref": "#/$defs/summaryMetric"},
+        "everyday": {"$ref": "#/$defs/summaryMetric"},
+        "transit": {"$ref": "#/$defs/summaryMetric"},
+        "appraisal": {"$ref": "#/$defs/summaryMetric"}
+      }
+    },
+    "portfolioByPurpose": {
+      "type": "object", "additionalProperties": false,
+      "required": ["network", "equity", "school", "everyday", "transit", "appraisal"],
+      "properties": {
+        "network": {"type": "array", "items": {"$ref": "#/$defs/portfolioStep"}},
+        "equity": {"type": "array", "items": {"$ref": "#/$defs/portfolioStep"}},
+        "school": {"type": "array", "items": {"$ref": "#/$defs/portfolioStep"}},
+        "everyday": {"type": "array", "items": {"$ref": "#/$defs/portfolioStep"}},
+        "transit": {"type": "array", "items": {"$ref": "#/$defs/portfolioStep"}},
+        "appraisal": {"type": "array", "items": {"$ref": "#/$defs/portfolioStep"}}
+      }
+    },
+    "summaries": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baseline", "government_target", "go_dutch", "ebike", "commute_8pct"],
+      "properties": {
+        "baseline": {"$ref": "#/$defs/summaryByPurpose"},
+        "government_target": {"$ref": "#/$defs/summaryByPurpose"},
+        "go_dutch": {"$ref": "#/$defs/summaryByPurpose"},
+        "ebike": {"$ref": "#/$defs/summaryByPurpose"},
+        "commute_8pct": {"$ref": "#/$defs/summaryByPurpose"}
+      }
+    },
+    "portfolios": {
+      "type": "object", "additionalProperties": false,
+      "required": ["baseline", "government_target", "go_dutch", "ebike", "commute_8pct"],
+      "properties": {
+        "baseline": {"$ref": "#/$defs/portfolioByPurpose"},
+        "government_target": {"$ref": "#/$defs/portfolioByPurpose"},
+        "go_dutch": {"$ref": "#/$defs/portfolioByPurpose"},
+        "ebike": {"$ref": "#/$defs/portfolioByPurpose"},
+        "commute_8pct": {"$ref": "#/$defs/portfolioByPurpose"}
+      }
+    },
+    "capabilities": {
+      "type": "object", "additionalProperties": false,
+      "required": ["equity", "appraisal", "sketchEvaluation"],
+      "properties": {
+        "equity": {"enum": ["available", "rights_blocked", "unavailable"]},
+        "appraisal": {"enum": ["reviewed", "research_only", "withheld"]},
+        "sketchEvaluation": {
+          "enum": ["same_pipeline", "requires_pipeline_evaluation", "unavailable"]
+        }
+      }
+    },
+    "layer": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "id", "label", "url", "sha256", "defaultVisible", "optional", "licence", "sourceIds"
+      ],
+      "properties": {
+        "id": {"enum": ["cells", "network", "candidates", "programmes", "counters"]},
+        "label": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "defaultVisible": {"type": "boolean"},
+        "optional": {"type": "boolean"},
+        "licence": {"type": "string", "minLength": 1},
+        "sourceIds": {
+          "type": "array", "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "sourceDecision": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceId", "redistribution", "decision", "reason"],
+      "properties": {
+        "sourceId": {"type": "string", "minLength": 1},
+        "redistribution": {"enum": ["permitted", "unknown", "restricted"]},
+        "decision": {"enum": ["include", "exclude"]},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "nullableShare": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "number", "minimum": 0, "maximum": 1}
+      ]
+    },
+    "nullableNonNegative": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "number", "minimum": 0}
+      ]
+    }
+  }
+}

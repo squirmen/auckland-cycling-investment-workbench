@@ -1,0 +1,38 @@
+For $n$ eligible, period-compatible counter sites with observations $y_j$ and
+present-day model values $\widehat y_j$, define residual
+$e_j=\widehat y_j-y_j$ and
+\begin{align}
+\operatorname{Bias}
+ &=\frac1n\sum_{j=1}^{n}e_j,
+\label{eq:validation-bias}\\
+\operatorname{MAE}
+ &=\frac1n\sum_{j=1}^{n}|e_j|,
+\label{eq:validation-mae}\\
+\operatorname{RMSE}
+ &=\sqrt{\frac1n\sum_{j=1}^{n}e_j^2}.
+\label{eq:validation-rmse}
+\end{align}
+With $\bar y$ and $\bar{\widehat y}$ denoting sample means, Pearson association
+and the observed-on-modelled calibration slope are
+\begin{align}
+r_P
+ &=\frac{\sum_j(y_j-\bar y)(\widehat y_j-\bar{\widehat y})}
+ {\sqrt{\sum_j(y_j-\bar y)^2\sum_j(\widehat y_j-\bar{\widehat y})^2}},
+\label{eq:validation-pearson}\\
+b
+ &=\frac{\sum_j(\widehat y_j-\bar{\widehat y})(y_j-\bar y)}
+ {\sum_j(\widehat y_j-\bar{\widehat y})^2},
+\qquad a=\bar y-b\bar{\widehat y}.
+\label{eq:validation-calibration}
+\end{align}
+Spearman association $r_S$ applies the Pearson formula to average ranks. A
+mean-observation null comparison is
+\begin{equation}
+R^2_{\mathrm{null}}
+=1-\frac{\sum_j(y_j-\widehat y_j)^2}
+        {\sum_j(y_j-\bar y)^2}.
+\label{eq:validation-null-r2}
+\end{equation}
+A negative value means worse squared error than the observed-mean null. All
+metrics are reported with site, temporal, direction, and screenline coverage;
+spatially blocked holdouts are required when counters inform calibration.

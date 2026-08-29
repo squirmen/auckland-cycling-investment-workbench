@@ -1,0 +1,74 @@
+[build-system]
+requires = ["setuptools==75.8.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "auckland-cycling-investment-workbench"
+version = "0.1.0"
+description = "Reproducible analysis and publishing pipeline for Auckland cycling investment scenarios."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { text = "MIT" }
+authors = [{ name = "Tim Welch" }]
+keywords = ["cycling", "transport", "investment", "Auckland", "reproducible-research"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+  "PyYAML==6.0.2",
+  "geopandas>=1.0,<2",
+  "numpy>=2,<3",
+  "osmium>=4,<5",
+  "pandas>=2.2,<3",
+  "pyarrow>=17,<24",
+  "pyproj>=3.6,<4",
+  "r5py==1.1.7",
+  "rasterio>=1.4,<2",
+  "scipy>=1.14,<2",
+  "shapely>=2,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build==1.2.2.post1",
+  "pytest==8.3.5",
+  "pytest-cov==6.0.0",
+  "ruff==0.9.10",
+]
+
+[project.scripts]
+ciw = "cycling_investment_workbench.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-config --strict-markers"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["cycling_investment_workbench"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "PERF", "RUF", "SIM", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]

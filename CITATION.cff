@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using this metadata and cite the underlying methodological sources listed in NOTICE.md."
+title: "Auckland Cycling Investment Workbench"
+type: software
+authors:
+  - family-names: Welch
+    given-names: Tim
+version: 0.1.0
+license: MIT
+abstract: >-
+  A reproducible screening tool for cycling demand, low-stress network
+  connectivity, candidate-corridor counterfactuals, distributional context,
+  uncertainty, and investment sequencing in Auckland, New Zealand.
+keywords:
+  - cycling
+  - active transport
+  - transport planning
+  - network connectivity
+  - Auckland
+  - reproducible research
+references:
+  - type: article
+    title: "The Propensity to Cycle Tool: An open source online system for sustainable transport planning"
+    doi: "10.5198/jtlu.2016.862"
+  - type: article
+    title: "Scenarios of cycling to school in England, and associated health and carbon impacts"
+    doi: "10.1016/j.jth.2019.01.008"

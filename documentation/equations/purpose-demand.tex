@@ -1,0 +1,30 @@
+For trip purpose $h\in\mathcal{H}$, let $F_{ab}^{(h)}$ be the source flow from
+origin zone $a$ to destination zone $b$. Let $w_{az}^{O,h}$ and
+$w_{bk}^{D,h}$ be non-negative within-zone origin and destination weights that
+each sum to one. Disaggregated demand is
+\begin{equation}
+Q_{zk}^{(h)}
+=\sum_a\sum_b F_{ab}^{(h)}w_{az}^{O,h}w_{bk}^{D,h},
+\qquad
+\sum_z\sum_k Q_{zk}^{(h)}=\sum_a\sum_b F_{ab}^{(h)}.
+\label{eq:purpose-disaggregation}
+\end{equation}
+Population weights are used for residential origins; destination weights are
+purpose-specific, such as employment, school enrolment, everyday opportunity,
+or transit-boardings evidence. Terms with $a=b$ are retained, so intrazonal
+flows are not discarded.
+
+For retained plausible paths $r\in\mathcal{P}_{i}^{K,h}$ with conditional
+probability $\pi_{ir}^{(h)}$, the directed edge flow is
+\begin{equation}
+X_e^{(h)}
+=\sum_i Q_i^{(h)}
+  \sum_{r\in\mathcal{P}_{i}^{K,h}}
+  \pi_{ir}^{(h)}I(e\in P_{ir}),
+\qquad
+\sum_r\pi_{ir}^{(h)}=1.
+\label{eq:purpose-edge-flow}
+\end{equation}
+Commute, school, everyday, and transit surfaces use distinct source flows,
+weights, route ledgers, and provenance; a commute surface is not renamed to
+stand in for another purpose.

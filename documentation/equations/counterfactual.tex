@@ -1,0 +1,39 @@
+For candidate $C\subseteq\Edges$ and declared treatment cost $c_e^{C}$,
+\begin{equation}
+c_e^{(1,C)}=
+\begin{cases}
+c_e^{C}, & e\in C,\\
+c_e, & e\notin C.
+\end{cases}
+\label{eq:treated-cost}
+\end{equation}
+The treated route and its generalized cost are
+\begin{align}
+P_i^{(1,C)}
+ &=\arg\min_{P\in\Paths_i}\sum_{e\in P}c_e^{(1,C)},
+\label{eq:treated-path}\\
+C_i^{0}
+ &=\sum_{e\in P_i^{0}}c_e,
+\qquad
+C_i^{1,C}=\sum_{e\in P_i^{(1,C)}}c_e^{(1,C)}.
+\label{eq:path-costs}
+\end{align}
+Let $B_i$ be the baseline cycling count used for the comparison,
+$q_i=B_i/E_i$, and $\epsilon$ the declared probability floor. Define
+$\widetilde p_i^0=\min\{1-\epsilon,\max(\epsilon,q_i)\}$. The bounded
+odds-elasticity response with $\eta\ge0$ is
+\begin{align}
+\logit\!\left(p_i^{1,C}\right)
+ &= \logit\!\left(\widetilde p_i^{0}\right)
+ + \eta\max\!\left\{0,\log\!\left(\frac{C_i^{0}}{C_i^{1,C}}\right)\right\},
+\label{eq:odds-elasticity}\\
+\Delta A_i^C
+ &= \min\!\left\{E_i-B_i,\max(0,E_ip_i^{1,C}-B_i)\right\}
+ I\!\left(C\cap P_i^{(1,C)}\ne\varnothing\right).
+\label{eq:incremental-trips}
+\end{align}
+The path-use indicator prevents a corridor from receiving benefit when its
+network change does not appear on the treated path. Subtracting $B_i$, rather
+than $E_i\widetilde p_i^0$, ensures the numerical floor does not erase a
+possible increment for a disclosure-controlled zero. The response elasticity
+and floor are declared sensitivities unless locally estimated.

@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ciw.tfwelch.com/schemas/source-registry.schema.json",
+  "title": "Cycling Investment Workbench source registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "sources"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "sources": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/source"}
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "acquisition",
+        "role",
+        "destination",
+        "required",
+        "sha256",
+        "homepage",
+        "url",
+        "license",
+        "license_url",
+        "attribution",
+        "redistribution"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]{1,63}$"},
+        "title": {"type": "string", "minLength": 1},
+        "acquisition": {
+          "enum": ["download", "manual", "arcgis_query", "ckan_datastore"]
+        },
+        "role": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+        "destination": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "required": {"type": "boolean"},
+        "sha256": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          ]
+        },
+        "homepage": {
+          "oneOf": [{"type": "null"}, {"type": "string", "format": "uri"}]
+        },
+        "url": {
+          "oneOf": [{"type": "null"}, {"type": "string", "format": "uri"}]
+        },
+        "license": {"type": "string", "minLength": 1},
+        "license_url": {
+          "oneOf": [{"type": "null"}, {"type": "string", "format": "uri"}]
+        },
+        "attribution": {"type": "string", "minLength": 1},
+        "redistribution": {"enum": ["permitted", "restricted", "unknown"]},
+        "resource_id": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          ]
+        },
+        "where": {"type": "string", "minLength": 1},
+        "out_fields": {"type": "string", "minLength": 1},
+        "page_size": {"type": "integer", "minimum": 1, "maximum": 10000},
+        "include_geometry": {"type": "boolean"},
+        "expected_record_count": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "integer", "minimum": 0}
+          ]
+        },
+        "source_version": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "minLength": 1}
+          ]
+        },
+        "published_at": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "format": "date"}
+          ]
+        }
+      }
+    }
+  }
+}

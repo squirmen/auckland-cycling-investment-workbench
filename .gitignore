@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+.venv/
+build/
+dist/
+
+# JavaScript
+web/node_modules/
+web/dist/
+web/public/data/
+web/playwright-report/
+web/test-results/
+
+# Reproducible pipeline outputs
+.cache/
+data/raw/
+data/interim/
+data/processed/
+runs/
+exports/
+release-assets/
+*.lock.tmp
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials.json
+secrets.yml
+
+# Restricted reference files are never published.
+documentation/references/restricted/*
+!documentation/references/restricted/README.md
+!documentation/references/restricted/manifest.csv
+
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*~

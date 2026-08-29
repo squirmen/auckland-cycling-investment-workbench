@@ -1,0 +1,93 @@
+name: CI
+
+"on":
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.11.16"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.12.5"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Install locked environment
+        run: uv sync --locked --all-extras --python 3.11.16
+      - name: Lint
+        run: uv run --locked --no-sync ruff check .
+      - name: Check formatting
+        run: uv run --locked --no-sync ruff format --check .
+      - name: Test
+        run: uv run --locked --no-sync pytest --cov --cov-report=xml
+      - name: Validate configuration
+        run: uv run --locked --no-sync ciw validate --config configs/auckland.yml --config-only
+      - name: Build distributions
+        run: uv run --locked --no-sync python -m build
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.11.16"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          version: "0.12.5"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install locked analysis environment
+        run: uv sync --locked --python 3.11.16
+      - name: Export deterministic browser fixture
+        run: uv run --locked --no-sync ciw demo --config configs/auckland.yml --export-web --no-resume
+      - name: Verify browser fixture hashes and schema
+        run: uv run --locked --no-sync ciw validate --config configs/auckland.yml --config-only --web
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Audit production dependencies
+        working-directory: web
+        run: npm audit --omit=dev --audit-level=high
+      - name: Lint
+        working-directory: web
+        run: npm run lint
+      - name: Type-check
+        working-directory: web
+        run: npm run typecheck
+      - name: Unit tests
+        working-directory: web
+        run: npm test
+      - name: Build production client
+        working-directory: web
+        run: npm run build
+      - name: Install browser runtime
+        working-directory: web
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end and accessibility tests
+        working-directory: web
+        run: npm run test:e2e

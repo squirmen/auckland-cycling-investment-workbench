@@ -1,0 +1,58 @@
+Let $D_i^{\mathrm{all}}$ be the shortest feasible physical route length and
+$D_i^{\mathrm{LS}}$ the shortest route length using directed edges with traffic
+stress at or below $\tau$. The pair-level pass indicator is
+\begin{equation}
+I_i^{\mathrm{LS}}
+=I\!\left(D_i^{\mathrm{LS}}<\infty
+\ \land\
+D_i^{\mathrm{LS}}\le\delta D_i^{\mathrm{all}}\right).
+\label{eq:connectivity-pass}
+\end{equation}
+For declared OD analysis set $\PriorityOD$ and non-negative demand weights $w_i$,
+\begin{align}
+\CIWLS
+ &=\frac{1}{|\PriorityOD|}
+   \sum_{i\in\PriorityOD}I_i^{\mathrm{LS}},
+\label{eq:ciw-ls-unweighted}\\
+\CIWLS_w
+ &=\frac{\sum_{i\in\PriorityOD}w_iI_i^{\mathrm{LS}}}
+          {\sum_{i\in\PriorityOD}w_i}.
+\label{eq:ciw-ls-weighted}
+\end{align}
+These are the unweighted and demand-weighted CIW OD low-stress connectivity
+shares for the declared set. They are not a universal city index.
+For candidate metric $x_{cj}$, its min--max normalised value and score under
+named preset $h$ are
+\begin{align}
+z_{cj}
+ &=\begin{cases}
+\dfrac{x_{cj}-\min_{c'}x_{c'j}}
+      {\max_{c'}x_{c'j}-\min_{c'}x_{c'j}},
+& \max_{c'}x_{c'j}>\min_{c'}x_{c'j},\\
+\tfrac12, & \text{otherwise},
+\end{cases}
+\label{eq:preset-normalisation}\\
+S_c^{(h)}
+ &=\frac{\sum_j a_j^{(h)}z_{cj}}{\sum_j a_j^{(h)}},
+\qquad a_j^{(h)}\ge0.
+\label{eq:preset-score}
+\end{align}
+With declared maximised objectives $J_+$ and minimised objectives $J_-$, the
+Pareto set is
+\begin{equation}
+\mathcal{F}
+=\left\{c\in\Candidates:
+\nexists c'\ne c\ \text{that is no worse on every }j\in J_+\cup J_-
+\text{ and strictly better on at least one}\right\}.
+\label{eq:pareto-frontier}
+\end{equation}
+For an explicitly chosen ordered portfolio $B_r=(C_1,\ldots,C_r)$, each
+treatment is applied to the preceding network and all routes are recomputed:
+\begin{equation}
+G_r=\mathcal{T}(G_{r-1},C_r),
+\qquad
+\Delta\mathbf y_r=\mathbf M(G_r)-\mathbf M(G_{r-1}).
+\label{eq:portfolio-change}
+\end{equation}
+Preset scores and Pareto membership support comparison; neither selects a
+globally optimal portfolio.

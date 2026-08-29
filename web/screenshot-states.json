@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "2.0.0",
+  "states": [
+    {
+      "basename": "workbench-overview",
+      "demoQuery": "?scenario=government_target&purpose=network&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates",
+      "releaseQuery": "?scenario=commute_8pct&purpose=network&view=portfolio&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-2923bae90b476f70",
+      "viewport": { "width": 1800, "height": 1100 }
+    },
+    {
+      "basename": "pareto-frontier",
+      "demoQuery": "?scenario=go_dutch&purpose=appraisal&view=pareto&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates",
+      "releaseQuery": "?scenario=go_dutch&purpose=network&view=pareto&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-8d60dfb42cab4400",
+      "viewport": { "width": 1800, "height": 1100 }
+    },
+    {
+      "basename": "candidate-evidence",
+      "demoQuery": "?scenario=ebike&purpose=network&view=evidence&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=main_street",
+      "releaseQuery": "?scenario=commute_8pct&purpose=network&view=evidence&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-2923bae90b476f70",
+      "viewport": { "width": 1800, "height": 1100 }
+    },
+    {
+      "basename": "equity-purpose-portfolio",
+      "demoQuery": "?scenario=go_dutch&purpose=equity&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates",
+      "releaseQuery": "?scenario=go_dutch&purpose=school&view=portfolio&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-c8321995b5d9571b",
+      "viewport": { "width": 1800, "height": 1100 }
+    },
+    {
+      "basename": "network-validation-overlays",
+      "demoQuery": "?scenario=baseline&purpose=network&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates%2Cprogrammes%2Ccounters",
+      "releaseQuery": "?scenario=baseline&purpose=network&view=portfolio&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates%2Cprogrammes%2Ccounters&candidate=candidate-2676bfa088d5dce7",
+      "viewport": { "width": 1800, "height": 1100 }
+    },
+    {
+      "basename": "custom-corridor",
+      "demoQuery": "?scenario=commute_8pct&purpose=network&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates&sketch=A%2CF",
+      "releaseQuery": "?scenario=commute_8pct&purpose=network&view=portfolio&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-2923bae90b476f70&sketch=osm-node-259751059%2Cosm-node-7676167013",
+      "viewport": { "width": 1800, "height": 1100 },
+      "scrollTarget": "#sketch-result",
+      "releaseScrollContainer": "#controls-panel"
+    },
+    {
+      "basename": "responsive-mobile",
+      "demoQuery": "?scenario=go_dutch&purpose=school&view=evidence&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=main_street",
+      "releaseQuery": "?scenario=commute_8pct&purpose=network&view=evidence&budget=100&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-2923bae90b476f70",
+      "viewport": { "width": 390, "height": 844 },
+      "scrollTarget": ".map-panel"
+    }
+  ]
+}
