@@ -54,6 +54,8 @@ is closed.
 
 ## Publication gate
 
-`.github/pages-release.json` deliberately remains locked with null release tag,
-asset name, and checksum. Populate it only after the separate release-asset and
-Pages approvals. The existing site and domain remain unchanged.
+Release `v1.0.0` publishes the archive and checksum above. The separately
+reviewed `.github/pages-release.json` configuration pins Pages builds to that
+exact tag, asset name, and SHA-256. The workflow remains manual-only: merging
+the configuration does not deploy Pages, change the custom domain, or retire
+the existing site. Those actions remain separately gated.
