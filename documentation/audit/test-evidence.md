@@ -1,15 +1,16 @@
 # Test and integrity evidence
 
 This record separates checks that have actually run from the larger release
-test matrix. Results are local evidence for the file state described below;
-they do not substitute for a clean checkout, CI, container reproduction, or an
-Auckland regression run.
+test matrix. Results identify whether evidence is local or hosted; neither
+hosted CI nor local checks substitute for independent container reproduction
+or an Auckland regression run.
 
 ## Current recorded checks
 
 | Check | Result | Release interpretation |
 | --- | --- | --- |
 | Locked Python suite, 2026-08-30 | Python 3.11.16; 185 tests passed; branch coverage 80.27% against the enforced 80% floor | Current-tree local evidence including counter-source, fail-closed appraisal, deterministic-release-asset, complete miniature candidate-stage, complete routing-orchestration, and CLI contract tests; repeat in clean CI and container |
+| Hosted GitHub Actions, 2026-08-30 | Release-branch commit `3526249ea0c07b7c161958159715f7572f61c387`; [run 33273402742](https://github.com/squirmen/auckland-cycling-investment-workbench/actions/runs/33273402742) passed both jobs: locked Python install, lint, format, 185-test coverage gate, configuration validation, sdist/wheel build, deterministic browser fixture/schema validation, production dependency audit, frontend lint/type/unit/build, and Playwright end-to-end/accessibility checks | Clean hosted Linux/x64 evidence for the release-candidate implementation and tests; repeat on the final PR head and tag candidate |
 | Python quality checks, 2026-08-29 | Ruff format check and lint passed across the complete Python source/test tree | Current-tree local evidence |
 | Python package build, 2026-08-24 | Locked build produced both `auckland_cycling_investment_workbench-0.1.0.tar.gz` and a `py3-none-any` wheel in an external temporary directory | Installable-package evidence; repeat from a clean checkout in CI |
 | Frontend static and unit checks, 2026-08-29 | ESLint and TypeScript `--noEmit` passed; 15 Vitest assertions passed; Vite production build completed with a 246.27 kB JavaScript bundle (69.71 kB gzip) | Exact Node 24 evidence remains the container/CI gate |
@@ -30,14 +31,14 @@ Auckland regression run.
 
 ## Still required
 
-- repeat the complete suite in hosted CI under its locked Node 24 environment;
+- repeat the complete suite on the final pull-request head and tag candidate;
 - complete amd64 container reproduction and close corresponding-source
   obligations;
 - close the declared full-network connectivity, purpose-compatible predictive
   counter validation, local-cost, uncertainty-prior, and visual-map audit gates
   identified by the Auckland snapshot; and
-- repeat the publication scan over the resulting commit and complete history
-  immediately before push.
+- repeat the publication scan over the final pull-request head and complete
+  history immediately before merge and tag.
 
 The authoritative completion checklist remains
 [`release-readiness.md`](release-readiness.md).

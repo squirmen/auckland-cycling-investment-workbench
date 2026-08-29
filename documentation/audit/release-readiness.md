@@ -114,7 +114,9 @@ remaining gaps are recorded in
   Ruff format/lint, package build,
   configuration validation, 15 frontend unit tests, type/lint/build, 13
   applicable Playwright cases, axe checks, and a zero-vulnerability production
-  dependency audit. Hosted CI remains a separate post-push gate.
+  dependency audit. Hosted Linux/x64 run 33273402742 passes the same locked
+  Python, package, frontend, browser, and accessibility gates; repeat it on the
+  final pull-request head and tag candidate.
 - [ ] Produce the final publication run manifest containing runtime/model versions,
   implementation checksum, seeds, stage fingerprints, input/output hashes, row
   and failure counts, routing

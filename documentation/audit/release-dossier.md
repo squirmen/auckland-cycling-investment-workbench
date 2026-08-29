@@ -13,8 +13,8 @@ gates remain explicit.
 | Legacy and method resolution | [`audit-resolution-matrix.md`](audit-resolution-matrix.md) | Mixed: closed method decisions and explicit release gates |
 | PCT implementation provenance | [`pct-provenance-review.md`](pct-provenance-review.md) | Current source hashes, dependency scan, and source-similarity scan recorded; repeat if code changes before a tag |
 | Source and public-layer rights | [`public-layer-rights.csv`](public-layer-rights.csv) and [`../../DATA_LICENSES.md`](../../DATA_LICENSES.md) | 30 explicit decisions; pending sources/layers remain blocked or omitted |
-| Container reproduction | [`container-reproduction.md`](container-reproduction.md) | Isolated staged-tree arm64 build/runtime evidence passes; CI/amd64 and licence-obligation checks remain unmet |
-| Tests and integrity scans | [`test-evidence.md`](test-evidence.md) | Isolated locked installs, 185 Python tests with 80.27% branch coverage, Python format/lint/package build, frontend type/lint/unit/build, Playwright, production dependency audit, container, artifact audits, and live browser checks pass locally; CI/amd64 remains unmet |
+| Container reproduction | [`container-reproduction.md`](container-reproduction.md) | Isolated staged-tree arm64 build/runtime evidence passes; independent container amd64 and licence-obligation checks remain unmet |
+| Tests and integrity scans | [`test-evidence.md`](test-evidence.md) | Isolated locked installs, 185 Python tests with 80.27% branch coverage, Python format/lint/package build, frontend type/lint/unit/build, Playwright, production dependency audit, artifact audits, and live browser checks pass locally; the same locked code/test interfaces pass hosted Linux/x64 CI |
 | Interface and experience | [`ui-ux-review.md`](ui-ux-review.md) | Guided desktop/mobile workflow accepted locally; accessibility and interaction suites pass; formal user testing remains recommended |
 | Auckland real-stage evidence | [`auckland-real-stage-evidence.md`](auckland-real-stage-evidence.md) and [`run-manifest-evidence.md`](run-manifest-evidence.md) | Corrected raw-to-web run succeeded; five unavailable optional inputs and the resulting validation/rights limitations remain declared |
 | Analytical artifact review | [`auckland-artifact-audit.md`](auckland-artifact-audit.md) and [`counter-plausibility-audit.md`](counter-plausibility-audit.md) | Exact candidate and defined extreme-route checks pass; counter evidence is spatial plausibility only; visual map audit remains open |
@@ -62,7 +62,8 @@ rollback until the replacement has been separately accepted.
   audits remain open for any future decision-use release.
 - The sanitized 308.6 MB Auckland browser snapshot is packaged locally as a
   deterministic 18,921,866-byte archive. Isolated Linux arm64 container checks
-  pass; hosted CI/amd64, remaining ODbL/corresponding-source duties,
+  pass; hosted Linux/x64 CI passes; independent container amd64,
+  remaining ODbL/corresponding-source duties,
   and the separate stage,
   commit, push, PR, merge, tag, release, Pages, domain, and rollback approvals
   remain outstanding.
