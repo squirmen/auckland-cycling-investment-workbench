@@ -5,12 +5,15 @@ type: software
 authors:
   - family-names: Welch
     given-names: Tim
-version: 0.1.0
+version: 1.0.0
+date-released: "2026-08-30"
+repository-code: "https://github.com/squirmen/auckland-cycling-investment-workbench"
+url: "https://squirmen.github.io/auckland-cycling-investment-workbench/"
 license: MIT
 abstract: >-
-  A reproducible screening tool for cycling demand, low-stress network
-  connectivity, candidate-corridor counterfactuals, distributional context,
-  uncertainty, and investment sequencing in Auckland, New Zealand.
+  An interactive research tool for exploring how cycling projects could affect
+  demand, low-stress connectivity, access, equity, and investment priorities in
+  Auckland, New Zealand.
 keywords:
   - cycling
   - active transport
