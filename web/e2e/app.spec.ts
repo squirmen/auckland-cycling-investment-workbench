@@ -206,6 +206,29 @@ test("is responsive without horizontal document overflow", async ({ page }, test
   await expect(page.locator("#map-legend").getByText("Legend", { exact: true })).toBeVisible();
 });
 
+test("keeps map notes accessible and the offline basemap state explicit", async ({ page }) => {
+  await page.goto("/?offline=1");
+  await waitForWorkbench(page);
+  await expect(page.getByRole("button", { name: "Analysis" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.getByRole("button", { name: "Light" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Streets" })).toBeDisabled();
+
+  const infoButton = page.getByRole("button", { name: "About this map and its data" });
+  await infoButton.click();
+  const dialog = page.getByRole("dialog", { name: "About this map" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("not an investment business case");
+  await expect(dialog).toContainText("Analysis is the tile-free view");
+  const accessibility = await new AxeBuilder({ page }).analyze();
+  expect(accessibility.violations).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+  await expect(infoButton).toBeFocused();
+});
+
 test("has no automatically detectable accessibility violations", async ({ page }) => {
   await page.goto("/?offline=1");
   await waitForWorkbench(page);
@@ -285,10 +308,15 @@ test("keeps all seven approved screenshot states free of runtime errors", async 
     await waitForWorkbench(page);
     if (state.scrollTarget) await page.locator(state.scrollTarget).scrollIntoViewIfNeeded();
     await expect(page.locator("#status-message")).not.toHaveClass(/error/);
-    await expect(page.locator("#map-provenance")).toBeVisible();
-    await expect(page.locator("#map-provenance")).toContainText("not Auckland evidence");
-    await expect(page.locator("#map-provenance")).toContainText(manifest.runId);
-    await expect(page.locator("#map-provenance")).toContainText(manifest.attribution[0]!);
+    await expect(page.locator("#map-info-button")).toBeVisible();
+    if (state.basename === "workbench-overview") {
+      await page.locator("#map-info-button").click();
+      await expect(page.locator("#map-info-dialog")).toBeVisible();
+      await expect(page.locator("#map-info-dialog")).toContainText("not Auckland evidence");
+      await expect(page.locator("#map-info-dialog")).toContainText(manifest.runId);
+      await expect(page.locator("#map-info-dialog")).toContainText(manifest.attribution[0]!);
+      await page.locator("#map-info-close").click();
+    }
     if (state.basename === "network-validation-overlays") {
       await expect(page.locator("#overlay-context")).toContainText("no calendar period");
     }

@@ -29,6 +29,14 @@ O(n log n) calculation. Its plot renders every frontier member plus a
 deterministic visual sample capped at 1,500 points, with the full eligible count
 and calculation scope stated beside the chart.
 
+The 31 August interface refinement reduces the desktop masthead to a compact
+single-line title and four shallow indicators. On a phone, the same indicators
+remain in one row rather than doubling the height of the page header. The map
+now offers Analysis, Light, and Streets views; changing the basemap changes
+only geographic context, not the analytical state. The mapping engine is
+loaded on demand, so the tile-free Analysis view does not pay its JavaScript
+download cost.
+
 ## Comprehension and trust
 
 - The interface says “Planning lens”, “capital screen”, and “lifecycle cost
@@ -36,6 +44,10 @@ and calculation scope stated beside the chart.
 - The 8% commute sensitivity is explicitly distinguished from TERP.
 - Data status, run ID, model version, units, routing coverage, attribution, and
   unavailable indicators remain visible.
+- Longer source and use notes have moved from a permanent footer and map panel
+  into a labelled information button. Its modal separates purpose, limitations,
+  data credits, and methods in short sections while keeping basemap attribution
+  visible on the map itself.
 - Equity and Appraisal controls are disabled when the export capability is
   withheld. The sanitized Auckland asset contains null BCR fields, so this is
   a data contract rather than presentation-only hiding.
@@ -64,11 +76,12 @@ and calculation scope stated beside the chart.
 
 - ESLint, TypeScript, and the production build pass.
 - Fifteen Vitest assertions pass.
-- Playwright reports 13 applicable passes and nine intentional cross-project
+- Playwright reports 15 applicable passes and nine intentional cross-project
   skips. Tested behaviour includes scenarios, lenses, budget/reset, full-set
   search, Pareto selection, optional layers, exact-selection export,
-  graph-snapped sketching, keyboard use, responsive overflow, hostile strings,
-  and all seven screenshot states.
+  graph-snapped sketching, keyboard use, responsive overflow, the map-notes
+  dialog, the explicit offline-basemap state, hostile strings, and all seven
+  screenshot states.
 - Desktop and mobile axe scans report zero automatically detectable
   violations.
 - All seven release screenshots load the sanitized Auckland asset with the

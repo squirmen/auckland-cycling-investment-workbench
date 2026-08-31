@@ -24,6 +24,8 @@ candidate routes and project sequencing into one interactive map.
   single composite score.
 - Sketch a corridor on the routable graph and export the current selection as
   GeoJSON.
+- Switch between a clean analysis view and light or street basemaps without
+  changing the model results.
 - Use the map on a desktop, tablet or phone, with keyboard-accessible controls.
 
 The current Auckland snapshot contains 12,578 candidate links derived from
