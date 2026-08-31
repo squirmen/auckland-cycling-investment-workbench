@@ -86,7 +86,13 @@ release decision, not a general legal opinion.
 - The official AT GTFS page states CC BY 4.0. The configured derived transit
   node file remains pending until the archived feed's retrieval date, service
   dates, and hash are recorded.
-- CARTO hosted basemaps are disabled. CARTO's current terms require an
+- OpenFreeMap's public vector-tile service is permitted for live contextual
+  display under its public-instance terms. The Light and Streets choices must
+  retain visible OpenFreeMap, OpenMapTiles, and OpenStreetMap attribution. No
+  tiles may be cached, prefetched, bundled, or treated as part of the release
+  data. Analysis remains the tile-free fallback and the required mode for
+  deterministic release captures.
+- CARTO hosted basemaps remain disabled. CARTO's current terms require an
   enterprise licence for commercial use or an approved grant for qualifying
   non-commercial use; neither is recorded for this project.
 
@@ -97,7 +103,8 @@ release decision, not a general legal opinion.
       tile is tracked.
 - [ ] OpenStreetMap attribution is visible wherever OSM-derived geometry or a
       compliant basemap is displayed.
-- [ ] Publisher attributions survive exports and screenshots.
+- [ ] Publisher attributions survive exports and appear on or immediately
+      beside screenshots.
 - [ ] Data that cannot be redistributed has a documented acquisition path and
       is covered by ignore rules.
 - [ ] Article PDFs in `documentation/references/open` have an explicit open

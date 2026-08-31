@@ -1,14 +1,33 @@
 import L, { type GeoJSON as LeafletGeoJson, type Layer, type PathOptions } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 import { candidatePropertiesSchema, type AppState, type CandidateFeature, type LoadedLayers } from "./types";
 import { metricFor, NetworkGraph, type SketchResult } from "./model";
 
 const AUCKLAND_CENTRE: L.LatLngExpression = [-36.855, 174.765];
+const BASEMAP_STYLES = {
+  light: "https://tiles.openfreemap.org/styles/positron",
+  streets: "https://tiles.openfreemap.org/styles/liberty",
+} as const;
+const BASEMAP_ATTRIBUTION =
+  '<a href="https://openfreemap.org/" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> · ' +
+  '© <a href="https://openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>';
+const OSM_ATTRIBUTION =
+  '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>';
+
+export const BASEMAP_IDS = ["analysis", "light", "streets"] as const;
+export type BasemapId = (typeof BASEMAP_IDS)[number];
+
+export interface WorkbenchMapOptions {
+  allowHostedBasemaps: boolean;
+  initialBasemap: BasemapId;
+}
 
 export interface MapCallbacks {
   onCandidateSelected: (candidateId: string) => void;
   onSketchChanged: (result: SketchResult | null, error?: string) => void;
+  onBasemapChanged: (basemap: BasemapId) => void;
 }
 
 export class WorkbenchMap {
@@ -20,23 +39,75 @@ export class WorkbenchMap {
   private networkGraph: NetworkGraph | null = null;
   private sketchPoints: [number, number][] = [];
   private hasFitted = false;
+  private basemapLayer: L.Layer | null = null;
+  private basemap: BasemapId = "analysis";
+  private loadingBasemap: BasemapId | null = null;
+  private basemapRequest = 0;
 
-  constructor(element: HTMLElement, private readonly callbacks: MapCallbacks) {
+  constructor(
+    element: HTMLElement,
+    private readonly callbacks: MapCallbacks,
+    private readonly options: WorkbenchMapOptions,
+  ) {
     this.map = L.map(element, {
       center: AUCKLAND_CENTRE,
       zoom: 12,
       minZoom: 9,
       maxZoom: 18,
       preferCanvas: true,
-      attributionControl: false,
+      attributionControl: true,
       zoomControl: true,
     });
+    this.map.attributionControl.setPrefix(false);
+    this.map.attributionControl.addAttribution(OSM_ATTRIBUTION);
+    this.setBasemap(options.initialBasemap, false);
     for (const id of ["cells", "network", "candidates", "programmes", "counters"]) {
       const group = L.layerGroup().addTo(this.map);
       this.groups.set(id, group);
     }
     this.sketchGroup.addTo(this.map);
     this.map.on("click", (event: L.LeafletMouseEvent) => this.handleSketchClick(event));
+  }
+
+  get activeBasemap(): BasemapId {
+    return this.basemap;
+  }
+
+  setBasemap(requestedBasemap: BasemapId, notify = true): void {
+    const nextBasemap =
+      this.options.allowHostedBasemaps || requestedBasemap === "analysis"
+        ? requestedBasemap
+        : "analysis";
+    if (
+      nextBasemap === this.basemap &&
+      (nextBasemap === "analysis" || this.basemapLayer || this.loadingBasemap === nextBasemap)
+    ) return;
+    this.basemapRequest += 1;
+    const request = this.basemapRequest;
+    if (this.basemapLayer) {
+      this.map.removeLayer(this.basemapLayer);
+      this.basemapLayer = null;
+    }
+    this.loadingBasemap = null;
+    this.basemap = nextBasemap;
+    if (nextBasemap !== "analysis") {
+      this.loadingBasemap = nextBasemap;
+      void this.addHostedBasemap(nextBasemap, request);
+    }
+    if (notify) this.callbacks.onBasemapChanged(nextBasemap);
+  }
+
+  private async addHostedBasemap(basemap: Exclude<BasemapId, "analysis">, request: number): Promise<void> {
+    const { maplibreGL } = await import("@maplibre/maplibre-gl-leaflet");
+    if (request !== this.basemapRequest || basemap !== this.basemap) return;
+    this.basemapLayer = maplibreGL({
+      style: BASEMAP_STYLES[basemap],
+      attributionControl: {
+        compact: true,
+        customAttribution: BASEMAP_ATTRIBUTION,
+      },
+    }).addTo(this.map);
+    this.loadingBasemap = null;
   }
 
   setLayers(layers: LoadedLayers): void {

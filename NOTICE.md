@@ -55,6 +55,8 @@ and basemap providers. At minimum, applicable builds should acknowledge:
 
 - © OpenStreetMap contributors; data available under the Open Database
   License 1.0;
+- OpenFreeMap and © OpenMapTiles when the hosted Light or Streets basemap is
+  selected;
 - “This work includes Stats NZ data licensed for reuse under CC BY 4.0” for
   adapted or collected Stats NZ content;
 - “Contains data sourced from the LINZ Data Service licensed for reuse under
@@ -63,8 +65,10 @@ and basemap providers. At minimum, applicable builds should acknowledge:
   and
 - any third-party basemap provider exactly as required by that provider.
 
-The current public build must not request CARTO hosted tiles; no applicable
-enterprise licence or qualifying grant is recorded. See `DATA_LICENSES.md` and
+The Light and Streets choices request vector styles and tiles from
+OpenFreeMap's public service; Analysis makes no hosted basemap request. CARTO
+hosted tiles remain disabled because no applicable enterprise licence or
+qualifying grant is recorded. See `DATA_LICENSES.md` and
 `documentation/audit/public-layer-rights.csv` for the release checklist and
 per-layer decisions. A derived output does not automatically inherit the
 software licence.
@@ -77,6 +81,13 @@ of Education, Auckland Transport, and LINZ components retain their own CC BY
 4.0 attribution requirements. The exact permitted hashes and deliberately
 empty or withheld layers are recorded in
 `documentation/audit/public-layer-rights.csv`.
+
+## Frontend map components
+
+The optional hosted basemap view uses MapLibre GL JS 6.6.0 under the
+BSD-3-Clause licence and `@maplibre/maplibre-gl-leaflet` 0.1.4 under the ISC
+licence. These packages are installed from the locked npm manifest and remain
+subject to their own notices and licence terms.
 
 ## Container runtime components
 

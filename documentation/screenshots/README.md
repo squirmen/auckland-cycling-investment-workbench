@@ -2,12 +2,19 @@
 
 Screenshots are generated locally from the exact web export proposed for
 release. Desktop masters are lossless 1800 × 1100 PNGs at device scale 1 with
-browser chrome excluded. The approved current state is offline with only local,
-rights-cleared layers; hosted CARTO tiles are disabled and must not be captured.
-Any later basemap requires a separately recorded licence and attribution
-decision. Keep attribution, legend, scenario, units, data status, and run
+browser chrome excluded. The approved current state uses Analysis with only
+local, rights-cleared layers. OpenFreeMap is cleared for live contextual use,
+but its hosted tiles are excluded from deterministic captures; CARTO remains
+disabled. Keep attribution, legend, scenario, units, data status, and run
 identifier visible. Do not expose local paths, tokens, developer panels,
 personal details, or restricted data.
+
+OpenStreetMap attribution remains on the map itself. The Auckland analysis
+shown in these images includes Stats NZ data licensed for reuse under CC BY
+4.0, Auckland Transport cycle-facility data, and LINZ elevation data licensed
+for reuse under CC BY 4.0. Full dataset and database notices are in
+[`../../NOTICE.md`](../../NOTICE.md) and accompany the images when they are
+reused.
 
 The current set was captured from the completed Auckland research snapshot,
 run `run-224e9baa3be4ef73`. Each image visibly retains the research-snapshot

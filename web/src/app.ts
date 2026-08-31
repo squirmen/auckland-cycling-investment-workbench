@@ -1,7 +1,7 @@
 import "./style.css";
 
 import { candidateFeatures, loadDefaultLayers, loadLayer, loadManifest } from "./data";
-import { WorkbenchMap } from "./map";
+import { BASEMAP_IDS, WorkbenchMap, type BasemapId } from "./map";
 import {
   compactNumber,
   formatCost,
@@ -42,10 +42,23 @@ let statusTimer: number | undefined;
 let budgetRenderTimer: number | undefined;
 const paretoCache = new Map<string, Set<string>>();
 let state: AppState;
+let stateIsReady = false;
+const initialQuery = new URLSearchParams(window.location.search);
+const offlineMode = initialQuery.get("offline") === "1";
+const initialBasemap = offlineMode
+  ? "analysis"
+  : basemapId(initialQuery.get("basemap")) ?? "light";
 
 const mapController = new WorkbenchMap(requiredElement("map"), {
   onCandidateSelected: (candidateId) => selectCandidate(candidateId),
   onSketchChanged: (result, error) => renderSketch(result, error),
+  onBasemapChanged: () => {
+    renderBasemapControls();
+    if (stateIsReady) syncQueryState();
+  },
+}, {
+  allowHostedBasemaps: !offlineMode,
+  initialBasemap,
 });
 
 void initialise();
@@ -57,6 +70,7 @@ async function initialise(): Promise<void> {
     candidates = candidateFeatures(layers);
     paretoCache.clear();
     state = initialState(manifest);
+    stateIsReady = true;
     populateControls();
     await applyQueryState(false);
     bindEvents();
@@ -127,6 +141,7 @@ function populateControls(): void {
       return row;
     }),
   );
+  renderBasemapControls();
 }
 
 function bindEvents(): void {
@@ -182,6 +197,14 @@ function bindEvents(): void {
   requiredElement("share-button").addEventListener("click", () => void copyViewLink());
   requiredElement("reset-button").addEventListener("click", () => void resetView());
   requiredElement("print-button").addEventListener("click", () => window.print());
+  requiredElement("basemap-switcher").addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest<HTMLButtonElement>("button[data-basemap]");
+    const selectedBasemap = basemapId(button?.dataset.basemap ?? null);
+    if (!button || !selectedBasemap || button.disabled) return;
+    mapController.setBasemap(selectedBasemap);
+  });
+  bindMapInfoDialog();
   document.querySelectorAll<HTMLButtonElement>("button.tab").forEach((button) => {
     button.addEventListener("click", () => {
       activateTab(button.dataset.tab as AppState["activeTab"]);
@@ -237,7 +260,7 @@ function renderAll(): void {
   requiredElement("data-status").className = `data-status ${manifest.dataStatus}`;
   requiredElement("run-summary").textContent = `Run ${manifest.runId} · model ${manifest.modelVersion}`;
   requiredElement("map-provenance-text").textContent =
-    `${manifest.dataStatusLabel} · run ${manifest.runId} · ${manifest.attribution.join(" · ")}`;
+    `${manifest.dataStatusLabel} · run ${manifest.runId} · model ${manifest.modelVersion}.`;
   requiredElement("mobile-map-status").textContent =
     `${dataStatusName(manifest.dataStatus)} · ${scenario.label} · ${purpose.label} · ${manifest.runId}`;
   requiredElement<HTMLAnchorElement>("methodology-link").href = manifest.methodologyUrl;
@@ -925,6 +948,11 @@ async function applyQueryState(render = true): Promise<void> {
     manifest.layers.filter((layer) => layer.defaultVisible).map((layer) => layer.id),
   );
   desiredSketchNodeIds = [];
+  const requestedBasemap = offlineMode
+    ? "analysis"
+    : basemapId(params.get("basemap")) ?? "light";
+  mapController.setBasemap(requestedBasemap, false);
+  renderBasemapControls();
 
   const scenario = params.get("scenario");
   const purpose = params.get("purpose");
@@ -1000,9 +1028,11 @@ function syncQueryState(): void {
   params.set("purpose", state.purpose);
   params.set("view", state.activeTab);
   params.set("budget", queryNumber(state.budgetNzd / 1_000_000));
-  // The public v1 runtime is deliberately basemap-free. An online tile provider
-  // must not be enabled until its access and attribution terms are configured.
-  params.set("offline", "1");
+  if (offlineMode) {
+    params.set("offline", "1");
+  } else {
+    params.set("basemap", mapController.activeBasemap);
+  }
   const layerIds = manifest.layers
     .map((layer) => layer.id)
     .filter((layerId) => state.visibleLayerIds.has(layerId));
@@ -1011,6 +1041,48 @@ function syncQueryState(): void {
   if (desiredSketchNodeIds.length >= 2) params.set("sketch", desiredSketchNodeIds.join(","));
   const next = `${window.location.pathname}?${params.toString()}`;
   window.history.replaceState(null, "", next);
+}
+
+function renderBasemapControls(): void {
+  document.querySelectorAll<HTMLButtonElement>("button[data-basemap]").forEach((button) => {
+    const id = basemapId(button.dataset.basemap ?? null);
+    const active = id === mapController.activeBasemap;
+    const unavailable = offlineMode && id !== "analysis";
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+    button.disabled = unavailable;
+    if (unavailable) {
+      button.title = "Hosted basemaps are unavailable in the reproducible offline view.";
+    } else {
+      button.removeAttribute("title");
+    }
+  });
+}
+
+function bindMapInfoDialog(): void {
+  const button = requiredElement<HTMLButtonElement>("map-info-button");
+  const dialog = requiredElement<HTMLDialogElement>("map-info-dialog");
+  const closeButton = requiredElement<HTMLButtonElement>("map-info-close");
+  button.addEventListener("click", () => {
+    button.setAttribute("aria-expanded", "true");
+    dialog.showModal();
+    closeButton.focus();
+  });
+  closeButton.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", (event) => {
+    if (event.target !== dialog) return;
+    const bounds = dialog.getBoundingClientRect();
+    const outside =
+      event.clientX < bounds.left ||
+      event.clientX > bounds.right ||
+      event.clientY < bounds.top ||
+      event.clientY > bounds.bottom;
+    if (outside) dialog.close();
+  });
+  dialog.addEventListener("close", () => {
+    button.setAttribute("aria-expanded", "false");
+    button.focus();
+  });
 }
 
 function setStatus(message: string, error = false): void {
@@ -1030,6 +1102,10 @@ function dataStatusName(dataStatus: Manifest["dataStatus"]): string {
     research_snapshot: "Research snapshot",
     validated_release: "Validated release",
   }[dataStatus];
+}
+
+function basemapId(value: string | null): BasemapId | null {
+  return BASEMAP_IDS.find((candidate) => candidate === value) ?? null;
 }
 
 function programmeLabel(status: CandidateFeature["properties"]["programmeStatus"]): string {
