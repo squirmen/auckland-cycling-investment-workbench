@@ -45,7 +45,7 @@ the run, not the accuracy of its forecasts.
 SPAN has one map workspace: **Build order**, **Value for money** and
 **Connected journeys**. Link details explain the treatment and connections first;
 journey equivalents, sampling diagnostics and sensitivity sit behind expandable
-method notes. Connected journeys currently covers a North Shore sample, not
+method notes. Connected journeys currently covers a local 4 km-radius sample, not
 a citywide or calibrated forecast. Old `research.html` links redirect into SPAN.
 See the
 [results, limitations and reproduction commands](documentation/research/span-access-first-experiment.md).

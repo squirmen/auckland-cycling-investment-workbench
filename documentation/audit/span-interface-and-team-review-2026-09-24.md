@@ -26,6 +26,8 @@ coverage and methods. Putting them in one workspace does not make them equivalen
   group inspection and a whole-programme map control.
 - Complete journeys show A-to-B routes, required upgrades and funding status.
   The local coverage and distinction from new cyclist forecasts stay visible.
+  The 4 km-radius crop is centred at 174.69295, -36.80338 and includes both sides
+  of the upper harbour; it is not labelled as solely North Shore in the interface.
 - No collaborator biography, provider setup or unfinished CRANC exchange panel
   is exposed in the public site. Contracts and integration notes remain in the repo.
 - The journey view rejects mismatched run/topology data before showing results.
