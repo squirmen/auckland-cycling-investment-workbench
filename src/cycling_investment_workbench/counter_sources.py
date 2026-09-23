@@ -265,7 +265,10 @@ def prepare_at_cycle_counters(
                 "registry_name": registry_name,
                 "lat": float(registry_row["lat"]),
                 "lng": float(registry_row["lng"]),
-                "coordinate_provenance": "legacy_dashboard_registry_reviewed_by_exact_name_only",
+                "coordinate_provenance": (
+                    "project_maintained_approximate_site_registry_reviewed_by_exact_name"
+                ),
+                "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
                 "coordinate_registry_sha256": registry_hash,
             }
         )
@@ -287,9 +290,9 @@ def prepare_at_cycle_counters(
         "licence": "CC BY 4.0",
         "coordinate_registry_sha256": registry_hash,
         "coordinate_provenance_limitation": (
-            "coordinates originate in a May 2026 legacy dashboard registry whose exact publisher "
-            "file lineage is unresolved; they are suitable only for an explicitly labelled spatial "
-            "plausibility check"
+            "project-maintained approximate site points from the Cycleway Dashboard archive do "
+            "not define direction, bearing, or a count screenline; use is limited to an explicitly "
+            "labelled spatial plausibility check"
         ),
         "exclusions": dict(sorted(exclusion_ledger.items())),
     }

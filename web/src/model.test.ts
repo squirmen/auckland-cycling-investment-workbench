@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   NetworkGraph,
+  connectedGroups,
   objectiveValue,
   paretoFront,
   portfolioAtBudget,
@@ -133,6 +134,25 @@ describe("portfolio model", () => {
     const output = portfolioGeoJson([candidate("A"), candidate("B")], new Set(["B"]));
     expect(output.features).toHaveLength(1);
     expect(output.features[0]?.properties.candidate_id).toBe("B");
+  });
+});
+
+describe("physical network groups", () => {
+  it("joins transitive source contacts without merging coincident geometries", () => {
+    const a = candidate("a");
+    const b = candidate("b");
+    const c = candidate("c");
+    const separate = candidate("separate");
+    for (const item of [a, b, c, separate]) item.properties.networkContext = {
+      role: "extends_area", lengthKm: 1, direction: "both", existingKm: 1,
+      componentIds: [], touchingCandidateIds: [], endpoints: [],
+    };
+    a.properties.networkContext!.componentIds = ["area"];
+    b.properties.networkContext!.componentIds = ["area"];
+    b.properties.networkContext!.touchingCandidateIds = ["c"];
+    expect(connectedGroups([a, b, c, separate]).map((group) => group.map((item) => item.properties.candidateId)))
+      .toEqual([["a", "b", "c"], ["separate"]]);
+    expect(connectedGroups([a, c]).map((group) => group.length)).toEqual([1, 1]);
   });
 });
 

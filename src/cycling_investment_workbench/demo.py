@@ -1057,6 +1057,7 @@ def web_export_payload(
         ("candidates", "Synthetic candidate corridors", True, False),
         ("programmes", "Synthetic funded programmes", False, True),
         ("counters", "Synthetic validation counters", False, True),
+        ("safety", "Synthetic safety context", False, True),
     )
     manifest = {
         "schemaVersion": "2.0.0",
@@ -1146,6 +1147,7 @@ def web_export_payload(
             "matchedCount": len(counter_features),
             "coverage": 1.0,
             "purposeAlignment": "Synthetic daily cycling counts",
+            "status": "synthetic_fixture",
         },
         "capabilities": {
             "equity": "available",
@@ -1205,5 +1207,6 @@ def web_export_payload(
             "candidates": _candidate_geojson(city, metrics_by_scenario),
             "programmes": {"type": "FeatureCollection", "features": programme_features},
             "counters": {"type": "FeatureCollection", "features": counter_features},
+            "safety": {"type": "FeatureCollection", "features": []},
         },
     }

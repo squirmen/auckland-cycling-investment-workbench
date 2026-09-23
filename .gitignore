@@ -28,6 +28,12 @@ exports/
 release-assets/
 *.lock.tmp
 
+# Collaborator-supplied CRANC source archives are local review inputs, not SPAN code.
+/CRANC/*
+!/CRANC/README.md
+# Interrupted/sync-restored export staging must never enter source control.
+web/public/.span-*/
+
 # Local configuration and credentials
 .env
 .env.*

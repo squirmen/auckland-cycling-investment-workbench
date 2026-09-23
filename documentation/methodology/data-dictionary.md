@@ -97,8 +97,8 @@ records not selected by the declared probability sample.
 | `route_inclusion_probability` | number | probability | Exact without-replacement inclusion probability |
 | `analysis_weight` | number | inverse probability | Horvitz--Thompson weight; zero on unselected output rows |
 | `weighted_eligible`, `weighted_observed_cycle` | number | trips | Sample-expanded demand on selected records |
-| `origin_node_id`, `destination_node_id` | string/null | — | Exact source-identified CIW snap nodes |
-| `origin_snap_distance_m`, `destination_snap_distance_m` | number/null | m | Demand support point to CIW terminal distance |
+| `origin_node_id`, `destination_node_id` | string/null | — | Exact source-identified SPAN snap nodes |
+| `origin_snap_distance_m`, `destination_snap_distance_m` | number/null | m | Demand support point to SPAN terminal distance |
 | `origin_component`, `destination_component` | string/null | — | Auditable network component identities |
 | `origin_layer`, `destination_layer` | integer/null | OSM layer | Terminal layer metadata; source node identity remains authoritative |
 | `route_status`, `failure_reason` | enum/string/null | — | `assigned`, `unassigned`, or `not_selected_probability_sample`; every failure is retained |
@@ -106,7 +106,7 @@ records not selected by the declared probability sample.
 | `path_ids`, `path_probabilities` | array | — / share | Retained paths and conditional probabilities, summing to one for each assigned OD |
 | `path_id` | string | — | Stable identifier within the OD choice set |
 | `r5_edge_ids`, `r5_osm_way_ids` | array[integer] | — | Ordered engine and source-way audit identities |
-| `project_edge_ids`, `project_edge_reversed` | arrays | — | Ordered exact CIW physical-edge identities and traversal directions |
+| `project_edge_ids`, `project_edge_reversed` | arrays | — | Ordered exact SPAN physical-edge identities and traversal directions |
 | `generalized_cost` | number | generalized m | Sum of directed edge cost |
 | `length_m` | number | m | Physical path length |
 | `detour_ratio` | number | ratio | Path length divided by the shortest physical-distance route |
@@ -120,15 +120,15 @@ the later uncertainty output, not to the baseline routing ledger.
 
 ## Optional area context
 
-These fields are absent from public output when the exact contextual dataset is
-not rights-cleared. They describe areas, not people.
+These fields describe areas, not people. Raw NZDep polygons are not included in
+the public browser snapshot; only aggregate subgroup metrics are exported.
 
 | Field | Type | Unit | Meaning |
 | --- | --- | --- | --- |
 | `area_id` | string | — | Stable source geography identifier |
 | `context_source_id`, `context_version` | string | — | Exact contextual dataset and vintage |
-| `nzdep_decile` | integer/null | 1–10 relative decile | NZDep2023 area decile when the separate dataset is cleared; null for withheld/missing |
-| `nzdep_score` | number/null | index points | NZDep2023 area score when cleared; never an individual attribute |
+| `nzdep_decile` | integer/null | 1–10 relative decile | NZDep2023 area decile in prepared analysis data; raw values are not exported to the public browser layer |
+| `nzdep_score` | number/null | index points | NZDep2023 area score in prepared analysis data; never an individual attribute |
 | `context_status` | enum | — | `available`, `withheld`, `missing`, `rights_blocked`, or `not_applicable` |
 
 ## Candidate corridors
@@ -147,7 +147,7 @@ not rights-cleared. They describe areas, not people.
 | `changed_edge_ids` | array[string] | — | Edges whose treatment/cost changed |
 | `additional_cycle_by_od` | object | trips | Increment attributed by the declared response model |
 | `additional_cycle_trips` | number | trips | Sum of the OD-level increments |
-| `od_low_stress_share_delta`, `demand_weighted_od_low_stress_share_delta` | number/null | share | Marginal CIW OD low-stress connectivity share under the complete stated denominator; null when full-network rerouting has not executed |
+| `od_low_stress_share_delta`, `demand_weighted_od_low_stress_share_delta` | number/null | share | Marginal SPAN OD low-stress connectivity share under the complete stated denominator; null when full-network rerouting has not executed |
 | `annual_benefit_nzd` | number | NZD/year and stated price base | Incremental monetised categories only |
 | `screening_bcr` | number/null | ratio | Present-value benefits divided by present-value costs |
 | `uncertainty_*` | number/null | field unit | Clearly named conditional interval metrics |

@@ -68,6 +68,7 @@ describe("web data integrity", () => {
         matchedCount: 2,
         coverage: 1,
         purposeAlignment: "Synthetic daily cycling counts",
+        status: "synthetic_fixture",
       },
       capabilities: {
         equity: "available",

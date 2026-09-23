@@ -26,31 +26,34 @@ must include, at minimum:
 
 ## Current gate
 
-**Complete local pipeline evidence; public-tag gate still open.** Corrected run
-`run-224e9baa3be4ef73` succeeded through all nine stages. Its root manifest
-records the configuration and implementation hashes, Python 3.11.16, JDK 21,
-r5py 1.1.7, seeds, source hashes, stage fingerprints, timings, row counts,
-failure share, and artifact digests. The nested route manifest records R5
-7.5.1-r5py, exact graph-mapping diagnostics, route-choice parameters, sampling
-design, purpose-specific coverage, and every ledger checksum.
+**Complete local source-resolution pipeline evidence; public-tag gate still
+open.** Run `run-313e0277521633d3` succeeded through all nine stages. Its root
+manifest records configuration hash
+`2e82c64e131d96cecd07e1529025d40cbf2c9c0c8cff555316bd4e058684fc5c`,
+Python 3.11.16, JDK 21, r5py 1.1.7, seeds, 20 source decisions, stage
+fingerprints, timings and artifact digests. The nested route manifest records
+R5 7.5.1-r5py, exact graph-mapping diagnostics, route-choice parameters,
+sampling design, purpose-specific coverage and every ledger checksum.
 
-The run retained 780,060 disaggregated purpose records, selected 42,654 for
-routing, assigned 42,498, retained 156 failures, generated 131,214 paths and
-100,701,541 ordered path-edge rows, screened 12,578 candidates, evaluated 3,771
-cumulative portfolio steps, and produced 12,309,000 candidate uncertainty rows.
-The checksummed browser export contains five declared layers totalling
-308,957,404 bytes. Validation against the source state that created the run
-returned zero errors and five warnings for optional sources that were absent.
-After the 28 August counter-source and evidence corrections, current-tree
-validation intentionally reports `implementation-mismatch`; the immutable
-snapshot is not relabelled as a run of the corrected source.
+The run retained 780,429 disaggregated purpose records, selected 42,708 for
+routing, assigned 42,551, retained 157 failures, generated 131,316 paths and
+100,539,338 ordered path-edge rows, screened 12,580 candidates and retained
+191,539 exact candidate-edge rows. The browser export contains 10,110 cells,
+191,539 network-edge features, 12,580 candidates, 2,017 programme features, 73
+counter sites and 250 safety cells. Exact web validation returned zero errors
+and zero warnings.
 
-The current local manifest does not close every publication condition. It has
-no source revision because no release commit exists, and the root runtime field
-does not duplicate the R5 release stored in the cached route artifact. A
-separate exact AT counter preparation and spatial plausibility audit now exists,
-but purpose-compatible predictive validation does not. Full-network
-connectivity, visual map audits, local cost evidence, uncertainty-prior review,
-clean-checkout CI/amd64 reproduction, and remaining image-licence obligations
-remain open. A manifest cannot convert a pending or excluded source into a
-permitted public layer.
+The deterministic archive is 23,646,468 bytes with SHA-256
+`544f920eff526aecaf03176eadceaa5ec42c3dafbe4fd614ce883d6ccc7816b8`;
+two independent packages matched. Its web manifest SHA-256 is
+`8166ea14b64b6ca36410c4915ffbd66f8c7568db777a8923bb54f918d0a95d40`.
+Appraisal is exposed only as `research_only`, aggregate equity is available,
+counter validation is labelled spatial plausibility only, and every
+full-network low-stress point-estimate field is null.
+
+The manifest still has no source revision because these changes are not in an
+approved release commit, and the root runtime field does not duplicate the R5
+release stored in the route artifact. Geographic visual audits, local cost
+evidence, uncertainty-prior review, clean-checkout CI/amd64 reproduction and
+remaining ODbL/corresponding-source duties remain open. These are decision-use
+or publication gates; they are not hidden or substituted results.

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ciw.tfwelch.com/schemas/web-export.schema.json",
-  "title": "Cycling Investment Workbench browser manifest",
+  "title": "SPAN browser manifest",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -38,11 +38,185 @@
     "capabilities": {"$ref": "#/$defs/capabilities"},
     "limitations": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "layers": {
-      "type": "array", "minItems": 5, "maxItems": 5,
+      "type": "array", "minItems": 6, "maxItems": 8,
       "items": {"$ref": "#/$defs/layer"}
     },
     "attribution": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "methodologyUrl": {"type": "string", "minLength": 1},
+    "effectiveNetwork": {
+      "type": "object",
+      "required": ["version", "method", "status", "runId", "topologySha256", "inventorySha256", "inventorySites", "matchedSites", "reviewSites", "directedMovements", "note"],
+      "properties": {
+        "version": {"const": "1.0.0"},
+        "method": {"const": "unambiguous_at_grade_source_junctions"},
+        "status": {"const": "screening_sensitivity"},
+        "runId": {"type": "string"},
+        "topologySha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "inventorySha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "inventorySites": {"type": "integer", "minimum": 0},
+        "matchedSites": {"type": "integer", "minimum": 0},
+        "reviewSites": {"type": "integer", "minimum": 0},
+        "directedMovements": {"type": "integer", "minimum": 0},
+        "note": {"type": "string"}
+      }
+    },
+    "networkContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "method",
+        "maximumLts",
+        "displaySimplificationM",
+        "edgeCount",
+        "componentCount",
+        "lengthKm",
+        "note",
+        "routeUseNote",
+        "candidateRoles",
+        "sourceFiles",
+        "implementationSha256",
+        "packages"
+      ],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "method": {
+          "const": "weak_components_exact_source_nodes"
+        },
+        "maximumLts": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4
+        },
+        "displaySimplificationM": {
+          "type": "number",
+          "minimum": 0
+        },
+        "edgeCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "componentCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lengthKm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "note": {
+          "type": "string"
+        },
+        "routeUseNote": {
+          "type": "string"
+        },
+        "candidateRoles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "sourceFiles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "implementationSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "before",
+              "after",
+              "additional",
+              "scenario",
+              "candidateIds"
+            ],
+            "properties": {
+              "before": {
+                "type": "number",
+                "minimum": 0
+              },
+              "after": {
+                "type": "number",
+                "minimum": 0
+              },
+              "additional": {
+                "type": "number",
+                "minimum": 0
+              },
+              "scenario": {
+                "$ref": "#/$defs/scenarioId"
+              },
+              "candidateIds": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "demandContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "routedBaselineUsers",
+        "sourceMarginUsers",
+        "routedEligible",
+        "internalEligible",
+        "sourceEligible",
+        "internalCoverage",
+        "sourceCoverage",
+        "capitalCostPerKm",
+        "note"
+      ],
+      "properties": {
+        "routedBaselineUsers": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "sourceMarginUsers": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "routedEligible": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "internalEligible": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "sourceEligible": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "internalCoverage": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "sourceCoverage": {
+          "$ref": "#/$defs/nullableNonNegative"
+        },
+        "capitalCostPerKm": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
     "sourceDecisions": {"type": "array", "items": {"$ref": "#/$defs/sourceDecision"}}
   },
   "$defs": {
@@ -73,13 +247,14 @@
     },
     "validation": {
       "type": "object", "additionalProperties": false,
-      "required": ["periodLabel", "counterCount", "matchedCount", "coverage", "purposeAlignment"],
+      "required": ["periodLabel", "counterCount", "matchedCount", "coverage", "purposeAlignment", "status"],
       "properties": {
         "periodLabel": {"type": "string", "minLength": 1},
         "counterCount": {"type": "integer", "minimum": 0},
         "matchedCount": {"type": "integer", "minimum": 0},
         "coverage": {"type": "number", "minimum": 0, "maximum": 1},
-        "purposeAlignment": {"type": "string", "minLength": 1}
+        "purposeAlignment": {"type": "string", "minLength": 1},
+        "status": {"type": "string", "minLength": 1}
       }
     },
     "summaryMetric": {
@@ -117,7 +292,9 @@
         "marginalObjective": {"type": "number", "minimum": 0},
         "cumulativeObjective": {"type": "number", "minimum": 0},
         "objectiveUnit": {"type": "string", "minLength": 1},
-        "paretoMember": {"type": "boolean"}
+        "paretoMember": {"type": "boolean"},
+        "routeUsersBefore": {"type": "number", "minimum": 0},
+        "routeUsersAfter": {"type": "number", "minimum": 0}
       }
     },
     "summaryByPurpose": {
@@ -183,7 +360,7 @@
         "id", "label", "url", "sha256", "defaultVisible", "optional", "licence", "sourceIds"
       ],
       "properties": {
-        "id": {"enum": ["cells", "network", "candidates", "programmes", "counters"]},
+        "id": {"enum": ["cells", "network", "candidates", "programmes", "counters", "safety", "existing", "intersections"]},
         "label": {"type": "string", "minLength": 1},
         "url": {"type": "string", "minLength": 1},
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},

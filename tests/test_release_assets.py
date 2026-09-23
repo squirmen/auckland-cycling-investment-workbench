@@ -12,7 +12,7 @@ def _fixture_run(tmp_path: Path) -> Path:
     run = tmp_path / "run-0123456789abcdef"
     data = run / "artifacts" / "export-web" / "data"
     data.mkdir(parents=True)
-    layer_names = ("cells", "network", "candidates", "programmes", "counters")
+    layer_names = ("cells", "network", "candidates", "programmes", "counters", "safety")
     for name in layer_names:
         features = []
         if name == "candidates":

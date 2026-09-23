@@ -1,0 +1,433 @@
+{
+  "area": "Rangatira Road / North Shore pilot",
+  "baseline": {
+    "journeys": 11,
+    "weight": 1635.72
+  },
+  "budget": 20000000.0,
+  "centre": [
+    174.69294893016277,
+    -36.80337781096317
+  ],
+  "crancStatus": "integration_reserved_not_computed",
+  "elapsedS": 54.733479334041476,
+  "experimentScriptHash": "b7cb4631a77bfceb718b0592eaef51ba3afbf601628164ba4091a9765191802c",
+  "graph": {
+    "directedArcs": 47146,
+    "nodes": 24467,
+    "projects": 195
+  },
+  "implementationHash": "3e06b88dfbf354b6d29ddf60cbb22af0cde530150ec688589f5f62dc5e83a066",
+  "limitations": [
+    "A local graph crop and deterministic OD sample; not an Auckland forecast or recommendation.",
+    "Weights retain source OD expansion factors without an additional pilot sampling expansion.",
+    "Complete means LTS \u2264 2, distance \u2264 1.5 times the shortest legal route and time \u2264 30 minutes.",
+    "Time assumes 15 km/h on flat ground with a declared uphill penalty; it is not calibrated.",
+    "Street treatment retains recorded intersection stress. Movement-specific turning evidence is unavailable in this pilot.",
+    "Only complete source candidate projects in the crop are eligible; prices are provisional protected-lane estimates.",
+    "Search caps can omit routes. Solver optimality applies to generated routes, not unsearched possibilities.",
+    "No induced-ridership, crash-reduction or benefit-cost forecast is produced by this experiment.",
+    "Preference cases are unfitted sensitivities, not estimated rider types or CRANC profiles. Each independently assigns the same fixed 8% scenario demand. Do not add these cases together.",
+    "Assignment uses the union of the three preference optima with a path-overlap correction. It is conditional on this limited choice set. No-route demand is reported as unassigned rather than removed or labelled new cyclists."
+  ],
+  "parameters": {
+    "flatSpeedKph": 15,
+    "maxLabelsPerSearch": 15000,
+    "protectedCostSource": "candidate_ledger.capital_cost_base_nzd",
+    "sampleSizeRequested": 169,
+    "uphillExponent": 3
+  },
+  "radiusM": 4000,
+  "ridershipForecast": null,
+  "runId": "run-313e0277521633d3",
+  "sample": {
+    "citywideRepresentative": false,
+    "eligibleWithinArea": 169,
+    "selected": 169,
+    "weightedDemand": 10058.640000000003
+  },
+  "schemaVersion": "1.0.0",
+  "searchComplete": true,
+  "seed": 20260915,
+  "solutions": [
+    {
+      "assignmentKey": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "budget": 0.0,
+      "capital_cost": 0,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 11,
+      "served_weight": 1635.72
+    },
+    {
+      "assignmentKey": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "budget": 0.0,
+      "capital_cost": 0,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 11,
+      "served_weight": 1635.72
+    },
+    {
+      "assignmentKey": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "budget": 0.0,
+      "capital_cost": 0,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [],
+      "served_journeys": 11,
+      "served_weight": 1635.72
+    },
+    {
+      "assignmentKey": "e7cc7b568601f4ae08fc7db238cbb4d4cdae821eb6435a820c8e211f1a732bcf",
+      "budget": 5000000.0,
+      "capital_cost": 3525137.72382141,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-51389382abf3468a"
+      ],
+      "served_journeys": 12,
+      "served_weight": 2205.96
+    },
+    {
+      "assignmentKey": "e7cc7b568601f4ae08fc7db238cbb4d4cdae821eb6435a820c8e211f1a732bcf",
+      "budget": 5000000.0,
+      "capital_cost": 3525137.72382141,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-51389382abf3468a"
+      ],
+      "served_journeys": 12,
+      "served_weight": 2205.96
+    },
+    {
+      "assignmentKey": "e7cc7b568601f4ae08fc7db238cbb4d4cdae821eb6435a820c8e211f1a732bcf",
+      "budget": 5000000.0,
+      "capital_cost": 3525137.72382141,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [
+        "candidate-51389382abf3468a"
+      ],
+      "served_journeys": 12,
+      "served_weight": 2205.96
+    },
+    {
+      "assignmentKey": "e7cc7b568601f4ae08fc7db238cbb4d4cdae821eb6435a820c8e211f1a732bcf",
+      "budget": 10000000.0,
+      "capital_cost": 3525137.72382141,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-51389382abf3468a"
+      ],
+      "served_journeys": 12,
+      "served_weight": 2205.96
+    },
+    {
+      "assignmentKey": "9f99133b96f2113245774ae3fd0d5529ba01551e0419f47db697032b826d39a2",
+      "budget": 10000000.0,
+      "capital_cost": 9729737.561435515,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-51389382abf3468a",
+        "candidate-b965b3e2ea80f96b",
+        "candidate-f0c429710eb33c5b"
+      ],
+      "served_journeys": 13,
+      "served_weight": 2484.7200000000003
+    },
+    {
+      "assignmentKey": "9f99133b96f2113245774ae3fd0d5529ba01551e0419f47db697032b826d39a2",
+      "budget": 10000000.0,
+      "capital_cost": 9729737.561435515,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [
+        "candidate-51389382abf3468a",
+        "candidate-b965b3e2ea80f96b",
+        "candidate-f0c429710eb33c5b"
+      ],
+      "served_journeys": 13,
+      "served_weight": 2484.7200000000003
+    },
+    {
+      "assignmentKey": "e7cc7b568601f4ae08fc7db238cbb4d4cdae821eb6435a820c8e211f1a732bcf",
+      "budget": 20000000.0,
+      "capital_cost": 3525137.72382141,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-51389382abf3468a"
+      ],
+      "served_journeys": 12,
+      "served_weight": 2205.96
+    },
+    {
+      "assignmentKey": "4cdb5287f76dc1d33cea259dfb9ce28ac89f95354149d55f8302645864eef19d",
+      "budget": 20000000.0,
+      "capital_cost": 18740598.368594453,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-44a5c13a51d89f2f",
+        "candidate-51389382abf3468a",
+        "candidate-b965b3e2ea80f96b",
+        "candidate-d03ed06bd2f3b71b",
+        "candidate-f0c429710eb33c5b",
+        "candidate-fee522565925bb91"
+      ],
+      "served_journeys": 14,
+      "served_weight": 2991.7200000000003
+    },
+    {
+      "assignmentKey": "4cdb5287f76dc1d33cea259dfb9ce28ac89f95354149d55f8302645864eef19d",
+      "budget": 20000000.0,
+      "capital_cost": 18740598.368594453,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [
+        "candidate-44a5c13a51d89f2f",
+        "candidate-51389382abf3468a",
+        "candidate-b965b3e2ea80f96b",
+        "candidate-d03ed06bd2f3b71b",
+        "candidate-f0c429710eb33c5b",
+        "candidate-fee522565925bb91"
+      ],
+      "served_journeys": 14,
+      "served_weight": 2991.7200000000003
+    }
+  ],
+  "sourceHashes": {
+    "candidateLedger": "f9334b5b083dd3ada394a6a29064313ab101705d4811b23e61eed2c518ebc773",
+    "odLedger": "9e89176035853da46bba4061d986ee9713e06fc140dafb2115c1f3158b8b6614",
+    "originWeights": "7cc179bfe98aa778a60979eabde856b2e21fb734761527e73283835dd72e5eda",
+    "origins": "38d6594762d6afcadf834f3bfbcdc3d7c618ed250fd5d0afefbbabe2a2eb75bc",
+    "scenarioOdLedger": "53ea020501e12d497ad9ec389421eca9edfb8dc45b18a5a5ddf3fc81d530c08b",
+    "topology": "33fc0b546326193333c382cbdae742aa9acc41a5ed4e9a235a3c2257dfd1d66e"
+  },
+  "standard": {
+    "maximum_detour": 1.5,
+    "maximum_stress": 2,
+    "maximum_time_s": 1800
+  },
+  "status": "local_research_pilot",
+  "title": "Complete journeys before extra cycling",
+  "assignment": {
+    "additionalCyclists": null,
+    "choiceSet": "Union of one minimum-cost route per preference; not exhaustive.",
+    "costScalePerS": 0.005,
+    "demandUnit": "usual_cycle_commuters",
+    "pathSizeCoefficient": 1.0,
+    "profileSharesEstimated": false,
+    "profiles": [
+      {
+        "coefficient_status": "illustrative_unfitted",
+        "distance_s_per_km": 60,
+        "facility_s_per_km": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "id": "direct",
+        "label": "Time and distance",
+        "stress_s_per_km": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "time_weight": 1
+      },
+      {
+        "coefficient_status": "illustrative_unfitted",
+        "distance_s_per_km": 60,
+        "facility_s_per_km": [
+          0,
+          15,
+          45,
+          60,
+          90
+        ],
+        "id": "balanced",
+        "label": "Moderate facility preference",
+        "stress_s_per_km": [
+          0,
+          30,
+          120,
+          300
+        ],
+        "time_weight": 1
+      },
+      {
+        "coefficient_status": "illustrative_unfitted",
+        "distance_s_per_km": 60,
+        "facility_s_per_km": [
+          0,
+          30,
+          90,
+          120,
+          180
+        ],
+        "id": "comfort",
+        "label": "Stronger facility preference",
+        "stress_s_per_km": [
+          0,
+          60,
+          240,
+          600
+        ],
+        "time_weight": 1
+      }
+    ],
+    "scenarioId": "commute_8pct",
+    "status": "fixed_demand_illustrative_preferences",
+    "totalDemand": 1286.2165204308146,
+    "portfolios": [
+      {
+        "key": "4cdb5287f76dc1d33cea259dfb9ce28ac89f95354149d55f8302645864eef19d",
+        "selected": [
+          "candidate-44a5c13a51d89f2f",
+          "candidate-51389382abf3468a",
+          "candidate-b965b3e2ea80f96b",
+          "candidate-d03ed06bd2f3b71b",
+          "candidate-f0c429710eb33c5b",
+          "candidate-fee522565925bb91"
+        ],
+        "profiles": [
+          {
+            "profileId": "direct",
+            "assigned": 443.3426131264799,
+            "unassigned": 842.8739073043344,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "balanced",
+            "assigned": 443.3426131264799,
+            "unassigned": 842.8739073043344,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "comfort",
+            "assigned": 443.3426131264799,
+            "unassigned": 842.8739073043344,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          }
+        ]
+      },
+      {
+        "key": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "selected": [],
+        "profiles": [
+          {
+            "profileId": "direct",
+            "assigned": 255.34349586370797,
+            "unassigned": 1030.8730245671063,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "balanced",
+            "assigned": 255.34349586370797,
+            "unassigned": 1030.8730245671063,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "comfort",
+            "assigned": 255.34349586370797,
+            "unassigned": 1030.8730245671063,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          }
+        ]
+      },
+      {
+        "key": "9f99133b96f2113245774ae3fd0d5529ba01551e0419f47db697032b826d39a2",
+        "selected": [
+          "candidate-51389382abf3468a",
+          "candidate-b965b3e2ea80f96b",
+          "candidate-f0c429710eb33c5b"
+        ],
+        "profiles": [
+          {
+            "profileId": "direct",
+            "assigned": 388.3613360094125,
+            "unassigned": 897.8551844214016,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "balanced",
+            "assigned": 388.3613360094125,
+            "unassigned": 897.8551844214016,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "comfort",
+            "assigned": 388.3613360094125,
+            "unassigned": 897.8551844214016,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          }
+        ]
+      },
+      {
+        "key": "e7cc7b568601f4ae08fc7db238cbb4d4cdae821eb6435a820c8e211f1a732bcf",
+        "selected": [
+          "candidate-51389382abf3468a"
+        ],
+        "profiles": [
+          {
+            "profileId": "direct",
+            "assigned": 353.2170907968375,
+            "unassigned": 932.9994296339767,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "balanced",
+            "assigned": 353.2170907968375,
+            "unassigned": 932.9994296339767,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          },
+          {
+            "profileId": "comfort",
+            "assigned": 353.2170907968375,
+            "unassigned": 932.9994296339767,
+            "multipleRouteOds": 7,
+            "truncatedSearches": 0
+          }
+        ]
+      }
+    ]
+  },
+  "searchSummary": {
+    "disconnectedInCrop": 11,
+    "labelsExpanded": 107802
+  }
+}

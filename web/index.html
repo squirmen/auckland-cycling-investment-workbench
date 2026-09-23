@@ -2,214 +2,287 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://tiles.openfreemap.org; worker-src 'self' blob:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
     <meta
       name="description"
-      content="A transparent research workbench for screening low-stress cycling investments in Auckland."
+      content="SPAN ranks possible new cycling links in Auckland and shows which to build first for a chosen goal and budget."
     />
-    <meta name="theme-color" content="#073f45" />
-    <title>Auckland Cycling Investment Workbench</title>
+    <meta name="theme-color" content="#0c0c48" />
+    <link rel="icon" href="./span-mark.svg" type="image/svg+xml" />
+    <title>SPAN · Spending Priorities for Active Networks</title>
   </head>
   <body>
-    <a class="skip-link" href="#main-content">Skip to the workbench</a>
+    <a class="skip-link" href="#controls-panel">Skip to controls</a>
     <div id="app" aria-busy="true">
-      <header class="masthead">
-        <div class="brand-block">
-          <p class="eyebrow">Research screening tool</p>
-          <h1>Auckland Cycling Investment Workbench</h1>
-          <div class="run-line">
-            <span id="data-status" class="data-status">Loading</span>
-            <p id="run-summary" class="run-summary">Loading a verified model run…</p>
+      <section id="map-panel" class="map-panel" aria-label="Map">
+        <div id="map" role="region" aria-label="Map of candidate cycling links in Auckland"></div>
+      </section>
+
+      <aside id="controls-panel" class="panel" aria-label="SPAN">
+        <header class="brand">
+          <img class="brand-mark" src="./span-mark.svg" alt="" width="36" height="36" />
+          <div class="brand-text">
+            <h1>SPAN</h1>
+            <p class="tagline">Spending Priorities for Active Networks</p>
+            <p id="mobile-map-status" class="mini" aria-live="polite"></p>
           </div>
-        </div>
-        <div id="headline-kpis" class="headline-kpis" aria-live="polite"></div>
-      </header>
+          <button
+            id="map-info-button"
+            class="text-button"
+            type="button"
+            aria-label="About SPAN and its data"
+            aria-haspopup="dialog"
+            aria-controls="map-info-dialog"
+            aria-expanded="false"
+          >About</button>
+          <button
+            id="panel-toggle"
+            class="icon-button panel-toggle"
+            type="button"
+            aria-expanded="true"
+            aria-controls="panel-body"
+            aria-label="Hide controls"
+          >
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 12l5-5 5 5" fill="none" stroke="currentColor" stroke-width="2" /></svg>
+          </button>
+        </header>
 
-      <nav class="mobile-jump-nav" aria-label="Workbench sections">
-        <a href="#controls-panel">Set up</a>
-        <a href="#map-panel">Map</a>
-        <a href="#analysis-panel">Results</a>
-      </nav>
+        <div id="panel-body" class="panel-body">
+          <p id="lede" class="lede">Ranks possible new cycling links in Auckland and shows which to build first for a goal and a budget.</p>
+          <p class="help"><a href="./research.html">Research: complete journeys and connected investment →</a></p>
+          <p class="help"><a href="./research.html#cranc-accessibility">CRANC accessibility · integration point →</a></p>
+          <details class="method-note"><summary>Planning use · evidence and limits</summary><div class="context-note"><p>Use SPAN to screen candidate links, compare scenarios and identify packages for closer investigation. The published scenario rankings use retained routes; the research view tests fresh routing after investment.</p><p>Demand response is uncalibrated and some leading gains depend heavily on individual weighted OD records. Costs are screening estimates. Validate route coverage, crossings, programmed projects, distribution of access and design feasibility before an investment decision.</p><p><a href="./documentation/research-review.md">Methodology, research contribution and validation gates</a></p></div></details>
 
-      <main id="main-content" class="workspace">
-        <aside id="controls-panel" class="controls" aria-label="Model controls">
-          <div class="workflow-intro">
-            <p class="eyebrow">Start here</p>
-            <h2>Build a screening view</h2>
-            <ol>
-              <li>Choose a demand scenario and planning lens.</li>
-              <li>Set an illustrative capital budget.</li>
-              <li>Compare corridors, then inspect the evidence.</li>
-            </ol>
+          <div class="field">
+            <span id="goal-label" class="field-label">Goal</span>
+            <div id="purpose-picker" class="chips" role="radiogroup" aria-labelledby="goal-label"></div>
+            <p id="purpose-note" class="help"></p>
           </div>
 
-          <section class="workflow-step">
-            <div class="step-heading">
-              <span aria-hidden="true">1</span>
-              <h2>Define the question</h2>
+          <div class="field">
+            <div class="field-head">
+              <label id="budget-heading" class="field-label" for="budget-slider">Budget</label>
+              <output id="budget-output" class="field-value" for="budget-slider"></output>
             </div>
-            <label for="scenario-select">Scenario</label>
+            <input id="budget-slider" type="range" min="0" max="500" step="5" value="100" aria-labelledby="budget-heading" />
+            <div class="range-labels" aria-hidden="true"><span>$0</span><span id="budget-maximum"></span></div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="scenario-select">Scenario</label>
             <select id="scenario-select"></select>
             <p id="scenario-note" class="help"></p>
+          </div>
 
-            <label for="purpose-select">Planning lens</label>
-            <select id="purpose-select"></select>
-            <p id="purpose-note" class="help"></p>
+          <details id="journey-controls" class="method-note journey-controls">
+            <summary>Journeys over time · assumptions</summary>
+            <div class="context-note">
+              <label for="journey-period">Show journey equivalents</label>
+              <select id="journey-period">
+                <option value="year">Annual</option>
+                <option value="month">Average month</option>
+                <option value="day">Cycling commute day</option>
+              </select>
+              <div class="calendar-inputs">
+                <label for="journey-days">Cycling commute days / year<input id="journey-days" type="number" min="0" max="366" step="1" value="220" /></label>
+                <label for="journey-legs">One-way journeys / day<select id="journey-legs"><option value="2">2 · there and back</option><option value="1">1 · one leg only</option></select></label>
+              </div>
+              <p class="help">Assumed frequency for each usual cycle commuter. Annual ÷ 12 gives an average month, without seasonality. Changing this display does not change demand, rankings or benefit–cost ratios.</p>
+            </div>
+          </details>
+
+          <div class="tabs" role="tablist" aria-label="Views">
+            <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Build order</button>
+            <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Value for money</button>
+          </div>
+
+          <section id="tab-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="control-portfolio">
+            <div id="portfolio-summary" class="hero" aria-live="polite"></div>
+            <section id="network-groups" class="network-groups" aria-label="Network groups" hidden></section>
+            <div class="section-title-row">
+              <span class="field-label">In the build order</span>
+              <span id="portfolio-count" class="badge"></span>
+            </div>
+            <input id="candidate-search" class="candidate-search" type="search" placeholder="Find a street in this list" aria-label="Find a street in the build order" autocomplete="off" />
+            <p id="candidate-search-status" class="list-status" aria-live="polite"></p>
+            <ol id="candidate-list" class="rank-list"></ol>
+            <button id="show-more-button" class="secondary show-more" type="button" hidden>Show more</button>
             <details class="method-note">
-              <summary>How this view is calculated</summary>
-              <p id="connectivity-context" class="help context-note"></p>
+              <summary>How the build order is worked out</summary>
+              <div id="connectivity-context" class="context-note"></div>
             </details>
           </section>
 
-          <section class="workflow-step">
-            <div class="section-title-row">
-              <div class="step-heading">
-                <span aria-hidden="true">2</span>
-                <h2><label id="budget-heading" for="budget-slider">Set a budget</label></h2>
-              </div>
-              <output id="budget-output" for="budget-slider"></output>
+          <section id="tab-pareto" class="tab-panel" role="tabpanel" aria-labelledby="control-pareto" hidden>
+            <div id="pareto-summary" class="hero"></div>
+            <div class="chart-key" aria-label="Chart key">
+              <span><i class="key-frontier"></i>Best value</span>
+              <span><i class="key-budget"></i>In the build order</span>
+              <span><i></i>Other links</span>
             </div>
-            <input id="budget-slider" type="range" min="0" max="250" step="5" value="100" aria-labelledby="budget-heading" aria-describedby="budget-help" />
-            <div class="range-labels" aria-hidden="true"><span>$0</span><span id="budget-maximum"></span></div>
-            <p id="budget-help" class="help">Filters the precomputed cumulative portfolio; it is not a funding recommendation.</p>
+            <div id="pareto-chart" class="pareto-chart"></div>
+            <p id="pareto-plot-status" class="list-status"></p>
+            <span id="pareto-heading" class="field-label">Best-value links</span>
+            <div id="pareto-list" class="compact-list"></div>
           </section>
-
-          <section class="action-panel" aria-label="View actions">
-            <button id="download-button" type="button">Export portfolio (.geojson)</button>
-            <div class="button-row equal">
-              <button id="share-button" class="secondary" type="button">Copy view link</button>
-              <button id="reset-button" class="secondary" type="button">Reset</button>
-            </div>
-            <button id="print-button" class="quiet-button" type="button">Print / save PDF</button>
-          </section>
-
-          <details id="layers-disclosure" class="advanced-panel">
-            <summary>Map layers</summary>
-            <div id="layer-controls" class="check-list"></div>
-            <p class="help">Analysis layers come from the verified run. Basemap choices provide visual context only.</p>
-          </details>
 
           <details id="sketch-disclosure" class="advanced-panel">
-            <summary>Sketch a custom corridor</summary>
-            <p id="sketch-help" class="help">Select points to route a contiguous corridor over exported network edges.</p>
+            <summary>Draw your own link</summary>
+            <p id="sketch-help" class="help"></p>
             <div class="button-row">
-              <button id="sketch-toggle" type="button">Start sketch</button>
+              <button id="sketch-toggle" type="button">Start drawing</button>
               <button id="sketch-clear" class="secondary" type="button">Clear</button>
             </div>
             <div id="sketch-result" class="result-card" aria-live="polite"></div>
           </details>
-        </aside>
 
-        <section id="map-panel" class="map-panel" aria-label="Investment map">
-          <div id="map" role="region" aria-label="Interactive map of cycling demand and candidate corridors"></div>
-          <div id="mobile-map-status" class="mobile-map-status" aria-live="polite"></div>
-          <div id="loading-panel" class="loading-panel" role="status">
-            <span class="loading-mark" aria-hidden="true"></span>
-            <strong>Loading verified model outputs</strong>
-            <span>Checking the manifest and map-layer hashes…</span>
+          <div class="action-panel" role="group" aria-label="Save and share">
+            <button id="download-button" type="button">Download build order (GeoJSON)</button>
+            <div class="button-row equal">
+              <button id="share-button" class="secondary" type="button">Copy link</button>
+              <button id="reset-button" class="secondary" type="button">Reset</button>
+            </div>
+            <button id="print-button" class="quiet-button" type="button">Print or save as PDF</button>
           </div>
-          <div id="overlay-context" class="overlay-context" aria-live="polite" hidden></div>
-          <div id="basemap-switcher" class="basemap-switcher" role="group" aria-label="Basemap">
-            <button type="button" data-basemap="analysis" aria-pressed="false">Analysis</button>
+        </div>
+
+        <footer class="panel-foot">
+          <a class="lab-link" href="https://betterplaces.blogs.auckland.ac.nz" rel="noopener">
+            <img src="./bpl-mark.svg" alt="" width="18" height="18" />
+            <span>Better Places Lab</span>
+          </a>
+          <span id="data-status" class="data-status">Loading</span>
+          <p id="run-summary" class="foot-note">Loading…</p>
+        </footer>
+      </aside>
+
+      <aside id="link-card" class="place" aria-labelledby="candidate-title" hidden>
+        <header class="place-head">
+          <div>
+            <p id="candidate-eyebrow" class="eyebrow">Selected link</p>
+            <h2 id="candidate-title">Choose a link</h2>
+            <p id="candidate-sub" class="place-sub"></p>
+          </div>
+          <button id="link-close" class="icon-button" type="button" aria-label="Close link details">
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" /></svg>
+          </button>
+        </header>
+        <div id="candidate-detail" class="place-body"></div>
+      </aside>
+
+      <section class="map-overlays" aria-label="Map tools and key">
+        <div class="map-tools">
+          <div id="basemap-switcher" class="segmented" role="group" aria-label="Background map">
             <button type="button" data-basemap="light" aria-pressed="false">Light</button>
             <button type="button" data-basemap="streets" aria-pressed="false">Streets</button>
+            <button type="button" data-basemap="analysis" aria-pressed="false">Plain</button>
           </div>
-          <details id="map-legend" class="map-legend" open>
-            <summary>Legend</summary>
-            <div id="map-legend-items" aria-label="Map legend"></div>
-          </details>
-          <button
-            id="map-info-button"
-            class="map-info-button"
-            type="button"
-            aria-label="About this map and its data"
-            aria-haspopup="dialog"
-            aria-controls="map-info-dialog"
-            aria-expanded="false"
-          ><span aria-hidden="true">i</span></button>
-          <div id="status-message" class="status-message" role="status"></div>
-        </section>
-
-        <aside id="analysis-panel" class="analysis" aria-label="Portfolio analysis">
-          <nav class="tabs" role="tablist" aria-label="Analysis views">
-            <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Portfolio</button>
-            <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Trade-offs</button>
-            <button id="control-evidence" class="tab" role="tab" type="button" data-tab="evidence" aria-controls="tab-evidence" aria-selected="false" tabindex="-1">Evidence</button>
-          </nav>
-
-          <section id="tab-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="control-portfolio">
-            <div class="section-title-row">
-              <div>
-                <p class="eyebrow">Cumulative screen</p>
-                <h2>Portfolio</h2>
-              </div>
-              <span id="portfolio-count" class="badge"></span>
+          <details id="layers-disclosure" class="layers">
+            <summary>Layers</summary>
+            <div class="layers-body">
+              <div id="layer-controls" class="check-list"></div>
             </div>
-            <p class="panel-intro">This sequence fits the selected budget and lens. Select a corridor to see its assumptions and uncertainty.</p>
-            <div id="portfolio-summary" class="summary-grid"></div>
-            <label class="search-label" for="candidate-search">Find within this portfolio</label>
-            <input id="candidate-search" class="candidate-search" type="search" placeholder="Search corridor, facility, or status" autocomplete="off" />
-            <p id="candidate-search-status" class="list-status" aria-live="polite"></p>
-            <ol id="candidate-list" class="candidate-list"></ol>
-            <button id="show-more-button" class="secondary show-more" type="button" hidden>Show 100 more</button>
-          </section>
+          </details>
+        </div>
 
-          <section id="tab-pareto" class="tab-panel hidden" role="tabpanel" aria-labelledby="control-pareto" hidden>
-            <p class="eyebrow">Non-dominated choices</p>
-            <h2 id="pareto-heading">Cost and selected objective</h2>
-            <p id="pareto-description" class="help">Frontier projects are not dominated on the selected planning dimensions.</p>
-            <div class="chart-key" aria-label="Chart key"><span><i class="frontier-key"></i>Pareto frontier</span><span><i></i>Other candidates</span></div>
-            <p id="pareto-plot-status" class="list-status"></p>
-            <div id="pareto-chart" class="pareto-chart"></div>
-            <div id="pareto-list" class="compact-list"></div>
-          </section>
-
-          <section id="tab-evidence" class="tab-panel hidden" role="tabpanel" aria-labelledby="control-evidence" hidden>
-            <p class="eyebrow">Selected candidate</p>
-            <h2 id="candidate-title">Choose a corridor</h2>
-            <p class="panel-intro">Review the corridor’s modelled effect, evidence coverage, uncertainty, and warnings before using or exporting it.</p>
-            <div id="candidate-detail" class="candidate-detail"></div>
-          </section>
-        </aside>
-      </main>
-
+        <details id="map-legend" class="map-legend" open>
+          <summary>Map key</summary>
+          <div id="map-legend-items" aria-label="Map key"></div>
+        </details>
+      </section>
+      <div id="loading-panel" class="loading-panel" role="status">
+        <span class="loading-mark" aria-hidden="true"></span>
+        <strong>Loading Auckland</strong>
+        <span>Checking the data files…</span>
+      </div>
+      <div id="status-message" class="status-message" role="status"></div>
       <p id="view-announcement" class="visually-hidden" aria-live="polite"></p>
     </div>
 
-    <dialog id="map-info-dialog" class="map-info-dialog" aria-labelledby="map-info-title">
-      <div class="map-info-heading">
+    <dialog id="map-info-dialog" class="about" aria-labelledby="map-info-title">
+      <div class="about-head">
         <div>
-          <p class="eyebrow">Map notes</p>
-          <h2 id="map-info-title">About this map</h2>
+          <p class="eyebrow">Better Places Lab</p>
+          <h2 id="map-info-title">About SPAN</h2>
         </div>
-        <button id="map-info-close" class="map-info-close" type="button" aria-label="Close map information">×</button>
+        <button id="map-info-close" class="icon-button" type="button" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" /></svg>
+        </button>
       </div>
-      <div class="map-info-content">
+      <div class="about-body">
         <section>
-          <h3>What it is</h3>
-          <p>The workbench compares candidate cycling corridors across demand scenarios, planning lenses, budgets, network effects, and evidence quality.</p>
+          <p>SPAN (Spending Priorities for Active Networks) ranks possible new cycling links in Auckland and puts them in a build order for a goal and a budget. It shows what each link would add, what it costs, and how firm the estimate is.</p>
         </section>
         <section>
-          <h3>Use with care</h3>
-          <p>This is an indicative research screen, not an investment business case. Results depend on the stated inputs and assumptions; local design, safety, delivery, cost, and consultation work is still required.</p>
+          <h3>Reading the map</h3>
+          <ul>
+            <li>Green numbered lines are the build order: the links that fit in the budget, numbered in the order to build them.</li>
+            <li>Orange is the link you have selected. Click a line or a list row to see its details.</li>
+            <li>Blue squares show where the trips behind the chosen goal start. Darker means more.</li>
+            <li>Layers adds existing low-stress streets and paths where available, other candidates, Auckland Transport's plans, cycle counters and crashes. Selecting a link shows its connection points; network groups join proposals through shared junctions or existing low-stress areas.</li>
+          </ul>
         </section>
         <section>
-          <h3>Data and map credits</h3>
+          <h3>Goals</h3>
+          <table class="about-table">
+            <thead><tr><th>Goal</th><th>What it counts</th></tr></thead>
+            <tbody>
+              <tr><td>Cycling to work</td><td>Modelled extra usual cycle commuters above the selected scenario's starting level. Total route users and daily journeys are different measures.</td></tr>
+              <tr><td>Deprived areas</td><td>Extra people cycling to work from the most deprived 30% of areas.</td></tr>
+              <tr><td>School trips</td><td>Access gain for cycling to school, weighted by school rolls.</td></tr>
+              <tr><td>Everyday trips</td><td>Access gain for cycling to shops, services and other everyday places.</td></tr>
+              <tr><td>Stations</td><td>Access gain for cycling to stations, main interchanges and the busiest bus stops.</td></tr>
+              <tr><td>Benefit–cost</td><td>Indicative benefit–cost ratio over 40 years. 8% scenario only.</td></tr>
+            </tbody>
+          </table>
+          <p>Access gain counts people helped, scaled by how much easier their ride gets: 100 people whose ride becomes 10% easier count as 10.</p>
+        </section>
+        <section>
+          <h3>Scenarios</h3>
+          <ul>
+            <li>Today: cycling to work as it is now, from the 2023 Census.</li>
+            <li>Government target, Go Dutch and E-bikes: scenarios from England's Propensity to Cycle Tool, applied to Auckland trips by distance and hilliness.</li>
+            <li>8% of commutes: what 8% of Auckland commuters cycling would look like. A test case, not an Auckland Transport target.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>How it is built</h3>
+          <ul>
+            <li>Candidate links upgrade connected stretches of streets that are stressful to ride today. Each is costed as a protected cycleway. Their connection to existing low-stress areas is assessed separately using source junctions.</li>
+            <li>Trips to work come from the 2023 Census. School, everyday and station trips link homes to school rolls, OpenStreetMap destinations and the Auckland Transport timetable. Each trip keeps up to five plausible routes, rated for traffic stress and hills.</li>
+            <li>A link's value is the extra cycling the model expects once its streets are low-stress. The build order re-runs the model at each step with the earlier links in place, so shared routes are not counted twice.</li>
+            <li>Whole-life cost adds 40 years of maintenance and renewal to the build cost, discounted.</li>
+            <li>For the 8% scenario, 1,000 test runs vary costs, how many people respond, route choice and other inputs, to show how firm each result is.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Limits</h3>
+          <ul>
+            <li>SPAN is a screening tool, not an investment business case. Design, a safety audit, consultation and project costings come later.</li>
+            <li>Riders are modelled, not counted. Cycle counters are shown as a rough check only.</li>
+            <li>Trips keep to their plausible routes; a check that reroutes the whole network is still to come.</li>
+            <li>Crash counts are not adjusted for how much cycling happens in each place.</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Data and credits</h3>
           <p id="map-provenance-text"></p>
-          <p><span id="attribution"></span></p>
-          <p>Light and Streets request OpenFreeMap vector tiles and use OpenStreetMap data. Analysis is the tile-free view used for reproducible captures.</p>
-        </section>
-        <section>
-          <h3>Methods and provenance</h3>
-          <p><a id="methodology-link" href="./documentation/methodology.md">Read the methodology, limitations, and run notes</a>.</p>
+          <ul id="attribution" class="credit-list"></ul>
+          <p>Light and Streets use OpenFreeMap tiles and OpenStreetMap data. Plain shows no background map, as used for reproducible captures.</p>
+          <p class="about-links">
+            <a id="methodology-link" href="./documentation/methodology.md">Method</a> ·
+            <a href="https://github.com/squirmen/auckland-cycling-investment-workbench" rel="noopener">Code</a> ·
+            <a href="https://betterplaces.blogs.auckland.ac.nz" rel="noopener">Better Places Lab</a>
+          </p>
+          <p>SPAN was released as the Auckland Cycling Investment Workbench up to version 1.0.</p>
         </section>
       </div>
     </dialog>
-    <noscript>This tool requires JavaScript to load verified model outputs.</noscript>
+    <noscript>SPAN needs JavaScript to load the map and data.</noscript>
     <script type="module" src="/src/app.ts"></script>
   </body>
 </html>

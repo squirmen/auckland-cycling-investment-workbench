@@ -40,7 +40,8 @@ its public control must also be disabled.
 
 ## Verified Auckland source position
 
-Primary publisher records were reviewed on 20 August 2026. This is a scoped
+Primary publisher records were reviewed between 20 August and 1 September
+2026. This is a scoped
 release decision, not a general legal opinion.
 
 - Stats NZ Datafinder table 121988, API version 410594, is the exact
@@ -52,12 +53,10 @@ release decision, not a general legal opinion.
   authority boundary, SA2 transport-margin, and 2024 Business Demography items
   state CC BY 4.0. The former mixed Eagle/NZDep service is no longer a required
   input.
-- NZDep2023 is a separate optional source. The University of Otago page
-  directly publishes the SA1 text/Excel files, and the associated research
-  report states CC BY 4.0, but the dataset page does not tie that licence to the
-  downloadable data. The exact dataset therefore remains pending; public
-  equity data and controls stay disabled until a dataset-specific grant and
-  release hash are recorded.
+- NZDep2023 is a separate optional source. The configured combined public
+  service snapshot is hash-pinned and raw polygons are not exported. Public
+  output is limited to aggregate decile 8–10 origin metrics with University of
+  Otago, Stats NZ and source-service attribution.
 - The Ministry of Education catalogue record for the Schools Directory states
   CC BY 4.0. Only institution identifiers, names, types, locations, status,
   roll date, and total roll are acquired; telephone, email, postal-address,
@@ -65,27 +64,30 @@ release decision, not a general legal opinion.
 - OpenStreetMap data may be used under ODbL 1.0. Public maps must visibly credit
   OpenStreetMap, and any distributed database or produced work must satisfy the
   applicable attribution, share-alike, and reconstruction-offer obligations.
-- The exact Auckland Transport Cycle Facility Network item states CC BY 4.0.
-  The Future Connect service and local RLTP-derived file do not carry
-  sufficiently specific dataset terms and remain pending.
+- Auckland Transport's open-data page states that its open data are available
+  under CC BY 4.0. The exact Cycle Facility Network, Future Connect and RLTP
+  service snapshots are hash-pinned. Future Connect remains strategic context;
+  RLTP `committed` and `planned` values are retained without calling them
+  funded.
 - Auckland Transport's monthly cycle-monitoring page states CC BY 4.0. The
   exact July 2026 workbook, 31-day period, workbook hash, deterministic
   transformation, and derived-observation hash are now recorded. Those
-  observations are cleared, but the separately inherited counter-coordinate
-  registry lacks exact publisher-file, direction, and screenline lineage; the
-  point layer therefore remains local and the public counter layer remains
-  empty.
-- The NZTA CAS Map item states CC BY 4.0, but the configured large CSV lacks its
-  exact portal item and export record. Raw crash rows and identifiers are
-  excluded; only disclosure-reviewed aggregates may be reconsidered.
+  observations are cleared. The separately maintained 73-site registry is
+  published only as approximate spatial context: it has no direction, bearing
+  or screenline identity and is unsuitable for predictive validation.
+- Raw CAS rows, identifiers, exact coordinates and narratives remain restricted
+  and excluded. A separate public layer retains only cycle-involved crash and
+  severity totals in 500 m cells, suppresses cells below three crashes, and
+  warns that police-reported counts are not exposure-adjusted.
 - The exact LINZ 8 m DEM page is CC BY 4.0 and requires LINZ Data Service
   attribution. The external schema-1 tile manifest now pins byte counts and
   SHA-256 hashes for all 32 TIFFs referenced by the VRT. LINZ also describes this
   contour-interpolated product as unsuitable for terrain analysis; a
   publication build must replace it or justify and test that use.
-- The official AT GTFS page states CC BY 4.0. The configured derived transit
-  node file remains pending until the archived feed's retrieval date, service
-  dates, and hash are recorded.
+- The official AT GTFS page states CC BY 4.0. The 1 September 2026 feed,
+  version, service dates and hash are recorded. The 199-node derivative uses a
+  declared 2 September service day and counts scheduled stop visits as access
+  opportunities, not patronage.
 - OpenFreeMap's public vector-tile service is permitted for live contextual
   display under its public-instance terms. The Light and Streets choices must
   retain visible OpenFreeMap, OpenMapTiles, and OpenStreetMap attribution. No

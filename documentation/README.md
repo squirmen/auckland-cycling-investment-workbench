@@ -3,6 +3,14 @@
 This directory separates the public method, release evidence, white-paper
 planning material, equations, references, and visual record.
 
+Current SPAN additions:
+
+- [Effective-network beta and server handoff](research/span-effective-network.md)
+- [CRANC entry points and adapter checklist](research/cranc-integration.md#where-to-connect-cranc)
+- [24 September improvement review](audit/span-improvement-review-2026-09-24.md)
+- [Complete-route experiment](research/span-access-first-experiment.md)
+- [Research methodology review](research/methodology-review-2026-09.md)
+
 ```text
 documentation/
 ├── audit/
@@ -62,7 +70,7 @@ documentation/
 
 The methodology documents are normative for interpretation. The white-paper
 files are editorial plans, not results. A complete local Auckland research
-snapshot now exists as run `run-224e9baa3be4ef73`, but its derived values are
+snapshot now exists as run `run-313e0277521633d3`, but its derived values are
 not decision-ready or publicly released. An Auckland value becomes publishable
 only when it is traced to the exact tagged release manifest, cleared asset, and
 completed validation and manual-audit evidence.

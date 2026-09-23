@@ -1,8 +1,14 @@
 # Methodology
 
+The main explorer's scenario analysis described here is distinct from the newer
+local routing experiment. The [17 September research review](../research/methodology-review-2026-09.md)
+documents fresh preference routing, fixed-demand assignment, an expanded 169-OD
+pilot, primary-source comparisons and the remaining validation gates. Its results
+do not overwrite the production forecasts or appraisal outputs.
+
 ## 1. Purpose and inferential boundary
 
-The workbench compares possible cycling-network interventions at metropolitan
+SPAN compares possible cycling-network interventions at metropolitan
 screening scale. Its unit of analysis is an origin–destination (OD) movement
 assigned to a directed, source-identified network. It estimates how stated
 scenarios and treatments change route availability, generalized cycling cost,
@@ -58,7 +64,7 @@ Product sensitivity and any table-specific exception must be recorded.
 Stats NZ Datafinder table 121988 version 410594 additionally removes rows whose
 total population is below six and includes only people whose workplace address
 is available at SA2. That structural absence is a third state: it is not an
-explicit suppression marker and not a published numeric zero. The workbench
+explicit suppression marker and not a published numeric zero. SPAN
 does not materialise a missing OD pair, assign it a destination, or apply the
 cell interval above. Missing-row and unlocated-workplace mass is retained in a
 source-coverage ledger as unresolved unless publisher totals support a bounded
@@ -96,8 +102,8 @@ therefore essential.
 ### 3.3 Explicit commute-cycling sensitivity
 
 The adopted Transport Emissions Reduction Pathway describes a 2030 target of
-17% of trips by cycling and micromobility together (and 13% by distance). The
-workbench's default 8% commute-cycling share is a configurable modelling
+17% of trips by cycling and micromobility together (and 13% by distance). SPAN's
+default 8% commute-cycling share is a configurable modelling
 sensitivity. It is neither a standalone adopted target nor a direct crosswalk
 from TERP's all-trip denominator to the Census commute denominator.
 
@@ -143,12 +149,12 @@ Import validation checks, at minimum:
 - weak components and isolated demand snaps; and
 - duplicate geometries without conflating legitimate parallel facilities.
 
-OD endpoints snap only to source-identified CIW nodes that have an unambiguous
+OD endpoints snap only to source-identified SPAN nodes that have an unambiguous
 endpoint identity in the reconciled R5 graph and belong to a compatible network
 component within the documented maximum distance. Routing starts and ends at
 those exact R5 vertices; it does not ask a coordinate linker to choose a nearby
 edge. Ambiguous source-node/engine-vertex mappings fail closed and are counted.
-The result retains CIW node, component, layer, snap distance, route status, and
+The result retains SPAN node, component, layer, snap distance, route status, and
 failure reason.
 
 ## 5. Traffic stress and generalized cost
@@ -171,13 +177,13 @@ where \(\ell_e\) is metres, \(m_{s(e)}\) is the LTS multiplier, \(g_e\) is
 directional rise/run, and the structure term records bridge and tunnel
 sensitivities. Intersection stress can raise, but not lower, link stress.
 
-R5 supplies directed route searches, but the CIW topology is authoritative for
+R5 supplies directed route searches, but the SPAN topology is authoritative for
 bicycle access, direction, stress, terrain, structure penalties, and exact
 segment identity. Every R5 directed edge is reconciled through OSM way geometry
-to an ordered CIW segment sequence. Unmapped engine edges have bicycle and
+to an ordered SPAN segment sequence. Unmapped engine edges have bicycle and
 pedestrian permission removed in the engine-local copy so R5 cannot silently
 fall back to walking a bicycle. Any path that cannot be reconciled to one
-contiguous, source-identified CIW sequence fails closed.
+contiguous, source-identified SPAN sequence fails closed.
 
 The first search minimizes generalized cost and a separate search establishes
 the shortest physical-distance denominator. Subsequent searches multiply the
@@ -238,9 +244,11 @@ cost \(C_0\), treated cost \(C_1\), and elasticity \(\eta\):
 
 The result is bounded to the eligible population and produces no benefit when
 cost does not improve. A declared small probability floor makes the logit
-finite for a disclosure-controlled zero, while the increment is still measured
-against the published baseline count so the floor itself is not counted as
-cycling. Elasticity and floor are explicit and sensitivity-tested. Benefits are
+finite for a disclosure-controlled zero. The current implementation measures
+the increment against the original baseline, so a small floor-related addition
+can occur where cost improves, even at zero elasticity. This is a numerical
+sensitivity, not evidence of uptake. Elasticity and floor are explicit and
+sensitivity-tested. Benefits are
 credited only to modelled incremental activity under this response model;
 scenario trips that merely reroute are not automatically counted as newly
 induced trips.
@@ -258,7 +266,7 @@ Let \(\Omega\) be a declared analysis set of OD relations. A pair passes when a
 directed path exists using edges at or below the LTS threshold and its physical
 length is no more than \(\delta\) times the unrestricted feasible route length.
 When the full-network calculation has executed, unweighted and demand-weighted
-**CIW OD low-stress connectivity shares** are defined as:
+**SPAN OD low-stress connectivity shares** are defined as:
 
 \[
 \mathrm{LS}_{\mathrm{OD}}=|\Omega|^{-1}\sum_{i\in\Omega}I_i,\qquad
@@ -289,10 +297,11 @@ exact-edge treatments and recomputes costs, path probabilities, demand response,
 and appraisal over the affected retained path market. This captures overlap and
 some complementarity without repeatedly crediting static candidate totals, but
 it is not full-network rerouting and cannot reveal paths absent from the retained
-choice set. The reference full-network algorithm is separately tested; a future
-production run must use it before claiming network-wide route or connectivity
-effects. Presets and Pareto membership are decision aids, not proof of a globally
-optimal programme. Budget, dependency, deliverability, and geographic
+choice set. The reference full-network algorithm is separately tested, but the
+Auckland full-network connectivity result is intentionally reserved for the
+separate sabbatical research integration. No Auckland point estimate is
+reported here. Presets and Pareto membership are decision aids, not proof of a
+globally optimal programme. Budget, dependency, deliverability, and geographic
 constraints remain explicit scenario inputs.
 
 ## 10. Economics
@@ -304,11 +313,12 @@ General Circular 25/01: 2% in years 1–30 and 1.5% in years 31–40, with the
 required constant 8% sensitivity also reported. Capital, operations,
 maintenance, renewals, treatment life, and residual value are separate
 cash-flow fields in a common real price base. Benefit categories are not
-double-counted. An analytically reviewed run may report an indicative lifecycle
-benefit–cost ratio, not a formal appraisal BCR. The current public Auckland
-research asset does not report that ratio: its appraisal capability is
-`withheld`, all BCR fields are null, and the Appraisal lens is disabled until
-the local release inputs below pass expert review.
+double-counted. A research snapshot may report an indicative lifecycle
+benefit–cost ratio and interval for its declared evidence scenario, not a formal
+appraisal BCR. The capability is labelled `research_only`; provisional local
+cost, maintenance, renewal, residual, benefit, e-bike, price-base and
+demand-response inputs must pass expert review before decision use. Candidate
+BCRs are not additive and do not form a programme BCR.
 
 The applicable Waka Kotahi Monetised Benefits and Costs Manual is authoritative
 for a formal appraisal. Historical default values retained for reproducibility
@@ -339,7 +349,61 @@ grade. The profile reports data completeness, routing coverage, frontier or
 rank stability, parameter sensitivity, and explicit warnings. No one component
 is presented as a probability that a project will succeed.
 
-## 12. Core references
+## 12. Browser network context and route use
+
+Enriched Auckland exports include a separate display layer of existing streets
+and paths at LTS 2 or lower. Weak components are calculated from exact source
+node identities, before geometry is simplified for display. Proposals are
+grouped when they share a junction or touch the same existing low-stress
+component. Contacts along a corridor, as well as its two ends, are retained.
+The map highlights the attached existing areas and marks shared junctions.
+These groups describe physical continuity only: they do not establish bicycle
+direction, crossing quality, acceptable detour or complete OD accessibility.
+The regional build order still maximises its stated objective and does not
+require all selected links to form a connected programme.
+
+For commute portfolios, route use and induced uptake are reported separately.
+For each OD market, route use is its scenario cycling activity multiplied by
+the summed probabilities of retained paths using any treated link. A path
+using several treated links contributes once. After-treatment use applies the
+joint cost response and updated path probabilities. Thus travellers are
+deduplicated within a programme or package; separate package totals can overlap
+and must not be added. Uptake measures additional usual cycle commuters across
+affected markets. Route-use changes also include rerouting, and need not equal
+uptake. Neither measure represents daily journeys or all-purpose cycling.
+
+Physical packages are independently evaluated against the scenario baseline,
+using the retained alternatives. New routes outside those alternatives are
+not discovered. Before export, recalculated cumulative uptake must match the
+stored portfolio sequence; a mismatch blocks enrichment. Source ledgers,
+parameters and implementation are fingerprinted in the context metadata.
+
+The baseline audit distinguishes routed internal OD demand from broader source
+margins. Suppressed bicycle cells use the lower bound, and these universes have
+different coverage. A high routing rate within the prepared internal market
+must not be interpreted as coverage of the full market, or corrected through
+an untested global scaling factor. Provisional capital rates are disclosed
+separately from project-specific cost estimates.
+
+### Journey equivalents and OD concentration
+
+Usual commuters remain the demand unit. The browser also offers illustrative
+journey equivalents: people × cycling commute days/year × one-way journeys/day.
+Defaults are 220 days and two legs, matching this run's appraisal calendar.
+Average months divide annual equivalents by 12; cycling-day equivalents use
+the assumed legs per cycling day. Neither adds unique riders or predicts
+seasonality. Return routes are not separately assigned. User calendar changes
+affect the display only, leaving stored demand, ranking and BCR results intact.
+
+Optional OD diagnostics reproduce candidate uptake from checked ledgers before
+calculating the largest-record and largest-three-record contribution shares.
+Only diagnostics matching the active run and candidate-layer hash are shown.
+Response-elasticity cases are not confidence bounds. Existing Monte Carlo
+parameter-sensitivity percentages hold the OD sample fixed and cannot establish
+sampling stability. The [local research note](../research/span-access-first-experiment.md)
+records the separate complete-route/package experiment and its limits.
+
+## 13. Core references
 
 The main methodological precedents are Lovelace et al. (2017), Goodman et al.
 (2019), Mekuria et al. (2012), Lowry et al. (2012), Furth et al. (2016), Lowry

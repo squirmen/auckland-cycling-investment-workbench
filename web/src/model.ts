@@ -41,6 +41,89 @@ export function purposeBenefit(metric: CandidateMetric, purpose: PurposeId): num
   return objectiveValue(metric, purpose);
 }
 
+function lineParts(geometry: CandidateFeature["geometry"]): [number, number][][] {
+  return geometry.type === "LineString" ? [geometry.coordinates] : geometry.coordinates;
+}
+
+function segmentKm([x1, y1]: [number, number], [x2, y2]: [number, number]): number {
+  const latitude = ((y1 + y2) / 2) * (Math.PI / 180);
+  const dx = (x2 - x1) * (Math.PI / 180) * Math.cos(latitude);
+  const dy = (y2 - y1) * (Math.PI / 180);
+  return Math.hypot(dx, dy) * 6371;
+}
+
+/** Physical length of a candidate's geometry in kilometres. */
+export function lengthKm(geometry: CandidateFeature["geometry"]): number {
+  return lineParts(geometry).reduce(
+    (total, part) => total + part.slice(1).reduce((sum, point, index) => sum + segmentKm(part[index]!, point), 0),
+    0,
+  );
+}
+
+/** Physical groups use exact-node contacts through the existing low-stress graph.
+ * They do not establish directed OD accessibility or an acceptable detour. */
+export function connectedGroups(candidates: CandidateFeature[]): CandidateFeature[][] {
+  const parent = new Map(candidates.map((candidate) => [candidate.properties.candidateId, candidate.properties.candidateId]));
+  const root = (id: string): string => {
+    let current = id;
+    while (parent.get(current) !== current) current = parent.get(current)!;
+    let next = id;
+    while (next !== current) {
+      const previous = parent.get(next)!;
+      parent.set(next, current);
+      next = previous;
+    }
+    return current;
+  };
+  const join = (a: string, b: string): void => { parent.set(root(a), root(b)); };
+  const areaOwner = new Map<string, string>();
+  for (const candidate of candidates) {
+    const { candidateId: id, networkContext: context } = candidate.properties;
+    for (const area of context?.componentIds ?? []) {
+      const other = areaOwner.get(area);
+      if (other) join(id, other);
+      else areaOwner.set(area, id);
+    }
+    for (const other of context?.touchingCandidateIds ?? []) if (parent.has(other)) join(id, other);
+  }
+  const groups = new Map<string, CandidateFeature[]>();
+  for (const candidate of candidates) {
+    const id = root(candidate.properties.candidateId);
+    const group = groups.get(id) ?? [];
+    group.push(candidate);
+    groups.set(id, group);
+  }
+  return [...groups.values()];
+}
+
+export function packageKey(ids: string[]): string {
+  return [...ids].sort().join("|");
+}
+
+export function candidateLengthKm(candidate: CandidateFeature): number {
+  return candidate.properties.networkContext?.lengthKm ?? lengthKm(candidate.geometry);
+}
+
+/** The point halfway along the longest part, as [longitude, latitude]. */
+export function midpoint(geometry: CandidateFeature["geometry"]): [number, number] {
+  const parts = lineParts(geometry);
+  const part = parts.reduce((best, item) => (lengthKm({ type: "LineString", coordinates: item }) >
+    lengthKm({ type: "LineString", coordinates: best }) ? item : best), parts[0]!);
+  const half = lengthKm({ type: "LineString", coordinates: part }) / 2;
+  let travelled = 0;
+  for (let index = 1; index < part.length; index += 1) {
+    const start = part[index - 1]!;
+    const end = part[index]!;
+    const step = segmentKm(start, end);
+    if (travelled + step >= half && step > 0) {
+      const share = (half - travelled) / step;
+      return [start[0] + (end[0] - start[0]) * share, start[1] + (end[1] - start[1]) * share];
+    }
+    travelled += step;
+  }
+  return part[0]!;
+}
+
 export function paretoFront(
   candidates: CandidateFeature[],
   scenario: ScenarioId,

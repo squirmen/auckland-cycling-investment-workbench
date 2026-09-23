@@ -48,7 +48,7 @@ const localMethodologyUrlSchema = localAssetUrlSchema.refine(
 );
 
 export const layerSchema = z.object({
-  id: z.enum(["cells", "network", "candidates", "programmes", "counters"]),
+  id: z.enum(["cells", "network", "candidates", "programmes", "counters", "safety", "existing", "intersections"]),
   label: z.string().min(1),
   url: localAssetUrlSchema,
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
@@ -117,6 +117,35 @@ const metricByScenarioSchema = z.object({
   commute_8pct: metricByPurposeSchema,
 });
 
+export const routeUseSchema = z.object({
+  before: z.number().finite().nonnegative(),
+  after: z.number().finite().nonnegative(),
+  additional: z.number().finite().nonnegative(),
+});
+export type RouteUse = z.infer<typeof routeUseSchema>;
+
+export const candidateNetworkContextSchema = z.object({
+  role: z.enum(["joins_areas", "within_area", "extends_area", "separate"]),
+  lengthKm: z.number().finite().nonnegative(),
+  direction: z.enum(["both", "forward", "reverse", "mixed"]),
+  componentIds: z.array(z.string().min(1)),
+  contacts: z.array(z.object({
+    nodeId: z.string().min(1),
+    componentId: z.string().min(1),
+    coordinates: z.tuple([z.number().finite(), z.number().finite()]),
+  })).optional(),
+  existingKm: z.number().finite().nonnegative(),
+  touchingCandidateIds: z.array(z.string().min(1)),
+  endpoints: z.array(z.object({
+    label: z.enum(["A", "B"]),
+    nodeId: z.string().min(1),
+    coordinates: z.tuple([z.number().finite(), z.number().finite()]),
+    componentId: z.string().nullable(),
+    existingKm: z.number().finite().nonnegative(),
+    touchingCandidateIds: z.array(z.string().min(1)),
+  })).length(2),
+});
+
 export const candidatePropertiesSchema = z.object({
   candidateId: z.string().min(1),
   name: z.string().min(1),
@@ -126,6 +155,14 @@ export const candidatePropertiesSchema = z.object({
   programmeStatus: z.enum(["unprogrammed", "aligned", "funded", "possible_duplicate"]),
   rationale: z.string().min(1),
   metrics: metricByScenarioSchema,
+  networkContext: candidateNetworkContextSchema.optional(),
+  commuteRouteUse: z.object({
+    baseline: routeUseSchema,
+    government_target: routeUseSchema,
+    go_dutch: routeUseSchema,
+    ebike: routeUseSchema,
+    commute_8pct: routeUseSchema,
+  }).optional(),
 });
 
 export type CandidateProperties = z.infer<typeof candidatePropertiesSchema>;
@@ -172,6 +209,8 @@ export const portfolioStepSchema = z.object({
   cumulativeObjective: z.number().nonnegative(),
   objectiveUnit: z.string().min(1),
   paretoMember: z.boolean(),
+  routeUsersBefore: z.number().finite().nonnegative().optional(),
+  routeUsersAfter: z.number().finite().nonnegative().optional(),
 });
 
 const portfolioPurposeSchema = z.object({
@@ -222,6 +261,7 @@ const validationSchema = z.object({
   matchedCount: z.number().int().nonnegative(),
   coverage: z.number().min(0).max(1),
   purposeAlignment: z.string().min(1),
+  status: z.string().min(1),
 }).refine((value) => value.matchedCount <= value.counterCount, {
   message: "Matched counter count cannot exceed the complete counter count",
 });
@@ -253,6 +293,42 @@ export const manifestSchema = z.object({
   layers: z.array(layerSchema),
   attribution: z.array(z.string().min(1)),
   methodologyUrl: localMethodologyUrlSchema,
+  effectiveNetwork: z.object({
+    version: z.string(), method: z.literal("unambiguous_at_grade_source_junctions"),
+    status: z.literal("screening_sensitivity"), runId: z.string(),
+    inventorySites: z.number().int().nonnegative(), matchedSites: z.number().int().nonnegative(),
+    reviewSites: z.number().int().nonnegative(), directedMovements: z.number().int().nonnegative(),
+    topologySha256: z.string().regex(/^[a-f0-9]{64}$/),
+    inventorySha256: z.string().regex(/^[a-f0-9]{64}$/), note: z.string(),
+  }).optional(),
+  networkContext: z.object({
+    version: z.string(),
+    method: z.literal("weak_components_exact_source_nodes"),
+    maximumLts: z.number().int().min(1).max(4),
+    displaySimplificationM: z.number().nonnegative(),
+    edgeCount: z.number().int().nonnegative(),
+    componentCount: z.number().int().nonnegative(),
+    lengthKm: z.number().nonnegative(),
+    note: z.string(),
+    routeUseNote: z.string(),
+    sourceFiles: z.record(z.string().regex(/^[a-f0-9]{64}$/)),
+    implementationSha256: z.string().regex(/^[a-f0-9]{64}$/),
+    packages: z.array(routeUseSchema.extend({
+      scenario: z.enum(scenarioIds),
+      candidateIds: z.array(z.string().min(1)).min(1),
+    })),
+  }).optional(),
+  demandContext: z.object({
+    routedBaselineUsers: z.number().nonnegative().nullable(),
+    sourceMarginUsers: z.number().nonnegative().nullable(),
+    routedEligible: z.number().nonnegative().nullable(),
+    internalEligible: z.number().nonnegative().nullable(),
+    sourceEligible: z.number().nonnegative().nullable(),
+    internalCoverage: z.number().nonnegative().nullable(),
+    sourceCoverage: z.number().nonnegative().nullable(),
+    capitalCostPerKm: z.number().positive(),
+    note: z.string(),
+  }).optional(),
 }).superRefine((value, context) => {
   if (!value.scenarios.every((scenario, index) => scenario.id === scenarioIds[index])) {
     context.addIssue({
@@ -281,11 +357,14 @@ export type Manifest = z.infer<typeof manifestSchema>;
 export type PortfolioStep = z.infer<typeof portfolioStepSchema>;
 
 export interface LoadedLayers {
+  intersections?: GenericFeatureCollection;
+  existing?: GenericFeatureCollection;
   cells?: GenericFeatureCollection;
   network?: GenericFeatureCollection;
   candidates?: GenericFeatureCollection;
   programmes?: GenericFeatureCollection;
   counters?: GenericFeatureCollection;
+  safety?: GenericFeatureCollection;
 }
 
 export interface AppState {
@@ -295,6 +374,7 @@ export interface AppState {
   selectedCandidateId: string | null;
   visibleLayerIds: Set<string>;
   portfolioIds: Set<string>;
-  activeTab: "portfolio" | "pareto" | "evidence";
+  activeTab: "portfolio" | "pareto";
   sketching: boolean;
+  focusedGroupIds: Set<string>;
 }

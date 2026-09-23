@@ -50,7 +50,7 @@ export async function loadDefaultLayers(manifest: Manifest): Promise<LoadedLayer
   const layers: LoadedLayers = {};
   await Promise.all(
     manifest.layers
-      .filter((layer) => layer.defaultVisible || layer.id === "network" || layer.id === "candidates")
+      .filter((layer) => layer.defaultVisible || layer.id === "candidates")
       .map(async (layer) => {
         try {
           layers[layer.id] = await loadLayer(manifest, layer.id);
