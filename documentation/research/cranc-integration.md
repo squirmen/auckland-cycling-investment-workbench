@@ -14,11 +14,10 @@ specified investment. A planner should see these results beside SPAN's measures,
 with the provider, profile, time cutoff, population weights and opportunity
 dataset visible. An opportunity gain is never relabelled as extra cyclists.
 
-The research page now supports a local file exchange. “Export comparison request”
-records the active investment and source fingerprints. “Import attributed
-comparison JSON” validates a returned aggregate comparison, then displays the
-before/after measurement and attribution. Changing the package to one that does
-not match hides its result and explains the mismatch. Missing values are not zero.
+The request and comparison validators exist in `web/src/cranc.ts`, with unit
+tests for scope matching and invalid results. The earlier public file-exchange
+panel was removed on 24 September to keep one understandable SPAN workspace.
+There are no CRANC results or integration controls in the public interface.
 
 This is an integration boundary, not a live API connection or a claim that CRANC
 natively emits the SPAN envelope. Steve retains ownership of profiles, coefficient
@@ -76,16 +75,16 @@ SPAN verifies their presence, not the truth of that scientific validation.
 
 ## Where to connect CRANC
 
-Integration map updated 24 September 2026. The first integration point is the
-**research page, after a complete investment package has been selected**. It is
+Integration map updated 24 September 2026. The intended integration point is
+**Connected journeys in SPAN, after a complete package has been selected**. It is
 not a replacement for the main Auckland ranking engine and is not a new source
 of cyclist counts.
 
 | Layer | Exact entry point | Status / responsibility |
 | --- | --- | --- |
-| Planner interface | `web/research.html`, section `#cranc-accessibility` | Implemented: a clearly labelled accessibility panel with local request/result exchange. |
+| Planner interface | `web/index.html`, section `#tab-connected` | Future “Access to destinations” result. Do not expose unfinished integration machinery or collaborator biographies in the planning interface. |
 | Request and result boundary | `web/src/cranc.ts`: `crancRequest`, `crancComparisonSchema`, `checkCrancScope` | Implemented: run/network/origin/weight/project matching, units and attribution. Keep transport code separate from these validators. |
-| Active investment context | `web/src/research.ts`: `comparisonContext`, `renderCranc`, `importCranc` | Implemented: binds the comparison to the selected package, refuses mismatches, and displays provider results separately. |
+| Active investment context | `web/src/connected.ts`: `ConnectedJourneys`, `report`, `solution`, `render` | Selected package and source report are available here. Future adapter results must pass the existing validators plus an extended routing-scope check before display. No provider request runs here today. |
 | Investment geometry and provenance | `web/src/research-data.ts`: `portfolioGeoJson`; source candidate ledger `ordered_edge_ids` | Implemented SPAN side. Use exact source edge identities for the crosswalk; map lines alone do not identify CRANC edges. |
 | CRANC execution adapter | Proposed `src/cycling_investment_workbench/integrations/cranc.py` and `scripts/run_cranc_comparison.py` | **Not implemented.** Run locally/server-side, with an explicitly configured endpoint and approved data sharing. Prepare paired scenarios, call CRANC and wrap validated aggregate outputs. Do not embed credentials or silently upload origins from the browser. |
 | CRANC graph/scenario support | Collaborator-owned graph import/scenario mechanism | **Not implemented in SPAN.** Agree with Steve how project treatments and crossing assumptions map onto CRANC's directed graph, then verify that investment actually changes the graph. |
@@ -116,11 +115,9 @@ SPAN selected package + agreed origins/weights/opportunities
    no-change package, inaccessible origins and stale-result rejection. Only then
    enable a live connection or wider comparisons.
 
-The local v1 panel is useful for independently attributed accessibility results,
-but its source/project match is narrower than a full routing-equivalence check.
-The UI explicitly warns about this distinction. Until the adapter and extended
-scope contract exist, comparison files must be prepared in the agreed external
-workflow; the exported request is not directly runnable CRANC input.
+The v1 source/project match is narrower than a full routing-equivalence check.
+Keep the public panel disabled until the adapter and extended scope contract
+exist. The request object is not directly runnable CRANC input.
 
 ## Version 1 exchange contract
 
@@ -152,16 +149,16 @@ eligible weight)` pairs for the same local records. Compute accessible opportuni
 once per distinct origin, then apply the recorded weights; repeated records must
 not duplicate destinations within a single origin's catchment. These fingerprints
 are identifiers, not enough information to run CRANC. A local collaboration still
-needs an agreed origin table, opportunity inventory and graph crosswalk. The UI
-request deliberately does not export raw OD locations or send them to a server.
+needs an agreed origin table, opportunity inventory and graph crosswalk. The
+request builder does not export raw OD locations or send them to a server.
 
 Both outcomes share the single scope/provider envelope, so they must use the
 same origins, weights, opportunity inventory, profile and cutoff. A nonempty
 investment requires a different network-scenario hash. IDs must be unique;
-null, negative and non-finite result values are rejected. The UI additionally
-matches the network, run, origins, weights and exact selected project set to the
-active SPAN experiment. Importing a syntactically valid file does not authenticate
-its producer or independently validate the underlying measurements; the UI says so.
+null, negative and non-finite result values are rejected. The scope validator
+matches the network, run, origins, weights and exact selected project set.
+Passing this validator does not authenticate the producer or independently
+validate the underlying measurements. A future results view must explain that.
 
 No default CRANC numbers are shipped. Synthetic contract fixtures exist only in
 tests and are labelled as such. Version 1 can be extended later to multiple

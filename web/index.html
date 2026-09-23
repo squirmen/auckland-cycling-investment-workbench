@@ -53,10 +53,12 @@
 
         <div id="panel-body" class="panel-body">
           <p id="lede" class="lede">Ranks possible new cycling links in Auckland and shows which to build first for a goal and a budget.</p>
-          <p class="help"><a href="./research.html">Research: complete journeys and connected investment →</a></p>
-          <p class="help"><a href="./research.html#cranc-accessibility">CRANC accessibility · integration point →</a></p>
-          <details class="method-note"><summary>Planning use · evidence and limits</summary><div class="context-note"><p>Use SPAN to screen candidate links, compare scenarios and identify packages for closer investigation. The published scenario rankings use retained routes; the research view tests fresh routing after investment.</p><p>Demand response is uncalibrated and some leading gains depend heavily on individual weighted OD records. Costs are screening estimates. Validate route coverage, crossings, programmed projects, distribution of access and design feasibility before an investment decision.</p><p><a href="./documentation/research-review.md">Methodology, research contribution and validation gates</a></p></div></details>
-
+          <div class="tabs" role="tablist" aria-label="Views">
+            <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Build order</button>
+            <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Value for money</button>
+            <button id="control-connected" class="tab" role="tab" type="button" data-tab="connected" aria-controls="tab-connected" aria-selected="false" tabindex="-1">Connected journeys</button>
+          </div>
+          <div id="ranking-controls">
           <div class="field">
             <span id="goal-label" class="field-label">Goal</span>
             <div id="purpose-picker" class="chips" role="radiogroup" aria-labelledby="goal-label"></div>
@@ -78,6 +80,25 @@
             <p id="scenario-note" class="help"></p>
           </div>
 
+
+
+          </div>
+
+          <section id="tab-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="control-portfolio">
+            <div id="portfolio-summary" class="hero" aria-live="polite"></div>
+            <button id="programme-zoom" type="button" class="secondary">Show all upgrades on the map</button>
+            <section id="network-groups" class="network-groups" aria-label="Network groups" hidden></section>
+            <div class="section-title-row">
+              <span class="field-label">In the build order</span>
+              <span id="portfolio-count" class="badge"></span>
+            </div>
+            <input id="candidate-search" class="candidate-search" type="search" placeholder="Find a street in this list" aria-label="Find a street in the build order" autocomplete="off" />
+            <p id="candidate-search-status" class="list-status" aria-live="polite"></p>
+            <ol id="candidate-list" class="rank-list"></ol>
+            <button id="show-more-button" class="secondary show-more" type="button" hidden>Show more</button>
+            <details class="method-note">
+              <summary>How the build order is worked out</summary>
+              <div id="connectivity-context" class="context-note"></div>
           <details id="journey-controls" class="method-note journey-controls">
             <summary>Journeys over time · assumptions</summary>
             <div class="context-note">
@@ -94,26 +115,6 @@
               <p class="help">Assumed frequency for each usual cycle commuter. Annual ÷ 12 gives an average month, without seasonality. Changing this display does not change demand, rankings or benefit–cost ratios.</p>
             </div>
           </details>
-
-          <div class="tabs" role="tablist" aria-label="Views">
-            <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Build order</button>
-            <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Value for money</button>
-          </div>
-
-          <section id="tab-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="control-portfolio">
-            <div id="portfolio-summary" class="hero" aria-live="polite"></div>
-            <section id="network-groups" class="network-groups" aria-label="Network groups" hidden></section>
-            <div class="section-title-row">
-              <span class="field-label">In the build order</span>
-              <span id="portfolio-count" class="badge"></span>
-            </div>
-            <input id="candidate-search" class="candidate-search" type="search" placeholder="Find a street in this list" aria-label="Find a street in the build order" autocomplete="off" />
-            <p id="candidate-search-status" class="list-status" aria-live="polite"></p>
-            <ol id="candidate-list" class="rank-list"></ol>
-            <button id="show-more-button" class="secondary show-more" type="button" hidden>Show more</button>
-            <details class="method-note">
-              <summary>How the build order is worked out</summary>
-              <div id="connectivity-context" class="context-note"></div>
             </details>
           </section>
 
@@ -128,6 +129,24 @@
             <p id="pareto-plot-status" class="list-status"></p>
             <span id="pareto-heading" class="field-label">Best-value links</span>
             <div id="pareto-list" class="compact-list"></div>
+          </section>
+
+          <section id="tab-connected" class="tab-panel connected-panel" role="tabpanel" aria-labelledby="control-connected" hidden>
+            <p class="scope-note"><strong>North Shore sample</strong> · separate from the Auckland-wide build order.</p>
+            <p id="connected-status" class="help" role="status">Loading journey options…</p>
+            <div id="connected-controls" hidden>
+              <div class="field"><label class="field-label" for="connected-budget">Budget for this area</label><select id="connected-budget"></select><p class="help">Choose a pre-calculated budget. Each is a separate package, not the next step in the build order.</p></div>
+              <section id="connected-outcomes" class="connected-outcomes" aria-label="Package results" aria-live="polite"></section>
+              <p class="help">Routes that meet the model's limits, not a forecast of new cyclists.</p>
+              <div class="field"><label class="field-label" for="connected-journey">Choose a journey</label><select id="connected-journey"></select></div>
+              <div class="field"><label class="field-label" for="connected-alternative">Route</label><select id="connected-alternative"></select></div>
+              <div id="connected-route-detail" aria-live="polite"></div>
+              <details class="method-note"><summary>Upgrades needed for this journey</summary><div id="connected-projects" class="context-note"></div></details>
+              <button id="connected-zoom" type="button" class="secondary">Show this journey on the map</button>
+              <details class="method-note"><summary>Compare ways to choose upgrades</summary><div class="context-note"><label for="connected-method">Selection method</label><select id="connected-method"><option value="route_packages_milp">Choose whole packages together</option><option value="package_greedy">Add the best package at each step</option><option value="single_project_greedy">Add the best single link at each step</option></select><p class="help">All methods use the same budget and sample. A package includes every upgrade needed to complete a route.</p></div></details>
+              <details class="method-note"><summary>Route preferences</summary><div class="context-note"><label for="connected-preference">Compare route choices</label><select id="connected-preference"><option value="access">Any route within the limits</option></select><p id="connected-assignment-summary"></p><details><summary>Calculation settings</summary><p id="connected-preference-assumptions"></p></details><p class="help">These are illustrative preferences, not measured groups of cyclists. Each uses the same travel demand; do not add their results together.</p></div></details>
+              <details class="method-note"><summary>What these results can tell you</summary><div class="context-note"><p>Use this to check how links work together and identify routes for closer inspection. Costs and intersection waits are estimates, not designs or observed signal timings.</p><p id="connected-coverage"></p><p id="connected-standard"></p><p id="connected-weight"></p><p id="connected-provenance"></p><p><a href="./documentation/effective-network.md">Data and calculation notes</a></p></div></details>
+            </div>
           </section>
 
           <details id="sketch-disclosure" class="advanced-panel">
@@ -216,9 +235,12 @@
       <div class="about-body">
         <section>
           <p>SPAN (Spending Priorities for Active Networks) ranks possible new cycling links in Auckland and puts them in a build order for a goal and a budget. It shows what each link would add, what it costs, and how firm the estimate is.</p>
+          <p>Build order shows which links to fund first. Value for money compares their costs and effects. Connected journeys checks which upgrades need to be built together to complete a route; it currently covers a North Shore sample only.</p>
         </section>
         <section>
           <h3>Reading the map</h3>
+          <p id="intersection-source-note"></p>
+          <p>Cycle counters: July 2026. Cycle crashes: 2016–2025. These layers provide context; they do not establish the effect of a proposed upgrade.</p>
           <ul>
             <li>Green numbered lines are the build order: the links that fit in the budget, numbered in the order to build them.</li>
             <li>Orange is the link you have selected. Click a line or a list row to see its details.</li>

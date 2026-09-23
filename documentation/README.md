@@ -6,6 +6,7 @@ planning material, equations, references, and visual record.
 Current SPAN additions:
 
 - [Effective-network beta and server handoff](research/span-effective-network.md)
+- [SPAN interface and TEAM reuse review](audit/span-interface-and-team-review-2026-09-24.md)
 - [CRANC entry points and adapter checklist](research/cranc-integration.md#where-to-connect-cranc)
 - [24 September improvement review](audit/span-improvement-review-2026-09-24.md)
 - [Complete-route experiment](research/span-access-first-experiment.md)

@@ -50,12 +50,12 @@ try {
     await page.goto(`${base}?offline=1&layers=existing,intersections`, { waitUntil: "load" });
     await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false", { timeout: 90000 });
     await expect(page.locator("#controls-panel h1")).toHaveText("SPAN");
-    await expect(page.locator("#data-status")).toHaveText("Research snapshot");
+    await expect(page.locator("#data-status")).toHaveText("Preliminary estimates");
     await expect(page.locator("#run-summary")).toContainText(manifest.runId);
     await expect(page.locator("#status-message")).not.toHaveClass(/error/);
     await expect(page.locator("#layer-intersections")).toBeChecked();
     await expect(page.locator("#map-legend-items")).toContainText("Matched signal-controlled site");
-    await expect(page.locator("#layer-controls")).toContainText(`${manifest.effectiveNetwork.matchedSites} of`);
+    await expect(page.locator("#intersection-source-note")).toContainText(`${manifest.effectiveNetwork.matchedSites} of`);
     await page.waitForTimeout(500); // Let Leaflet's fit/pan animation settle before visual QA.
     await page.screenshot({ path: path.join(output, `${name}-explorer.png`) });
     if (name === "desktop") {
@@ -64,8 +64,10 @@ try {
       await expect(page.locator("#map-legend-items")).not.toContainText("Matched signal-controlled site");
       await page.locator("#layer-intersections").check();
       await expect(page.locator("#map-legend-items")).toContainText("Matched signal-controlled site");
+      await page.screenshot({ path: path.join(output, "desktop-layers.png") });
       await page.locator("#layers-disclosure > summary").click();
-      const markerPoint = await page.evaluate(() => {
+      const markerPoints = await page.evaluate(() => {
+        const points = [];
         for (const canvas of document.querySelectorAll(".leaflet-points-pane canvas")) {
           const rect = canvas.getBoundingClientRect();
           const pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
@@ -75,52 +77,67 @@ try {
               if (pixels[offset] < 110 || pixels[offset] > 170 || pixels[offset + 1] > 120 || pixels[offset + 2] < 200 || pixels[offset + 3] < 150) continue;
               const screenX = rect.x + x * rect.width / canvas.width;
               const screenY = rect.y + y * rect.height / canvas.height;
-              if (screenX > 450 && screenX < innerWidth - 100 && screenY > 120 && screenY < innerHeight - 300 && document.elementFromPoint(screenX, screenY) === canvas) return { x: screenX, y: screenY };
+              if (screenX > 500 && screenX < innerWidth - 250 && screenY > 350 && screenY < innerHeight - 300 && document.elementFromPoint(screenX, screenY) === canvas && !points.some(p => Math.hypot(p.x - screenX, p.y - screenY) < 16)) points.push({ x: screenX, y: screenY });
             }
           }
         }
-        return null;
+        return points.slice(0, 30);
       });
-      assert.ok(markerPoint, "a matched signal marker must be drawn");
-      await page.mouse.click(markerPoint.x, markerPoint.y);
+      assert.ok(markerPoints.length, "a matched signal marker must be drawn");
+      let matchedPopup = false;
+      for (const point of markerPoints) {
+        await page.mouse.click(point.x, point.y);
+        if (await page.locator(".leaflet-popup-content").count()) {
+          if ((await page.locator(".leaflet-popup-content").innerText()).includes("Assumed delay:")) { matchedPopup = true; break; }
+          await page.keyboard.press("Escape");
+        }
+      }
+      assert.ok(matchedPopup, "a matched intersection popup must show its assumed wait");
       await expect(page.locator(".leaflet-popup-content")).toContainText("Assumed delay:");
       await expect(page.locator(".leaflet-popup-content")).toContainText("Actual phases, bicycle detection and waiting times require AT data");
       await page.waitForTimeout(500);
       await page.screenshot({ path: path.join(output, "desktop-intersection-popup.png") });
       await page.locator(".leaflet-popup-close-button").click();
+      await page.locator("#candidate-search").fill("Grand Drive");
       await page.locator("#candidate-list button").first().click();
       await expect(page.locator("#link-card")).toBeVisible();
       await expect(page.locator("#candidate-title")).not.toBeEmpty();
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: path.join(output, "desktop-link-details.png") });
     }
-    await page.goto(`${base}research.html`, { waitUntil: "load" });
-    await expect(page.locator("#research-status")).toContainText("not observed signal timings", { timeout: 30000 });
-    await expect(page.locator("#research-status")).toContainText(`${report.intersectionContext.sitesInCrop} matched intersections`);
+    if (name === "desktop") await page.locator("#link-close").click();
+    await page.getByRole("tab", { name: "Connected journeys" }).click();
+    await expect(page.locator("#connected-controls")).toBeVisible({ timeout: 30000 });
+    await expect(page.locator("#connected-provenance")).toContainText(`${report.intersectionContext.sitesInCrop} matched intersections`);
     const delayed = report.journeys.find(j => j.alternatives.some(r => r.intersectionDelayS > 0));
     assert.ok(delayed, "the pilot must exercise at least one nonzero delay");
-    await page.locator("#research-journey").selectOption(delayed.name);
+    await page.locator("#connected-journey").selectOption(delayed.name);
     const index = delayed.alternatives.findIndex(r => r.intersectionDelayS > 0);
-    await page.locator("#research-alternative").selectOption(String(index));
-    await expect(page.locator("#research-route-detail")).toContainText("assumed intersection delay");
+    await page.locator("#connected-alternative").selectOption(String(index));
+    await expect(page.locator("#connected-route-detail")).toContainText("assumed intersection delay");
     await page.waitForTimeout(500);
-    const drawnPaths = page.locator('#research-map .leaflet-overlay-pane path:not([d="M0 0"])');
+    const drawnPaths = page.locator('#map .connected-end');
     if (await drawnPaths.count() === 0) {
-      process.stdout.write(JSON.stringify(await page.locator("#research-map").evaluate(el => ({
+      process.stdout.write(JSON.stringify(await page.locator("#map").evaluate(el => ({
         viewport: el.getBoundingClientRect().toJSON(), pane: el.querySelector(".leaflet-map-pane")?.getAttribute("style"),
-        svg: el.querySelector("svg")?.outerHTML.slice(0, 500), markers: [...el.querySelectorAll(".research-end")].map(m => m.getAttribute("style")),
+        svg: el.querySelector("svg")?.outerHTML.slice(0, 500), markers: [...el.querySelectorAll(".connected-end")].map(m => m.getAttribute("style")),
       })), null, 2) + "\n");
     }
     await expect(drawnPaths.first()).toBeVisible();
-    await page.screenshot({ path: path.join(output, `${name}-research.png`), fullPage: true });
+    const endpoints = await drawnPaths.evaluateAll(markers => markers.map(m => m.getBoundingClientRect().toJSON()));
+    assert.ok(Math.hypot(endpoints[0].x - endpoints[1].x, endpoints[0].y - endpoints[1].y) > 60, "route must be legible at the fitted zoom");
+    await page.screenshot({ path: path.join(output, `${name}-connected.png`) });
     const download = page.waitForEvent("download");
-    await page.locator("#research-export").click();
+    await page.locator("#download-button").click();
     const exported = await download;
     const json = JSON.parse(await readFile(await exported.path(), "utf8"));
     assert.equal(json.type, "FeatureCollection");
     assert.ok(json.features.length > 0);
     assert.ok(json.span.inspectedRouteIntersectionDelayS > 0);
     assert.equal(json.span.intersectionContext.scenario, "default");
-    await page.locator("#research-preference").selectOption(report.assignment.profiles[0].id);
-    await expect(page.locator("#research-assignment-summary")).toContainText("not additional cyclists");
+    await page.getByText("Route preferences", { exact: true }).click();
+    await page.locator("#connected-preference").selectOption(report.assignment.profiles[0].id);
+    await expect(page.locator("#connected-assignment-summary")).toContainText("not additional cyclists");
     const notes = await context.request.get(`${base}documentation/effective-network.md`);
     assert.ok(notes.ok());
     const comparisonResponse = await context.request.get(`${base}data/delay-comparison.json`);

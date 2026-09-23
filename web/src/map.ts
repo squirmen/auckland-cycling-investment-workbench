@@ -4,6 +4,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import { midpoint, NetworkGraph, type SketchResult } from "./model";
 import type { AppState, CandidateFeature, GenericFeatureCollection, LoadedLayers, PortfolioStep } from "./types";
+import type { ResearchReport, ResearchRoute } from "./research-data";
 
 const AUCKLAND_CENTRE: L.LatLngExpression = [-36.855, 174.765];
 const BASEMAP_STYLES = {
@@ -88,6 +89,9 @@ export class SpanMap {
   private basemap: BasemapId = "analysis";
   private loadingBasemap: BasemapId | null = null;
   private basemapRequest = 0;
+  private connectedMode = false;
+  private readonly connectedGroup = L.featureGroup();
+  private rankingView: { centre: L.LatLng; zoom: number } | null = null;
 
   constructor(
     element: HTMLElement,
@@ -100,6 +104,7 @@ export class SpanMap {
       minZoom: 9,
       maxZoom: 18,
       preferCanvas: true,
+      zoomAnimation: false,
       attributionControl: true,
       zoomControl: false,
     });
@@ -204,6 +209,52 @@ export class SpanMap {
     this.render();
   }
 
+  /** Both investment views use this map and its current basemap. */
+  setConnectedMode(active: boolean): void {
+    if (active === this.connectedMode) return;
+    this.map.stop();
+    this.map.closePopup();
+    this.connectedMode = active;
+    if (active) {
+      this.rankingView = { centre: this.map.getCenter(), zoom: this.map.getZoom() };
+      for (const group of this.groups.values()) group.remove();
+      this.othersLayer?.remove();
+      this.sketchGroup.remove();
+      this.connectedGroup.addTo(this.map);
+    } else {
+      this.connectedGroup.remove();
+      for (const group of this.groups.values()) group.addTo(this.map);
+      this.sketchGroup.addTo(this.map);
+      this.render();
+      if (this.rankingView) this.map.setView(this.rankingView.centre, this.rankingView.zoom, { animate: false });
+    }
+  }
+
+  showConnectedRoute(report: ResearchReport, route?: ResearchRoute, fundedProjects: readonly string[] = []): void {
+    if (!this.connectedMode) return;
+    this.map.stop();
+    this.connectedGroup.clearLayers();
+    if (!route) {
+      this.map.setView([report.centre[1], report.centre[0]], 13, { animate: false });
+      return;
+    }
+    const points = (coordinates: number[][]): L.LatLngExpression[] => coordinates.map(p => [p[1]!, p[0]!]);
+    for (const project of report.projects.filter(p => route.projectIds.includes(p.id))) {
+      L.polyline(points(project.coordinates), { color: COLOURS.selected, weight: 3, dashArray: "5 5", opacity: 0.65 }).addTo(this.connectedGroup);
+    }
+    for (const segment of route.segments) {
+      L.polyline(points(segment.coordinates), { color: "white", weight: 8, interactive: false }).addTo(this.connectedGroup);
+    }
+    for (const segment of route.segments) {
+      const missing = segment.projectId && !fundedProjects.includes(segment.projectId);
+      L.polyline(points(segment.coordinates), { color: missing ? "#b42318" : segment.projectId ? COLOURS.selected : segment.existingCycleway ? COLOURS.build : COLOURS.street, weight: 5, dashArray: missing ? "6 6" : undefined, className: "connected-route-line" }).addTo(this.connectedGroup);
+    }
+    const ends = [route.segments[0]?.coordinates[0], route.segments.at(-1)?.coordinates.at(-1)];
+    ends.forEach((p, i) => { if (p) L.marker([p[1], p[0]], { icon: L.divIcon({ className: "connected-end", html: i === 0 ? "A" : "B", iconSize: [26, 26] }), title: i === 0 ? "Journey start" : "Journey end" }).addTo(this.connectedGroup); });
+    const bounds = this.connectedGroup.getBounds();
+    if (bounds.isValid()) this.map.fitBounds(bounds, { ...this.paddingOptions(), maxZoom: 16, animate: false });
+  }
+
   /** Show the whole build order, clear of the panels. */
   fitBuildOrder(): void {
     const bounds = L.latLngBounds([]);
@@ -263,7 +314,7 @@ export class SpanMap {
   }
 
   private render(): void {
-    if (!this.state) return;
+    if (!this.state || this.connectedMode) return;
     this.renderDemand();
     this.renderOnce("existing", () => this.drawExisting());
     this.highlightExisting();
@@ -577,6 +628,7 @@ export class SpanMap {
   }
 
   private handleSketchClick(event: L.LeafletMouseEvent): void {
+    if (this.connectedMode) return;
     if (!this.state?.sketching || !this.networkGraph) return;
     this.sketchPoints.push([event.latlng.lng, event.latlng.lat]);
     L.circleMarker(event.latlng, sketchPoint()).addTo(this.sketchGroup);

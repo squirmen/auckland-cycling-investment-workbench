@@ -127,20 +127,21 @@ PYTHONPATH=src .venv/bin/python scripts/package_span_site.py
 The comparison checks identical graph size, source ledger hashes, journeys,
 weights, planning standard and fixed demand across all four runs. Search
 completion is disclosed separately from solver optimality over generated routes.
-The public research page uses the default sensitivity and links to the full
-comparison JSON. The local audit contains the exact junction and arc identities.
+Connected journeys in the main SPAN workspace uses the default sensitivity.
+The full comparison remains bundled as `data/delay-comparison.json`. The local
+audit contains the exact junction and arc identities.
 
 ## Server handoff
 
 The resulting `release-assets/span-effective-network-beta.zip` is a complete
-static **SPAN** site, with main and research pages, hashed assets, browser data,
+static **SPAN** site, with one map workspace, an old-URL redirect, hashed assets, browser data,
 method notes and Apache `.htaccess`. No Python server, raw source topology,
 person-level data or OD ledger is included. The companion JSON records archive
 and per-file SHA-256 hashes. Creating the archive does not deploy anything.
 
 Back up the existing SPAN document root. Extract this archive into a separate
 staging directory for the **SPAN host**, preserve hidden files, and ensure files
-are web-readable. Test the main map, intersection toggle/popups, research page,
+are web-readable. Test the main map, intersection toggle/popups, Connected journeys,
 route export and documentation before switching the server to the new directory.
 Keep the old directory for rollback. Use HTTPS because browser data-integrity
 checks require a secure context. Apache must permit the bundled settings; on

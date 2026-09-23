@@ -212,7 +212,7 @@ input[type="range"] { width: 100%; margin: 2px 0 0; accent-color: var(--navy); }
   z-index: 2;
   top: 63px;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   margin: 2px -14px 0;
   padding: 0 8px;
   border-bottom: 1px solid var(--line);
@@ -433,7 +433,7 @@ button.quiet-button { min-height: 0; padding: 4px 0; border: 0; background: none
 .layers { position: relative; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; box-shadow: var(--shadow-soft); }
 .layers summary { min-height: 36px; padding: 8px 12px; color: var(--ink-soft); font-size: 12.5px; font-weight: 600; list-style: none; cursor: pointer; }
 .layers summary::-webkit-details-marker { display: none; }
-.layers-body { display: flex; flex-direction: column; gap: 8px; padding: 0 12px 12px; white-space: nowrap; }
+.layers-body { display: flex; flex-direction: column; gap: 8px; width: 240px; max-width: calc(100vw - 32px); max-height: 55dvh; overflow-y: auto; padding: 0 12px 12px; white-space: normal; }
 .check-list { display: flex; flex-direction: column; gap: 7px; }
 .check-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; }
 .check-row input { width: 16px; height: 16px; flex: 0 0 auto; margin: 2px 0 0; accent-color: var(--navy); }
@@ -451,7 +451,11 @@ button.quiet-button { min-height: 0; padding: 4px 0; border: 0; background: none
   box-shadow: var(--shadow-soft);
   font-size: 12px;
 }
-.map-legend > summary { display: none; color: var(--ink-soft); font-weight: 600; cursor: pointer; }
+.map-legend > summary { display: list-item; color: var(--ink-soft); font-weight: 600; cursor: pointer; }
+.map-legend[open] > summary { margin-bottom: 8px; }
+.map-legend:not([open]) #map-legend-items { display: none !important; }
+.key-notes { font-size: 11px; color: var(--muted); }
+.key-notes p { margin: 8px 0 0; }
 #map-legend-items { display: flex !important; flex-direction: column; gap: 7px; }
 #map-legend-items:empty { display: none !important; }
 .key-row { display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: start; gap: 8px; }
@@ -601,3 +605,29 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
 .demand-audit h3 { margin-top: 0; }
 .demand-audit .detail-grid { display: grid; grid-template-columns: 1fr auto; gap: 10px; font-size: 12px; }
 .demand-audit dd { margin: 0; font-weight: 600; }
+
+/* One workspace: detail stays available without competing with the decision. */
+#ranking-controls { display: flex; flex-direction: column; gap: 14px; }
+.connected-panel .scope-note { color: var(--muted); font-size: 12px; margin: 0; }
+.connected-panel .field { margin: 14px 0; }
+.connected-panel select { width: 100%; }
+.connected-panel h2 { font-size: 17px; margin: 16px 0 6px; }
+.connected-panel p { font-size: 13px; }
+.connected-panel .method-note { margin-top: 16px; }
+.connected-outcomes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 12px 0; border-block: 1px solid var(--line); }
+.connected-outcomes strong, .connected-outcomes span { display: block; }
+.connected-outcomes strong { font-size: 25px; color: var(--navy); }
+.connected-outcomes span { font-size: 12px; color: var(--muted); }
+.connected-project { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.connected-project strong, .connected-project span { display: block; }
+.connected-project span { font-size: 12px; color: var(--muted); }
+.connected-end { background: var(--navy); border: 2px solid white; color: white; text-align: center; line-height: 22px; border-radius: 50%; font-weight: 700; }
+.connected-key { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 12px; }
+.connected-key i { width: 22px; height: 4px; }
+.programme-connections { font-size: 13px; margin: 2px 0 8px; }
+.model-steps { padding-left: 20px; }
+.model-steps li + li { margin-top: 7px; }
+.place-body > p { margin-bottom: 4px; font-size: 13px; }
+.place-body .estimate-status { font-size: 12px; color: var(--muted); }
+.journey-equivalents { padding: 0; border: 0; background: none; }
+.package-card { padding: 10px 0; border: 0; border-block: 1px solid var(--line); border-radius: 0; background: none; }

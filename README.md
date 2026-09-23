@@ -42,17 +42,18 @@ the run, not the accuracy of its forecasts.
 
 ## How it works
 
-The local development version includes explicit people-to-journey reporting,
-OD concentration diagnostics for the leading candidates, and a separate
-`research.html` view for the complete-route investment experiment. These are
-research additions, not a newly calibrated Auckland forecast. See the
+SPAN has one map workspace: **Build order**, **Value for money** and
+**Connected journeys**. Link details explain the treatment and connections first;
+journey equivalents, sampling diagnostics and sensitivity sit behind expandable
+method notes. Connected journeys currently covers a North Shore sample, not
+a citywide or calibrated forecast. Old `research.html` links redirect into SPAN.
+See the
 [results, limitations and reproduction commands](documentation/research/span-access-first-experiment.md).
 
 The [17 September methodology review](documentation/research/methodology-review-2026-09.md)
 records the expanded 169-OD experiment, preference-aware routing, conserved
-assignment and the limits of any novelty or planning-readiness claim. The research
-page exports GIS packages and supports a local, attributed
-[CRANC comparison exchange](documentation/research/cranc-integration.md).
+assignment and the limits of any novelty or planning-readiness claim. Connected
+journeys exports GIS packages with the selected route and funding status.
 
 The [effective-network beta](documentation/research/span-effective-network.md)
 adds an AT intersection inventory overlay and tests assumed waits on SPAN's
@@ -62,15 +63,18 @@ main explorer's investment rankings.
 
 ## Where CRANC fits
 
-Open **Research → CRANC accessibility** (`research.html#cranc-accessibility`).
-The panel already exports a scoped comparison request and imports an attributed
-aggregate result. **A live CRANC service is not connected.** CRANC supplies
-profile-specific access to destinations; SPAN selects investment packages.
-Accessibility gains remain separate from estimates of additional cycling.
+CRANC belongs after selection of a complete investment package, as a future
+**Access to destinations** result within SPAN. **There is no live integration or
+public CRANC panel.** The versioned request, comparison and scope validators in
+`web/src/cranc.ts` remain tested building blocks. The execution adapter, paired
+scenario graphs and fuller routing-scope contract still need implementation.
+Accessibility gains must remain separate from estimates of additional cycling.
 
 See the [exact code entry points and adapter checklist](documentation/research/cranc-integration.md#where-to-connect-cranc)
 and the [prioritised improvement review](documentation/audit/span-improvement-review-2026-09-24.md).
 Collaborator source archives, source runs and deployment bundles are not committed.
+
+## Model foundations
 
 The analysis starts with census journey-to-work data and a cycling network built
 from OpenStreetMap node and way identities. It keeps direction, access,

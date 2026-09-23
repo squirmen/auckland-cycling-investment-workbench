@@ -203,7 +203,7 @@ export function linkName(name: string): string {
 export function dataStatusName(dataStatus: Manifest["dataStatus"]): string {
   return {
     synthetic_demo: "Synthetic demo",
-    research_snapshot: "Research snapshot",
+    research_snapshot: "Preliminary estimates",
     validated_release: "Validated release",
   }[dataStatus];
 }

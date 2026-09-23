@@ -1,6 +1,7 @@
 import "./style.css";
+import { ConnectedJourneys, CONNECTED_QUERY_KEYS } from "./connected";
 
-import { GOALS, SCENARIOS, amount, dataStatusName, money, snapshotDate, withNewName } from "./copy";
+import { GOALS, SCENARIOS, dataStatusName, money, snapshotDate, withNewName } from "./copy";
 import { candidateFeatures, loadDefaultLayers, loadLayer, loadManifest } from "./data";
 import { create, requiredElement } from "./dom";
 import { loadDemandDiagnostics, type DemandDiagnostics } from "./diagnostics";
@@ -41,6 +42,7 @@ let budgetTimer: number | undefined;
 const paretoCache = new Map<string, Set<string>>();
 let state: AppState;
 let ready = false;
+let connected: ConnectedJourneys;
 let journeyAssumptions = { ...DEFAULT_JOURNEY_ASSUMPTIONS };
 let demandDiagnostics: DemandDiagnostics | undefined;
 const offlineMode = new URLSearchParams(window.location.search).get("offline") === "1";
@@ -67,6 +69,7 @@ async function initialise(): Promise<void> {
     layers = await loadDefaultLayers(manifest);
     setCandidates();
     state = initialState(manifest);
+    connected = new ConnectedJourneys(mapController, manifest);
     ready = true;
     populateControls();
     await applyQueryState(false);
@@ -177,6 +180,7 @@ function bindEvents(): void {
   requiredElement("share-button").addEventListener("click", () => void copyViewLink());
   requiredElement("reset-button").addEventListener("click", () => void resetView());
   requiredElement("print-button").addEventListener("click", () => window.print());
+  requiredElement("programme-zoom").addEventListener("click", () => mapController.fitBuildOrder());
   requiredElement("link-close").addEventListener("click", closeCard);
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape" || !state.selectedCandidateId) return;
@@ -308,16 +312,12 @@ function renderAll(): void {
   scenarioSelect.disabled = !goal.commute || state.purpose === "appraisal";
   requiredElement("budget-output").textContent = money(state.budgetNzd);
   requiredElement<HTMLInputElement>("budget-slider").setAttribute("aria-valuetext", money(state.budgetNzd));
-  requiredElement("lede").textContent =
-    `Ranks ${amount(candidates.length)} possible new cycling links ` +
-    `${manifest.dataStatus === "synthetic_demo" ? "in a small test network" : "in Auckland"} ` +
-    "and shows which to build first for a goal and a budget.";
+  requiredElement("lede").textContent = "Compare cycling upgrades: what to build, what they connect and what they could change.";
   renderHero(requiredElement("portfolio-summary"), ctx);
   renderNetworkGroups(ctx);
   renderBuildList(ctx, filter, limit);
   renderMethodNote(requiredElement("connectivity-context"), ctx);
   if (state.activeTab === "pareto") renderPareto(ctx);
-  renderTabs();
   renderLinkCard(ctx);
   document.body.dataset.card = state.selectedCandidateId && byId.has(state.selectedCandidateId) ? "open" : "closed";
   mapController.update(state, steps);
@@ -332,6 +332,7 @@ function renderAll(): void {
   requiredElement("view-announcement").textContent =
     `${goal.chip}, ${SCENARIOS[state.scenario].label}, ${money(state.budgetNzd)} budget: ` +
     `${String(steps.length)} ${steps.length === 1 ? "link" : "links"} in the build order.`;
+  renderTabs();
 }
 
 function renderFooter(steps: PortfolioStep[]): void {
@@ -383,19 +384,36 @@ function renderTabs(): void {
     button.setAttribute("aria-selected", String(active));
     button.tabIndex = active ? 0 : -1;
   });
-  for (const id of ["portfolio", "pareto"] as const) requiredElement(`tab-${id}`).hidden = state.activeTab !== id;
+  for (const id of ["portfolio", "pareto", "connected"] as const) requiredElement(`tab-${id}`).hidden = state.activeTab !== id;
+  const journeyView = state.activeTab === "connected";
+  requiredElement("map").setAttribute("aria-label", journeyView ? "Whole journey and required upgrades" : "Map of candidate cycling links in Auckland");
+  for (const id of ["ranking-controls", "sketch-disclosure", "layers-disclosure"]) requiredElement(id).hidden = journeyView;
+  if (journeyView) {
+    requiredElement("link-card").hidden = true;
+    document.body.dataset.card = "closed";
+    requiredElement("lede").textContent = "Which upgrades are needed to make a whole journey work?";
+    const key = requiredElement("map-legend-items");
+    key.replaceChildren(...[["#ea580c", "Funded upgrade"], ["#b42318", "Unfunded gap (red dashes)"], ["#1f7a4d", "Existing cycleway / path"], ["#9aa5ab", "Other usable street"]].map(([colour, label]) => {
+      const row = create("p", { className: "connected-key" });
+      const swatch = create("i"); swatch.style.backgroundColor = colour!;
+      row.append(swatch, document.createTextNode(label!)); return row;
+    }), create("p", { className: "help", text: "A → B: whole journey. Dashed orange: rest of the upgrade." }));
+  }
+  const download = requiredElement<HTMLButtonElement>("download-button");
+  download.textContent = journeyView ? "Download package and route (GeoJSON)" : "Download build order (GeoJSON)";
+  if (journeyView) download.disabled = !connected.canExport;
+  connected.setActive(journeyView);
 }
 
 function activateTab(tab: AppState["activeTab"], focus = false): void {
   state.activeTab = tab;
-  renderTabs();
-  if (tab === "pareto") renderPareto(context());
-  syncQueryState();
+  if (tab === "connected") state.sketching = false;
+  renderAll();
   if (focus) document.querySelector<HTMLButtonElement>(`button.tab[data-tab="${tab}"]`)?.focus();
 }
 
 function handleTabKeydown(event: KeyboardEvent): void {
-  const tabs = ["portfolio", "pareto"] as const;
+  const tabs = ["portfolio", "pareto", "connected"] as const;
   const current = tabs.indexOf(state.activeTab);
   let next = current;
   if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
@@ -466,6 +484,7 @@ async function resetView(): Promise<void> {
 }
 
 function downloadBuildOrder(): void {
+  if (state.activeTab === "connected") { connected.download(); return; }
   const collection = portfolioGeoJson(candidates, new Set(selectedSteps().map((step) => step.candidateId)));
   const rank = new Map(selectedSteps().map((step) => [step.candidateId, step]));
   for (const feature of collection.features) {
@@ -556,7 +575,7 @@ async function applyQueryState(render = true): Promise<void> {
   if (isScenarioId(scenario)) state.scenario = scenario;
   if (isPurposeId(purpose) && isPurposeAvailable(purpose)) state.purpose = purpose;
   if (state.purpose === "appraisal") state.scenario = "commute_8pct";
-  if (tab === "portfolio" || tab === "pareto") state.activeTab = tab;
+  if (tab === "portfolio" || tab === "pareto" || tab === "connected") state.activeTab = tab;
   if (params.has("budget")) {
     const budget = Number(params.get("budget"));
     if (Number.isFinite(budget) && budget >= 0) state.budgetNzd = Math.min(budget * 1_000_000, manifest.maxBudgetNzd);
@@ -610,6 +629,8 @@ function syncControlsFromState(): void {
 
 function syncQueryState(): void {
   const params = new URLSearchParams();
+  const previous = new URLSearchParams(window.location.search);
+  for (const key of CONNECTED_QUERY_KEYS) { const value = previous.get(key); if (value !== null) params.set(key, value); }
   params.set("journeys", journeyAssumptions.period);
   params.set("cyclingDays", String(journeyAssumptions.daysPerYear));
   params.set("journeyLegs", String(journeyAssumptions.legsPerDay));

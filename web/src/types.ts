@@ -374,7 +374,7 @@ export interface AppState {
   selectedCandidateId: string | null;
   visibleLayerIds: Set<string>;
   portfolioIds: Set<string>;
-  activeTab: "portfolio" | "pareto";
+  activeTab: "portfolio" | "pareto" | "connected";
   sketching: boolean;
   focusedGroupIds: Set<string>;
 }

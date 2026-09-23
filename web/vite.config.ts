@@ -8,8 +8,6 @@ const methodologySource = fileURLToPath(
 );
 const documents = {
   "methodology.md": methodologySource,
-  "research-review.md": fileURLToPath(new URL("../documentation/research/methodology-review-2026-09.md", import.meta.url)),
-  "cranc-integration.md": fileURLToPath(new URL("../documentation/research/cranc-integration.md", import.meta.url)),
   "effective-network.md": fileURLToPath(new URL("../documentation/research/span-effective-network.md", import.meta.url)),
 };
 
