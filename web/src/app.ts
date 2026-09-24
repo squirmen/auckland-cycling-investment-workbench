@@ -393,11 +393,11 @@ function renderTabs(): void {
     document.body.dataset.card = "closed";
     requiredElement("lede").textContent = "Which upgrades are needed to make a whole journey work?";
     const key = requiredElement("map-legend-items");
-    key.replaceChildren(...[["#ea580c", "Funded upgrade"], ["#b42318", "Unfunded gap (red dashes)"], ["#1f7a4d", "Existing cycleway / path"], ["#9aa5ab", "Other usable street"]].map(([colour, label]) => {
-      const row = create("p", { className: "connected-key" });
+    key.replaceChildren(...[["#ea580c", "Funded upgrade"], ["#b42318", "Unfunded gap (red dashes)"], ["#1f7a4d", "Existing cycleway / path"], ["#9aa5ab", "Other usable street"]].map(([colour, label], index) => {
+      const row = create("p", { className: "connected-key", "data-route-only": String(index > 0) });
       const swatch = create("i"); swatch.style.backgroundColor = colour!;
       row.append(swatch, document.createTextNode(label!)); return row;
-    }), create("p", { className: "help", text: "A → B: whole journey. Dashed orange: rest of the upgrade." }));
+    }), create("p", { id: "connected-map-caption", className: "help", text: "A → B: whole journey. Dashed orange: rest of the upgrade." }));
   }
   const download = requiredElement<HTMLButtonElement>("download-button");
   download.textContent = journeyView ? "Download package and route (GeoJSON)" : "Download build order (GeoJSON)";

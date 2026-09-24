@@ -4,7 +4,7 @@ import type { SpanMap } from "./map";
 import { portfolioGeoJson, reportSchema, type ResearchReport, type ResearchRoute, type ResearchSolution } from "./research-data";
 import type { Manifest } from "./types";
 
-export const CONNECTED_QUERY_KEYS = ["areaBudget", "method", "journey", "preference", "route"] as const;
+export const CONNECTED_QUERY_KEYS = ["areaBudget", "method", "journey", "preference", "route", "extent"] as const;
 
 /** Complete-route results share SPAN's map, basemaps and workspace. */
 export class ConnectedJourneys {
@@ -14,6 +14,7 @@ export class ConnectedJourneys {
   private solution: ResearchSolution | undefined;
   private route: ResearchRoute | undefined;
   private alternativeContext = "";
+  private mapExtent: "route" | "package" = "route";
   private budget = requiredElement<HTMLSelectElement>("connected-budget");
   private method = requiredElement<HTMLSelectElement>("connected-method");
   private journey = requiredElement<HTMLSelectElement>("connected-journey");
@@ -47,8 +48,12 @@ export class ConnectedJourneys {
       this.journey.replaceChildren(...report.journeys.map(j => create("option", { value: j.name, text: j.name })));
       const funded = report.solutions.find(s => s.budget === Number(this.budget.value) && s.method === this.method.value)?.selected ?? [];
       this.journey.value = report.journeys.filter(j => j.alternatives.some(r => r.projectIds.length > 0 && r.projectIds.every(p => funded.includes(p)))).sort((a, b) => b.weight - a.weight)[0]?.name ?? report.journeys[0]?.name ?? "";
-      for (const control of [this.budget, this.method, this.journey, this.preference, this.alternative]) control.addEventListener("change", () => this.render());
-      requiredElement("connected-zoom").addEventListener("click", () => this.map.showConnectedRoute(report, this.route, this.solution?.selected));
+      for (const control of [this.budget, this.method, this.journey, this.preference, this.alternative]) control.addEventListener("change", () => {
+        if (control === this.journey || control === this.preference || control === this.alternative) this.mapExtent = "route";
+        this.render();
+      });
+      requiredElement("connected-zoom").addEventListener("click", () => { this.mapExtent = "route"; this.render(); });
+      requiredElement("connected-package-map").addEventListener("click", () => { this.mapExtent = this.mapExtent === "package" ? "route" : "package"; this.render(); });
       status.textContent = `${report.sample.selected} sample journeys · ${report.graph.projects} possible upgrades`;
       requiredElement("connected-controls").hidden = false;
       requiredElement("connected-coverage").textContent = `${report.sample.selected} of ${report.sample.eligibleWithinArea} eligible journeys in this area were sampled. ${report.searchComplete ? "All sampled searches finished within their limit." : "Some searches hit their limit; routes may be missing."} This sample does not represent all Auckland travel.`;
@@ -63,6 +68,7 @@ export class ConnectedJourneys {
 
   private restoreQuery(): void {
     const params = new URLSearchParams(window.location.search);
+    this.mapExtent = params.get("extent") === "package" ? "package" : "route";
     for (const [key, control] of [["areaBudget", this.budget], ["method", this.method], ["journey", this.journey], ["preference", this.preference]] as const) {
       const value = params.get(key);
       if (value !== null && [...control.options].some(o => o.value === value && !o.disabled)) control.value = value;
@@ -79,7 +85,8 @@ export class ConnectedJourneys {
     requiredElement<HTMLButtonElement>("download-button").disabled = !solution;
     if (!solution) {
       requiredElement("connected-status").textContent = "No package was calculated for this combination.";
-      for (const id of ["connected-outcomes", "connected-route-detail", "connected-projects"]) requiredElement(id).replaceChildren();
+      for (const id of ["connected-outcomes", "connected-route-detail", "connected-projects", "connected-funded-projects"]) requiredElement(id).replaceChildren();
+      requiredElement<HTMLButtonElement>("connected-package-map").disabled = true;
       this.map.showConnectedRoute(report);
       return;
     }
@@ -88,6 +95,28 @@ export class ConnectedJourneys {
       [money(solution.capital_cost), `${solution.selected.length} upgrades in the package`],
     ] as const).map(([value, label]) => { const card = create("div"); card.append(create("strong", { text: value }), create("span", { text: label })); return card; }));
     requiredElement("connected-weight").textContent = `With the source population weights, connected journeys represent ${amount(solution.served_weight)} eligible commuters (${amount(report.baseline.weight)} before). These are not forecasts of new cyclists.`;
+    const fundedProjects = report.projects.filter(project => solution.selected.includes(project.id));
+    if (!fundedProjects.length) this.mapExtent = "route";
+    const fundedKm = fundedProjects.reduce((sum, project) => sum + project.lengthM, 0) / 1000;
+    const packageButton = requiredElement<HTMLButtonElement>("connected-package-map");
+    packageButton.disabled = !fundedProjects.length;
+    packageButton.textContent = !fundedProjects.length ? "No upgrades in this budget" : this.mapExtent === "package" ? "Back to the selected journey" : `Show all ${fundedProjects.length} upgrades · ${fundedKm.toFixed(1)} km`;
+    packageButton.setAttribute("aria-pressed", String(this.mapExtent === "package"));
+    const fundedList = requiredElement("connected-funded-projects");
+    fundedList.replaceChildren(...fundedProjects.map((project, index) => {
+      const row = create("div", { className: "connected-project" });
+      const supportingJourney = report.journeys.find(j => j.alternatives.some(r => r.projectIds.includes(project.id) && r.projectIds.every(id => solution.selected.includes(id))));
+      const title = `${index + 1}. ${project.name}`;
+      if (supportingJourney) {
+        const button = create("button", { type: "button", className: "project-journey-link", text: title });
+        button.setAttribute("aria-label", `Inspect a journey using ${project.name}`);
+        button.addEventListener("click", () => this.inspectProject(project.id));
+        row.append(button);
+      } else row.append(create("strong", { text: title }));
+      row.append(create("span", { text: `${(project.lengthM / 1000).toFixed(2)} km · ${money(project.cost)}` }));
+      return row;
+    }));
+    if (!fundedProjects.length) fundedList.append(create("p", { text: "This package funds no upgrades." }));
     const j = report.journeys.find(j => j.name === this.journey.value);
     if (!j) { this.map.showConnectedRoute(report); return; }
     const selected = new Set(solution.selected);
@@ -129,12 +158,34 @@ export class ConnectedJourneys {
       }
       projects.append(create("p", { className: "help", text: `${money(route.capitalCost)} for all upgrades on this route. Priced as protected cycleways; not a detailed design.` }));
     }
-    this.map.showConnectedRoute(report, route, solution.selected);
-    requiredElement("mobile-map-status").textContent = `${j.name} · ${money(solution.capital_cost)} package`;
-    requiredElement("view-announcement").textContent = `${j.name}: ${solution.served_journeys} sample journeys connected within ${money(solution.budget)}.`;
+    if (this.mapExtent === "package") {
+      this.map.showConnectedPackage(report, solution.selected, id => this.inspectProject(id));
+      requiredElement("connected-map-caption").textContent = fundedProjects.length ? `All ${fundedProjects.length} funded upgrades. Numbers match the package list.` : "No upgrades funded in this package.";
+    } else {
+      this.map.showConnectedRoute(report, route, solution.selected);
+      requiredElement("connected-map-caption").textContent = "A → B: whole journey. Dashed orange: rest of the upgrade.";
+    }
+    requiredElement("connected-route-detail").hidden = this.mapExtent === "package";
+    document.querySelectorAll<HTMLElement>('#map-legend-items [data-route-only="true"]').forEach(row => { row.hidden = this.mapExtent === "package"; });
+    requiredElement("map").setAttribute("aria-label", this.mapExtent === "package" ? "All funded cycling upgrades in this package" : "Whole journey and required upgrades");
+    const mapSubject = this.mapExtent === "package" ? `${fundedProjects.length} funded upgrades` : j.name;
+    requiredElement("mobile-map-status").textContent = `${mapSubject} · ${money(solution.capital_cost)} package`;
+    requiredElement("view-announcement").textContent = `${mapSubject}: ${solution.served_journeys} sample journeys connected within ${money(solution.budget)}.`;
     const params = new URLSearchParams(window.location.search);
+    params.set("extent", this.mapExtent);
     for (const [key, control] of [["areaBudget", this.budget], ["method", this.method], ["journey", this.journey], ["preference", this.preference], ["route", this.alternative]] as const) params.set(key, control.value);
     window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
+  }
+
+  private inspectProject(projectId: string): void {
+    if (!this.report || !this.solution) return;
+    const selected = this.solution.selected;
+    const supports = (route: ResearchRoute) => route.projectIds.includes(projectId) && route.projectIds.every(id => selected.includes(id));
+    const journey = this.report.journeys.find(j => j.alternatives.some(supports));
+    if (!journey) return;
+    this.journey.value = journey.name; this.preference.value = "access"; this.mapExtent = "route";
+    this.render(String(journey.alternatives.findIndex(supports)));
+    requiredElement("connected-route-detail").scrollIntoView({ block: "nearest" });
   }
 
   download(): void {

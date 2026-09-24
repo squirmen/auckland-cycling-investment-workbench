@@ -109,6 +109,11 @@ try {
     await page.getByRole("tab", { name: "Connected journeys" }).click();
     await expect(page.locator("#connected-controls")).toBeVisible({ timeout: 30000 });
     await expect(page.locator("#connected-provenance")).toContainText(`${report.intersectionContext.sitesInCrop} matched intersections`);
+    await page.locator("#connected-package-map").click();
+    const packageSelection = report.solutions.find(s => s.budget === Math.max(...report.solutions.map(item => item.budget)) && s.method === "route_packages_milp");
+    await expect(page.locator("#map .connected-package-pin")).toHaveCount(packageSelection.selected.length);
+    await page.screenshot({ path: path.join(output, `${name}-package.png`) });
+    await page.locator("#connected-package-map").click();
     const delayed = report.journeys.find(j => j.alternatives.some(r => r.intersectionDelayS > 0));
     assert.ok(delayed, "the pilot must exercise at least one nonzero delay");
     await page.locator("#connected-journey").selectOption(delayed.name);

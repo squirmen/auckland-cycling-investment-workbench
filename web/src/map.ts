@@ -255,6 +255,26 @@ export class SpanMap {
     if (bounds.isValid()) this.map.fitBounds(bounds, { ...this.paddingOptions(), maxZoom: 16, animate: false });
   }
 
+  showConnectedPackage(report: ResearchReport, fundedProjects: readonly string[], inspectProject: (id: string) => void): void {
+    if (!this.connectedMode) return;
+    this.map.stop();
+    this.connectedGroup.clearLayers();
+    const projects = report.projects.filter(project => fundedProjects.includes(project.id));
+    for (const [index, project] of projects.entries()) {
+      const coordinates: L.LatLngExpression[] = project.coordinates.map(p => [p[1], p[0]]);
+      L.polyline(coordinates, { color: "white", weight: 9, interactive: false }).addTo(this.connectedGroup);
+      const line = L.polyline(coordinates, { color: COLOURS.selected, weight: 5 }).addTo(this.connectedGroup);
+      const label = document.createElement("span"); label.textContent = project.name;
+      line.bindTooltip(label, { sticky: true });
+      line.on("click", () => inspectProject(project.id));
+      const centre = line.getCenter();
+      L.marker(centre, { icon: L.divIcon({ className: "connected-package-pin", html: String(index + 1), iconSize: [24, 24] }), title: `Inspect ${project.name}` }).on("click", () => inspectProject(project.id)).addTo(this.connectedGroup);
+    }
+    const bounds = this.connectedGroup.getBounds();
+    if (bounds.isValid()) this.map.fitBounds(bounds, { ...this.paddingOptions(), maxZoom: 16, animate: false });
+    else this.map.setView([report.centre[1], report.centre[0]], 13, { animate: false });
+  }
+
   /** Show the whole build order, clear of the panels. */
   fitBuildOrder(): void {
     const bounds = L.latLngBounds([]);

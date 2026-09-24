@@ -622,6 +622,8 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
 .connected-project strong, .connected-project span { display: block; }
 .connected-project span { font-size: 12px; color: var(--muted); }
 .connected-end { background: var(--navy); border: 2px solid white; color: white; text-align: center; line-height: 22px; border-radius: 50%; font-weight: 700; }
+.connected-package-pin { background: var(--selected); border: 2px solid white; color: var(--navy); text-align: center; line-height: 20px; border-radius: 50%; font-weight: 700; }
+.project-journey-link { padding: 2px 0; border: 0; background: none; color: var(--accent); font-weight: 600; text-align: left; text-decoration: underline; }
 .connected-key { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 12px; }
 .connected-key i { width: 22px; height: 4px; }
 .programme-connections { font-size: 13px; margin: 2px 0 8px; }
