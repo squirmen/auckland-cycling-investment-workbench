@@ -179,16 +179,20 @@ OD records are uploaded to the live CRANC service by this implementation.
 ## Reproduce locally
 
 ```sh
-.venv/bin/python scripts/audit_span_ridership.py \
+PYTHONPATH=src .venv/bin/python scripts/audit_span_ridership.py \
   --run runs/run-313e0277521633d3 \
   --market-run runs/run-313e0277521633d3
-.venv/bin/python scripts/run_access_experiment.py \
+PYTHONPATH=src .venv/bin/python scripts/run_access_experiment.py \
   --run runs/run-313e0277521633d3
 ```
 
-Serve `web/` with Vite; open `research.html`. The scripts produce local,
-git-ignored browser JSON. They do not rewrite original run artifacts. Source
-inputs must be readable locally. This session used a checksummed copy at
+The access experiment now defaults to `build/pilots/access-experiment.json`;
+it does not replace the published browser report. `research.html` redirects to
+the single SPAN workspace, where Connected journeys shows the checked published
+report. Publishing a new experiment requires a coordinated export, matching
+intersection-delay comparison and verified site build, not just serving this
+command's output. The scripts do not rewrite original run artifacts. Source
+inputs must be readable locally. The original session used a checksummed copy at
 `/private/tmp/span-run-313e0277521633d3` to avoid File Provider offloading inputs.
 Temporary dependencies outside Dropbox were needed for verification; they are
 the same pinned/existing versions, not a change to project dependencies.

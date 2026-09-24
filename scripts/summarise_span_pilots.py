@@ -3,6 +3,7 @@
 
 import argparse
 import json
+from collections import Counter
 from pathlib import Path
 
 from cycling_investment_workbench.provenance import sha256_file, write_json_atomic
@@ -24,22 +25,41 @@ def main():
             "radiusM",
             "seed",
             "standard",
+            "budget",
             "parameters",
             "implementationHash",
             "experimentScriptHash",
         ):
             if report[key] != reference[key]:
                 raise ValueError(f"pilot settings differ: {key}")
-        for key in ("topology", "odLedger", "candidateLedger", "scenarioOdLedger"):
+        for key in (
+            "topology",
+            "odLedger",
+            "candidateLedger",
+            "candidateExclusionLedger",
+            "scenarioOdLedger",
+        ):
             if report["sourceHashes"][key] != reference["sourceHashes"][key]:
                 raise ValueError(f"pilot source differs: {key}")
         for key in ("evidenceSha256", "scenario"):
-            if report["intersectionContext"][key] != reference["intersectionContext"][key]:
+            if (report["intersectionContext"] or {}).get(key) != (
+                reference["intersectionContext"] or {}
+            ).get(key):
                 raise ValueError(f"pilot intersection context differs: {key}")
+        for key in ("sourceCandidateManifestSha256", "screeningCostPerM", "sourceMinimumLengthM"):
+            if (report.get("shortConnectorDiagnostic") or {}).get(key) != (
+                reference.get("shortConnectorDiagnostic") or {}
+            ).get(key):
+                raise ValueError(f"pilot connector context differs: {key}")
         gaps = [
             j["allProjectsDiagnostic"]["witnessStressGaps"]
             for j in report["journeys"]
             if j["allProjectsDiagnostic"] and j["allProjectsDiagnostic"]["witnessStressGaps"]
+        ]
+        connectors = [
+            j["allProjectsDiagnostic"]["shortConnectorCheck"]
+            for j in report["journeys"]
+            if j["allProjectsDiagnostic"] and j["allProjectsDiagnostic"].get("shortConnectorCheck")
         ]
         areas.append(
             {
@@ -52,6 +72,7 @@ def main():
                         "graph",
                         "sample",
                         "cropCoverage",
+                        "candidateCoverage",
                         "searchSummary",
                         "elapsedS",
                         "baseline",
@@ -82,6 +103,38 @@ def main():
                         "turnMovementsStillHighStress",
                     )
                 },
+                "stressGapReasonWitnessCounts": dict(
+                    sorted(
+                        Counter(
+                            reason
+                            for gap in gaps
+                            for reason, count in gap["untreatedEdgesByReason"].items()
+                            if count > 0
+                        ).items()
+                    )
+                ),
+                "shortConnectorDiagnostic": (
+                    {
+                        **report["shortConnectorDiagnostic"],
+                        "testedJourneys": len(connectors),
+                        "acceptableRouteFound": sum(c["routeFound"] for c in connectors),
+                        "foundAfterConclusiveFailure": sum(
+                            d["conclusiveNoRoute"] and d["shortConnectorCheck"]["routeFound"]
+                            for j in report["journeys"]
+                            if (d := j["allProjectsDiagnostic"]) and d.get("shortConnectorCheck")
+                        ),
+                        "foundAfterPreviouslyCappedSearch": sum(
+                            d["stopReason"] == "label_limit"
+                            and d["shortConnectorCheck"]["routeFound"]
+                            for j in report["journeys"]
+                            if (d := j["allProjectsDiagnostic"]) and d.get("shortConnectorCheck")
+                        ),
+                        "conclusiveNoRoute": sum(c["conclusiveNoRoute"] for c in connectors),
+                        "labelLimit": sum(c["stopReason"] == "label_limit" for c in connectors),
+                    }
+                    if report.get("shortConnectorDiagnostic")
+                    else None
+                ),
             }
         )
     write_json_atomic(
@@ -95,6 +148,7 @@ def main():
                     "radiusM",
                     "seed",
                     "standard",
+                    "budget",
                     "parameters",
                     "implementationHash",
                     "experimentScriptHash",
@@ -106,10 +160,13 @@ def main():
                     "topology",
                     "odLedger",
                     "candidateLedger",
+                    "candidateExclusionLedger",
                     "scenarioOdLedger",
                 )
             },
-            "intersectionEvidenceSha256": reference["intersectionContext"]["evidenceSha256"],
+            "intersectionEvidenceSha256": (reference["intersectionContext"] or {}).get(
+                "evidenceSha256"
+            ),
             "areas": areas,
             "limitations": [
                 "Same journeys, candidate costs and route columns for methods within each area.",
@@ -119,6 +176,9 @@ def main():
                 "Journeys with an endpoint outside the crop and routes outside it are excluded.",
                 "Relaxed-stress witnesses are diagnostic, not acceptable cycling routes.",
                 "Witness gap counts count journeys, not unique assets or minimum treatment sets.",
+                "A journey may have several exclusion reasons; reason counts are not additive.",
+                "Short-connector checks fund every original and hypothetical project, "
+                "not the budgeted portfolio; they do not establish buildability or affordability.",
                 "No new ridership forecast, measured signal wait or engineering design.",
             ],
         },

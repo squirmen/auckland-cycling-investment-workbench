@@ -6,6 +6,7 @@ planning material, equations, references, and visual record.
 Current SPAN additions:
 
 - [Priorities and acceptance criteria](roadmap.md)
+- [Short-link exclusions and connector diagnostics](audit/span-candidate-coverage-2026-09-25.md)
 - [Fresh routing, four-area checks and reliability fixes](audit/span-follow-up-progress-2026-09-24.md)
 - [Source-cell influence audit and next sampling work](audit/span-source-cell-influence-2026-09-24.md)
 - [Effective-network beta and server handoff](research/span-effective-network.md)

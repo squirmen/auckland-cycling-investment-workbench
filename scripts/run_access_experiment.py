@@ -37,7 +37,12 @@ from cycling_investment_workbench.research.behaviour import (
     assign_fixed_demand,
     preference_network,
 )
-from cycling_investment_workbench.research.gaps import diagnose_route_gap
+from cycling_investment_workbench.research.gaps import (
+    all_projects_check,
+    candidate_coverage_reasons,
+    diagnose_route_gap,
+    with_short_connector_diagnostic,
+)
 from cycling_investment_workbench.research.investment import (
     choose_investments,
     greedy_investments,
@@ -58,6 +63,12 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=20260915)
     parser.add_argument("--intersections", type=Path, help="SPAN native intersection audit")
     parser.add_argument("--delay-scenario", choices=("low", "default", "high"), default="default")
+    parser.add_argument(
+        "--test-short-connectors",
+        action="store_true",
+        help="Diagnostic only: test all projects plus complete short excluded chains; "
+        "does not add them to the budgeted portfolio",
+    )
     args = parser.parse_args()
     if (
         not isfinite(args.radius_m)
@@ -88,9 +99,14 @@ def main() -> None:
         route_dir / "od_ledger.parquet",
     ]:
         require_local(path)
-    verify_ledgers(candidate_dir, ("candidate_ledger.parquet",))
+    verify_ledgers(
+        candidate_dir, ("candidate_ledger.parquet", "candidate_exclusion_ledger.parquet")
+    )
     verify_ledgers(route_dir, ("od_ledger.parquet", "scenario_od_ledger.parquet"))
     candidates = pq.ParquetFile(candidate_dir / "candidate_ledger.parquet").read().to_pylist()
+    exclusions = (
+        pq.ParquetFile(candidate_dir / "candidate_exclusion_ledger.parquet").read().to_pylist()
+    )
     anchor = next((c for c in candidates if c["candidate_id"] == args.anchor_candidate), None)
     if anchor is None:
         raise ValueError("anchor candidate does not exist in the source run")
@@ -108,6 +124,21 @@ def main() -> None:
     }
     edges = [e for e in topology["edges"] if e["u"] in nodes and e["v"] in nodes]
     edge_ids = {e["id"] for e in edges}
+    untreated_reasons = candidate_coverage_reasons(edge_ids, candidates, exclusions)
+    candidate_coverage = {
+        "untreatedHighStressEdgesByReason": dict(
+            sorted(
+                Counter(
+                    untreated_reasons[e["id"]]
+                    for e in edges
+                    if e["lts"] > 2 and e["id"] in untreated_reasons
+                ).items()
+            )
+        ),
+        "note": "Counts of distinct physical edges in the crop, not journeys or buildable "
+        "projects. Source exclusions are read from the checked original ledger. "
+        "Unlisted edges are not assigned an inferred exclusion reason.",
+    }
     candidates = [c for c in candidates if set(c["ordered_edge_ids"]) <= edge_ids]
     by_edge = {}
     for candidate in candidates:
@@ -163,6 +194,24 @@ def main() -> None:
             "note": evidence["metadata"]["note"],
         }
     graph = InvestmentGraph(arcs, costs, turns)
+    connector_graph = None
+    connector_context = None
+    if args.test_short_connectors:
+        candidate_manifest = json.loads((candidate_dir / "manifest.json").read_text())
+        cost_per_m = candidate_manifest["screening_cost"]["base_nzd_per_m"]
+        connector_graph = with_short_connector_diagnostic(graph, exclusions, cost_per_m=cost_per_m)
+        connector_context = {
+            "additionalProjects": len(connector_graph.projects) - len(graph.projects),
+            "additionalScreeningCostNzd": sum(connector_graph.projects.values())
+            - sum(graph.projects.values()),
+            "screeningCostPerM": cost_per_m,
+            "sourceMinimumLengthM": candidate_manifest["method"]["minimum_length_m"],
+            "sourceCandidateManifestSha256": sha256_file(candidate_dir / "manifest.json"),
+            "note": "All projects plus complete in-crop chains excluded for minimum length "
+            "are funded hypothetically. Original stress, time, detour, turn and crop rules "
+            "remain. This tests coverage, not affordability, buildability or optimal investment. "
+            "The budgeted portfolio and its assignments are unchanged.",
+        }
     facility_by_edge = {e["id"]: e["facility"] for e in edges}
     facility_aliases = {
         "none": "none",
@@ -259,7 +308,16 @@ def main() -> None:
                 od["destination_node_id"],
                 standard=standard,
                 max_labels=args.max_labels,
+                untreated_reasons=untreated_reasons,
             )
+            if connector_graph is not None and not full_treatment_checks[label]["routeFound"]:
+                full_treatment_checks[label]["shortConnectorCheck"] = all_projects_check(
+                    connector_graph,
+                    od["origin_node_id"],
+                    od["destination_node_id"],
+                    standard=standard,
+                    max_labels=args.max_labels,
+                )
         print(
             f"{label}: {len(result.routes)} routes; "
             f"{result.labels_expanded} expansions; {result.stop_reason}",
@@ -496,6 +554,8 @@ def main() -> None:
             "citywideRepresentative": False,
         },
         "cropCoverage": coverage,
+        "candidateCoverage": candidate_coverage,
+        "shortConnectorDiagnostic": connector_context,
         "searchSummary": {
             "stopReasons": dict(sorted(Counter(r.stop_reason for r in searches.values()).items())),
             "labelsExpanded": sum(r.labels_expanded for r in searches.values()),
@@ -527,6 +587,9 @@ def main() -> None:
             "topology": sha256_file(topology_file),
             "odLedger": sha256_file(route_dir / "od_ledger.parquet"),
             "candidateLedger": sha256_file(candidate_dir / "candidate_ledger.parquet"),
+            "candidateExclusionLedger": sha256_file(
+                candidate_dir / "candidate_exclusion_ledger.parquet"
+            ),
             "scenarioOdLedger": sha256_file(route_dir / "scenario_od_ledger.parquet"),
             "origins": content_hash(sorted(od["origin_node_id"] for od in sample)),
             "originWeights": content_hash(
@@ -540,6 +603,7 @@ def main() -> None:
         "parameters": {
             "sampleSizeRequested": args.sample_size,
             "maxLabelsPerSearch": args.max_labels,
+            "testShortConnectors": args.test_short_connectors,
             "protectedCostSource": "candidate_ledger.capital_cost_base_nzd",
             "flatSpeedKph": 15,
             "uphillExponent": 3,

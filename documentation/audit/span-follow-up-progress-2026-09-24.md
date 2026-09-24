@@ -4,6 +4,10 @@
 [source-cell influence audit](span-source-cell-influence-2026-09-24.md).
 These are research checks, not a replacement for the deployed recommendations.
 
+Follow-up on 25 September: [candidate coverage tracing and short-connector tests](span-candidate-coverage-2026-09-25.md)
+resolve the missing-candidate diagnostic below. The original results in this
+note remain the paired reference.
+
 ## 1. Fresh routing through the stored demand support
 
 The commute ledger contains 695,488 stored location pairs in 28,173 source OD
