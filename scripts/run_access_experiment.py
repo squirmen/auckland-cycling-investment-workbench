@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Reproducible local access-first pilot; never rewrites the published model.
 
-Samples existing commute OD records in a declared circle around Rangatira Road.
+Samples existing commute OD records in a declared circle around a chosen project.
 Searches every retained directed street in that circle; all complete candidate
 projects in the circle are eligible. Crop/sampling/label limits are disclosed.
 """
@@ -11,9 +11,12 @@ from __future__ import annotations
 import argparse
 import gc
 import json
+import resource
+import sys
+from collections import Counter
 from dataclasses import asdict
 from hashlib import sha256
-from math import exp, hypot
+from math import exp, hypot, isfinite
 from pathlib import Path
 from time import perf_counter
 
@@ -34,6 +37,7 @@ from cycling_investment_workbench.research.behaviour import (
     assign_fixed_demand,
     preference_network,
 )
+from cycling_investment_workbench.research.gaps import diagnose_route_gap
 from cycling_investment_workbench.research.investment import (
     choose_investments,
     greedy_investments,
@@ -44,9 +48,9 @@ from cycling_investment_workbench.research.investment import (
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", type=Path, required=True)
-    parser.add_argument(
-        "--output", type=Path, default=Path("web/public/data/access-experiment.json")
-    )
+    parser.add_argument("--output", type=Path, default=Path("build/pilots/access-experiment.json"))
+    parser.add_argument("--anchor-candidate", default="candidate-93dcb500489db8cd")
+    parser.add_argument("--area-label", help="Human-readable area label; defaults to anchor roads")
     parser.add_argument("--radius-m", type=float, default=4000)
     parser.add_argument("--sample-size", type=int, default=169)
     parser.add_argument("--budget-m", type=float, default=20)
@@ -55,7 +59,14 @@ def main() -> None:
     parser.add_argument("--intersections", type=Path, help="SPAN native intersection audit")
     parser.add_argument("--delay-scenario", choices=("low", "default", "high"), default="default")
     args = parser.parse_args()
-    if args.radius_m <= 0 or args.sample_size < 1 or args.budget_m <= 0:
+    if (
+        not isfinite(args.radius_m)
+        or args.radius_m <= 0
+        or not isfinite(args.budget_m)
+        or args.budget_m <= 0
+        or args.sample_size < 1
+        or args.max_labels < 1
+    ):
         raise ValueError("pilot bounds must be positive")
     root = args.run.resolve()
     if args.output.resolve().is_relative_to(root):
@@ -80,7 +91,12 @@ def main() -> None:
     verify_ledgers(candidate_dir, ("candidate_ledger.parquet",))
     verify_ledgers(route_dir, ("od_ledger.parquet", "scenario_od_ledger.parquet"))
     candidates = pq.ParquetFile(candidate_dir / "candidate_ledger.parquet").read().to_pylist()
-    anchor = next(c for c in candidates if c["candidate_id"] == "candidate-93dcb500489db8cd")
+    anchor = next((c for c in candidates if c["candidate_id"] == args.anchor_candidate), None)
+    if anchor is None:
+        raise ValueError("anchor candidate does not exist in the source run")
+    area_label = (
+        args.area_label or " / ".join(anchor["primary_road_names"]) or args.anchor_candidate
+    )
     centre = from_wkb(anchor["geometry_wkb"]).centroid
     started = perf_counter()
     print("Loading source topology and defining the declared pilot area…", flush=True)
@@ -169,6 +185,7 @@ def main() -> None:
                 "od_id",
                 "purpose",
                 "status",
+                "route_sample_selected",
                 "origin_node_id",
                 "destination_node_id",
                 "weighted_eligible",
@@ -177,6 +194,32 @@ def main() -> None:
         )
         .to_pylist()
     )
+    assigned_commutes = [
+        od for od in ods if od["purpose"] == "commute" and od["status"] == "assigned"
+    ]
+    coverage = {
+        "assignedCommuteRecordsCitywide": len(assigned_commutes),
+        "sourceSelectedUnassignedCommuteRecords": sum(
+            od["purpose"] == "commute"
+            and od["route_sample_selected"]
+            and od["status"] == "unassigned"
+            for od in ods
+        ),
+        "bothEndpointsInCrop": sum(
+            od["origin_node_id"] in graph.nodes and od["destination_node_id"] in graph.nodes
+            for od in assigned_commutes
+        ),
+        "oneEndpointOutsideCrop": sum(
+            (od["origin_node_id"] in graph.nodes) != (od["destination_node_id"] in graph.nodes)
+            for od in assigned_commutes
+        ),
+        "bothEndpointsOutsideCrop": sum(
+            od["origin_node_id"] not in graph.nodes and od["destination_node_id"] not in graph.nodes
+            for od in assigned_commutes
+        ),
+        "note": "Endpoint coverage among previously assigned commute records. "
+        "An in-crop disconnected search is not proof of citywide disconnection.",
+    }
     eligible_ods = [
         od
         for od in ods
@@ -194,6 +237,7 @@ def main() -> None:
     standard = PlanningStandard(2, 1.5, 1800)
     budget = args.budget_m * 1e6
     searches, routes, weights = {}, {}, {}
+    full_treatment_checks = {}
     for i, od in enumerate(sample):
         label = f"Journey {i + 1}"
         result = graph.search(
@@ -208,6 +252,14 @@ def main() -> None:
             result.routes,
             od["weighted_eligible"],
         )
+        if not result.routes:
+            full_treatment_checks[label] = diagnose_route_gap(
+                graph,
+                od["origin_node_id"],
+                od["destination_node_id"],
+                standard=standard,
+                max_labels=args.max_labels,
+            )
         print(
             f"{label}: {len(result.routes)} routes; "
             f"{result.labels_expanded} expansions; {result.stop_reason}",
@@ -398,6 +450,7 @@ def main() -> None:
                 "stopReason": result.stop_reason,
                 "labelsExpanded": result.labels_expanded,
                 "elapsedS": result.elapsed_s,
+                "allProjectsDiagnostic": full_treatment_checks.get(name),
                 "alternatives": alternatives,
             }
         )
@@ -427,7 +480,8 @@ def main() -> None:
         "status": "local_research_pilot",
         "runId": manifest["run_id"],
         "title": "Complete journeys before extra cycling",
-        "area": "Rangatira Road / North Shore pilot",
+        "area": area_label,
+        "anchorCandidateId": args.anchor_candidate,
         "centre": list(transform.transform(centre.x, centre.y)),
         "radiusM": args.radius_m,
         "seed": args.seed,
@@ -440,6 +494,34 @@ def main() -> None:
             "eligibleWithinArea": len(eligible_ods),
             "weightedDemand": sum(weights.values()),
             "citywideRepresentative": False,
+        },
+        "cropCoverage": coverage,
+        "searchSummary": {
+            "stopReasons": dict(sorted(Counter(r.stop_reason for r in searches.values()).items())),
+            "labelsExpanded": sum(r.labels_expanded for r in searches.values()),
+            "searchElapsedS": sum(r.elapsed_s for r in searches.values()),
+            "allProjectsDiagnostics": {
+                "testedNoRouteJourneys": len(full_treatment_checks),
+                "routeFound": sum(r["routeFound"] for r in full_treatment_checks.values()),
+                "conclusiveNoRoute": sum(
+                    r["conclusiveNoRoute"] for r in full_treatment_checks.values()
+                ),
+                "labelLimit": sum(
+                    r["stopReason"] == "label_limit" for r in full_treatment_checks.values()
+                ),
+                "stressRelaxedWitnessFound": sum(
+                    r["stressRelaxedWitnessFound"] is True for r in full_treatment_checks.values()
+                ),
+                "stressRelaxedLabelLimit": sum(
+                    r["stressRelaxedStopReason"] == "label_limit"
+                    for r in full_treatment_checks.values()
+                ),
+                "note": "Diagnostic only: every in-crop modelled project funded, "
+                "with unchanged stress/time/detour standards and crossing assumptions. "
+                "Not a proposed or affordable programme.",
+            },
+            "peakProcessRssMiB": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            / (1024**2 if sys.platform == "darwin" else 1024),
         },
         "sourceHashes": {
             "topology": sha256_file(topology_file),

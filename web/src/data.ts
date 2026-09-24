@@ -10,13 +10,14 @@ import {
 } from "./types";
 
 const textDecoder = new TextDecoder();
+const validatedCandidates = new WeakMap<GenericFeatureCollection, CandidateFeature[]>();
 
 export async function sha256Hex(data: ArrayBuffer): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", data);
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function fetchVerifiedJson(url: string, expectedSha256?: string): Promise<unknown> {
+export async function fetchVerifiedJson(url: string, expectedSha256?: string): Promise<unknown> {
   const response = await fetch(url, { credentials: "same-origin", cache: "no-cache" });
   if (!response.ok) {
     throw new Error(`Unable to load ${url}: HTTP ${response.status}`);
@@ -39,9 +40,7 @@ export async function loadLayer(manifest: Manifest, layerId: string): Promise<Ge
   const layer = layerSchema.parse(manifest.layers.find((item) => item.id === layerId));
   const collection = featureCollectionSchema.parse(await fetchVerifiedJson(layer.url, layer.sha256));
   if (layer.id === "candidates") {
-    for (const feature of collection.features) {
-      candidateFeatureSchema.parse(feature);
-    }
+    validatedCandidates.set(collection, collection.features.map(feature => candidateFeatureSchema.parse(feature)));
   }
   return collection;
 }
@@ -64,5 +63,10 @@ export async function loadDefaultLayers(manifest: Manifest): Promise<LoadedLayer
 
 export function candidateFeatures(layers: LoadedLayers): CandidateFeature[] {
   if (!layers.candidates) return [];
-  return layers.candidates.features.map((feature) => candidateFeatureSchema.parse(feature));
+  let candidates = validatedCandidates.get(layers.candidates);
+  if (!candidates) {
+    candidates = layers.candidates.features.map(feature => candidateFeatureSchema.parse(feature));
+    validatedCandidates.set(layers.candidates, candidates);
+  }
+  return candidates;
 }

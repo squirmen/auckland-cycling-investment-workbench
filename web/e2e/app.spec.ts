@@ -5,7 +5,7 @@ import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-const dataDirectory = path.resolve(import.meta.dirname, "../public/data");
+const dataDirectory = process.env.SPAN_TEST_DATA_DIR ?? path.resolve(import.meta.dirname, "../public/data");
 const screenshotStatesPath = path.resolve(import.meta.dirname, "../screenshot-states.json");
 
 async function waitForSpan(page: Page): Promise<void> {

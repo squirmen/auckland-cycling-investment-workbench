@@ -59,6 +59,14 @@ def main() -> None:
     research = json.loads((site / "data/access-experiment.json").read_text())
     comparison = json.loads((site / "data/delay-comparison.json").read_text())
     evidence = manifest["effectiveNetwork"]
+    descriptor = manifest.get("journeyReport", {})
+    if (
+        descriptor.get("url") != "./data/access-experiment.json"
+        or descriptor.get("sha256") != sha256_file(site / "data/access-experiment.json")
+        or descriptor.get("runId") != manifest["runId"]
+        or descriptor.get("topologySha256") != research["sourceHashes"]["topology"]
+    ):
+        raise ValueError("journey report descriptor is missing, stale or mismatched")
     if manifest["dataStatus"] != "research_snapshot":
         raise ValueError("this package must be labelled as a research snapshot")
     if evidence["runId"] != manifest["runId"] or research["runId"] != manifest["runId"]:

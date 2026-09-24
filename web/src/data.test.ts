@@ -1,7 +1,24 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { sha256Hex } from "./data";
-import { layerSchema, manifestSchema, purposeIds, scenarioIds } from "./types";
+import { candidateFeatures, loadLayer, sha256Hex } from "./data";
+import { candidateFeatureSchema, layerSchema, manifestSchema, purposeIds, scenarioIds, type CandidateFeature, type Manifest } from "./types";
+
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+
+it("validates candidate records once when loading, then reuses the validated collection", async () => {
+  const feature = { type: "Feature", geometry: { type: "LineString", coordinates: [[0, 0], [1, 1]] }, properties: {} };
+  const parsed = { ...feature, properties: { candidateId: "validated" } } as CandidateFeature;
+  const parse = vi.spyOn(candidateFeatureSchema, "parse").mockReturnValue(parsed);
+  const body = JSON.stringify({ type: "FeatureCollection", features: [feature] });
+  const sha256 = await sha256Hex(new TextEncoder().encode(body).buffer);
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(body)));
+  const manifest = { layers: [{ id: "candidates", label: "Candidates", url: "./data/candidates.geojson", sha256, defaultVisible: true, optional: false, licence: "Test" }] } as Manifest;
+  const collection = await loadLayer(manifest, "candidates");
+  const first = candidateFeatures({ candidates: collection });
+  expect(first[0]).toBe(parsed);
+  expect(candidateFeatures({ candidates: collection })).toBe(first);
+  expect(parse).toHaveBeenCalledTimes(1);
+});
 
 function completeByScenario<T>(value: T): Record<(typeof scenarioIds)[number], Record<(typeof purposeIds)[number], T>> {
   return Object.fromEntries(

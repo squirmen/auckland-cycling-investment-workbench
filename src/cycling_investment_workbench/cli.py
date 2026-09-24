@@ -267,7 +267,11 @@ def _run_output_path(
         raise ConfigError(f"run manifest identity does not match {run_id}")
     stages = manifest.get("stages")
     stage = stages.get(stage_name) if isinstance(stages, Mapping) else None
-    if not isinstance(stage, Mapping) or stage.get("status") not in {"succeeded", "skipped"}:
+    if not isinstance(stage, Mapping) or stage.get("status") not in {
+        "succeeded",
+        "skipped",
+        "cached",
+    }:
         raise ConfigError(f"run {run_id} has no completed {stage_name} stage")
     outputs = stage.get("outputs")
     output = outputs.get(output_name) if isinstance(outputs, Mapping) else None
@@ -509,7 +513,9 @@ def _command_demo(args: argparse.Namespace) -> int:
         registry=demo_stage_registry(),
         resume=not args.no_resume,
     )
-    evidence_path = run.run_dir / "artifacts" / "appraisal-uncertainty-validation" / "evidence.json"
+    evidence_path = _run_output_path(
+        config, run.run_id, stage_name="appraisal-uncertainty-validation", output_name="evidence"
+    )
     result = read_json(evidence_path)
     payload: dict[str, Any] = {
         "run": run.to_dict(root=config.root_dir),
@@ -520,7 +526,9 @@ def _command_demo(args: argparse.Namespace) -> int:
         write_json_atomic(destination, result)
         payload["analysis_output"] = _portable_user_path(destination, root=Path.cwd())
     if args.export_web:
-        web_payload_path = run.run_dir / "artifacts" / "export-outputs" / "web-payload.json"
+        web_payload_path = _run_output_path(
+            config, run.run_id, stage_name="export-outputs", output_name="web_payload"
+        )
         export = export_web_payload(
             load_web_payload(web_payload_path),
             export_config=config.export,

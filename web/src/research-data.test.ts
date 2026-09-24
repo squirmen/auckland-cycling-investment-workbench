@@ -18,9 +18,10 @@ it("exports actual funded projects and identifies unfunded inspected route segme
   const solution = report.solutions[0];
   const journey = report.journeys[0];
   if (!solution || !journey) throw new Error("Test fixture must contain a solution and journey");
-  const exported = portfolioGeoJson(report, solution, journey.alternatives[0]);
+  const exported = portfolioGeoJson(report, solution, journey.alternatives[0], "b".repeat(64));
   expect(exported).toMatchObject({
     type: "FeatureCollection",
+    reportSha256: "b".repeat(64),
     features: [
       { properties: { id: "P", role: "proposed_project", capitalCostNzd: 5 } },
       { properties: { projectId: "Q", role: "inspected_route_segment", projectFunded: false } },

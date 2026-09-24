@@ -1,7 +1,7 @@
 import { amount, money } from "./copy";
 import { create, requiredElement } from "./dom";
 import type { SpanMap } from "./map";
-import { portfolioGeoJson, reportSchema, type ResearchReport, type ResearchRoute, type ResearchSolution } from "./research-data";
+import { loadJourneyReport, portfolioGeoJson, type ResearchReport, type ResearchRoute, type ResearchSolution } from "./research-data";
 import type { Manifest } from "./types";
 
 export const CONNECTED_QUERY_KEYS = ["areaBudget", "method", "journey", "preference", "route", "extent"] as const;
@@ -35,10 +35,7 @@ export class ConnectedJourneys {
   private async load(): Promise<void> {
     const status = requiredElement("connected-status");
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}data/access-experiment.json`);
-      if (!response.ok) throw new Error("Connected-journey results are not available in this release. The other SPAN views are still available.");
-      const report = reportSchema.parse(await response.json());
-      if (report.runId !== this.manifest.runId || (this.manifest.effectiveNetwork && report.sourceHashes.topology !== this.manifest.effectiveNetwork.topologySha256)) throw new Error("Journey results belong to a different data release and have not been shown. Reload after the site data is updated.");
+      const report = await loadJourneyReport(this.manifest);
       this.report = report;
       const budgets = [...new Set(report.solutions.map(s => s.budget))].sort((a, b) => a - b);
       this.budget.replaceChildren(...budgets.map(value => create("option", { value: String(value), text: money(value) })));
@@ -190,7 +187,7 @@ export class ConnectedJourneys {
 
   download(): void {
     if (!this.report || !this.solution) return;
-    const url = URL.createObjectURL(new Blob([JSON.stringify(portfolioGeoJson(this.report, this.solution, this.route), null, 2)], { type: "application/geo+json" }));
+    const url = URL.createObjectURL(new Blob([JSON.stringify(portfolioGeoJson(this.report, this.solution, this.route, this.manifest.journeyReport?.sha256), null, 2)], { type: "application/geo+json" }));
     const link = create("a", { href: url, download: "span-connected-journey.geojson" });
     document.body.append(link); link.click(); link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);

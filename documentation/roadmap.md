@@ -16,17 +16,22 @@ Neither analysis is a calibrated forecast of intervention-induced cycling.
 
 | Priority | Work | Acceptance evidence | Status |
 | --- | --- | --- | --- |
-| 1 | Demand support and ranking stability | Reproduce the current result first; quantify influential source cells; generate independent spatial OD replicates and reroute; compare selection stability and observed behaviour without changing source totals or treating suppression as zero. | First audit complete; fresh sampling and validation outstanding |
-| 2 | Broaden complete-route planning | Test contrasting inner-city, suburban and outer Auckland areas; disclose crop failures, search caps, runtime and memory; only then offer a citywide package workflow. | Planned |
-| 3 | Buildable interventions | Checked existing/committed infrastructure, crossing movements and waits, street widths, facility alternatives and defensible cost ranges. AT evidence and engineering review are dependencies. | Planned |
+| 1 | Demand support and ranking stability | Reproduce the current result first; quantify influential source cells; generate independent spatial OD replicates and reroute; compare selection stability and observed behaviour without changing source totals or treating suppression as zero. | Influence audit and 291-pair stored-support rerouting complete; new spatial support and validation outstanding |
+| 2 | Broaden complete-route planning | Test contrasting inner-city, suburban and outer Auckland areas; disclose crop failures, search caps, runtime and memory; only then offer a citywide package workflow. | Four bounded area checks complete; citywide scaling and boundary sensitivity outstanding |
+| 3 | Buildable interventions | Checked existing/committed infrastructure, crossing movements and waits, street widths, facility alternatives and defensible cost ranges. AT evidence and engineering review are dependencies. | All-project/stress-gap diagnostics implemented; trace missing candidate coverage next |
 | 4 | Tangible access outcomes | Checked place-based journey names, before/after routes and destination access. Reuse useful TEAM opportunities; connect CRANC only after scenario, graph, profile and weighting contracts are verified. | Planned |
-| 5 | Product reliability and practical use | Profile and reduce the 224 MiB uncompressed candidate payload without changing results; hash the journey report; saved alternatives, include/exclude controls and concise comparison exports. | Planned |
-| 6 | Benchmark and planner evaluation | Same inputs and budgets for SPAN, whole-route greedy and capable published methods; compare access, cost, robustness, runtime and planner task success. Report ties and losses as well as wins. | Planned |
+| 5 | Product reliability and practical use | Profile and reduce the 224 MiB uncompressed candidate payload without changing results; hash the journey report; saved alternatives, include/exclude controls and concise comparison exports. | Report integrity, duplicate validation and cached-artifact CLI fixes complete; payload reduction and planning features outstanding |
+| 6 | Benchmark and planner evaluation | Same inputs and budgets for SPAN, whole-route greedy and capable published methods; compare access, cost, robustness, runtime and planner task success. Report ties and losses as well as wins. | Three methods compared in four new areas; optimiser ties whole-route greedy; external benchmarks and planner study outstanding |
 
 Priority 6's evaluation design should inform priorities 1–3, not be added after
 tuning the model. Priority 5's integrity and performance fixes can be undertaken
 without waiting for new AT data. New public controls should earn their place
 through a planning task; do not bring back the separate research interface.
+
+Latest evidence: [fresh routing, four-area checks and reliability fixes](audit/span-follow-up-progress-2026-09-24.md).
+Next: trace high-stress route gaps to absent source candidates versus projects
+excluded by crop boundaries; then test broader sampling and graph buffers on
+paired journeys. Do not label stress-relaxed diagnostic routes as acceptable.
 
 ## First implementation: fixed-support influence audit
 

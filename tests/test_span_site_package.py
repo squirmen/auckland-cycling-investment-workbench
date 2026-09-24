@@ -46,6 +46,13 @@ def fixture(tmp_path, monkeypatch):
     }
     (data / "manifest.json").write_text(json.dumps(manifest))
     (data / "access-experiment.json").write_text(json.dumps(research))
+    manifest["journeyReport"] = {
+        "url": "./data/access-experiment.json",
+        "sha256": sha256_file(data / "access-experiment.json"),
+        "runId": "native",
+        "topologySha256": "topology",
+    }
+    (data / "manifest.json").write_text(json.dumps(manifest))
     comparison = {
         "scope": {"sourceHashes": research["sourceHashes"]},
         "scenarios": {"default": {"sha256": sha256_file(data / "access-experiment.json")}},
@@ -74,7 +81,19 @@ def test_complete_site_contains_hidden_settings_and_sha256_record(tmp_path, monk
     )
 
 
-@pytest.mark.parametrize("condition", ["wrong_product", "wrong_host", "stale", "private"])
+@pytest.mark.parametrize(
+    "condition",
+    [
+        "wrong_product",
+        "wrong_host",
+        "stale",
+        "private",
+        "missing_descriptor",
+        "descriptor_run",
+        "descriptor_url",
+        "descriptor_topology",
+    ],
+)
 def test_site_gate_rejects_wrong_or_unsafe_packages(tmp_path, monkeypatch, condition):
     site, output = fixture(tmp_path, monkeypatch)
     if condition == "wrong_product":
@@ -84,6 +103,19 @@ def test_site_gate_rejects_wrong_or_unsafe_packages(tmp_path, monkeypatch, condi
     elif condition == "stale":
         with (site / "data/access-experiment.json").open("a") as stream:
             stream.write("\n")
+    elif condition.startswith("descriptor_") or condition == "missing_descriptor":
+        path = site / "data/manifest.json"
+        manifest = json.loads(path.read_text())
+        if condition == "missing_descriptor":
+            del manifest["journeyReport"]
+        else:
+            key = {
+                "descriptor_run": "runId",
+                "descriptor_url": "url",
+                "descriptor_topology": "topologySha256",
+            }[condition]
+            manifest["journeyReport"][key] = "wrong"
+        path.write_text(json.dumps(manifest))
     else:
         (site / "data/private.parquet").write_bytes(b"private")
     with pytest.raises(ValueError):

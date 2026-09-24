@@ -43,6 +43,16 @@
     },
     "attribution": {"type": "array", "items": {"type": "string", "minLength": 1}},
     "methodologyUrl": {"type": "string", "minLength": 1},
+    "journeyReport": {
+      "type": "object", "additionalProperties": false,
+      "required": ["url", "sha256", "runId", "topologySha256"],
+      "properties": {
+        "url": {"const": "./data/access-experiment.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "runId": {"type": "string", "minLength": 1},
+        "topologySha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
     "effectiveNetwork": {
       "type": "object",
       "required": ["version", "method", "status", "runId", "topologySha256", "inventorySha256", "inventorySites", "matchedSites", "reviewSites", "directedMovements", "note"],

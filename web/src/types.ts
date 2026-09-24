@@ -57,6 +57,13 @@ export const layerSchema = z.object({
   licence: z.string().min(1),
 });
 
+export const journeyReportDescriptorSchema = z.object({
+  url: localAssetUrlSchema,
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  runId: z.string().min(1),
+  topologySha256: z.string().regex(/^[a-f0-9]{64}$/),
+});
+
 export const summaryMetricSchema = z.object({
   purpose: z.enum(purposeIds),
   activityValue: z.number().nonnegative(),
@@ -293,6 +300,7 @@ export const manifestSchema = z.object({
   layers: z.array(layerSchema),
   attribution: z.array(z.string().min(1)),
   methodologyUrl: localMethodologyUrlSchema,
+  journeyReport: journeyReportDescriptorSchema.optional(),
   effectiveNetwork: z.object({
     version: z.string(), method: z.literal("unambiguous_at_grade_source_junctions"),
     status: z.literal("screening_sensitivity"), runId: z.string(),

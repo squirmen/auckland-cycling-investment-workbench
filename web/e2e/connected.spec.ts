@@ -1,5 +1,7 @@
 import { readFile } from "node:fs/promises";
-import { expect, test } from "@playwright/test";
+import { createHash } from "node:crypto";
+import path from "node:path";
+import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const hash = "a".repeat(64);
@@ -26,9 +28,23 @@ const report = {
   assignment: { status: "fixed_demand_illustrative_preferences", scenarioId: "synthetic", totalDemand: 1, profiles: [], portfolios: [] },
 };
 
+async function serveReport(page: Page, override: object = {}) {
+  const manifestPath = process.env.SPAN_TEST_DATA_DIR
+    ? path.join(process.env.SPAN_TEST_DATA_DIR, "manifest.json")
+    : new URL("../public/data/manifest.json", import.meta.url);
+  const manifest = JSON.parse(await readFile(manifestPath, "utf8")) as { runId: string; effectiveNetwork?: { topologySha256: string } };
+  const topology = manifest.effectiveNetwork?.topologySha256 ?? hash;
+  const body = JSON.stringify({ ...report, runId: manifest.runId, sourceHashes: { ...report.sourceHashes, topology }, ...override });
+  const sha256 = createHash("sha256").update(body).digest("hex");
+  await page.route("**/data/manifest.json", route => route.fulfill({ json: {
+    ...manifest, journeyReport: { url: "./data/access-experiment.json", sha256, runId: manifest.runId, topologySha256: topology },
+  } }));
+  await page.route("**/data/access-experiment.json", route => route.fulfill({ body, contentType: "application/json" }));
+  return body;
+}
+
 test.beforeEach(async ({ page }) => {
-  const manifest = JSON.parse(await readFile(new URL("../public/data/manifest.json", import.meta.url), "utf8")) as { runId: string; effectiveNetwork?: { topologySha256: string } };
-  await page.route("**/data/access-experiment.json", route => route.fulfill({ json: { ...report, runId: manifest.runId, sourceHashes: { ...report.sourceHashes, topology: manifest.effectiveNetwork?.topologySha256 ?? hash } } }));
+  await serveReport(page);
 });
 
 test("uses one SPAN map for complete journeys and keeps the build-order settings", async ({ page }) => {
@@ -65,7 +81,8 @@ test("uses one SPAN map for complete journeys and keeps the build-order settings
   await expect(page.locator("#map .connected-end")).toHaveCount(2);
   const download = page.waitForEvent("download");
   await page.locator("#download-button").click();
-  const exported = JSON.parse(await readFile(await (await download).path(), "utf8")) as { span: { additionalCyclists: null; selectedProjectIds: string[] } };
+  const exported = JSON.parse(await readFile(await (await download).path(), "utf8")) as { reportSha256: string; span: { additionalCyclists: null; selectedProjectIds: string[] } };
+  expect(exported.reportSha256).toMatch(/^[a-f0-9]{64}$/);
   expect(exported.span.additionalCyclists).toBeNull();
   expect(exported.span.selectedProjectIds).toEqual(["P"]);
   await page.locator("#connected-package-map").click();
@@ -91,9 +108,20 @@ test("redirects old journey links into SPAN", async ({ page }) => {
 });
 
 test("rejects a journey report from another release without breaking SPAN", async ({ page }) => {
-  await page.route("**/data/access-experiment.json", route => route.fulfill({ json: { ...report, runId: "wrong-release" } }));
+  await serveReport(page, { runId: "wrong-release" });
   await page.goto("/?offline=1&view=connected");
   await expect(page.locator("#connected-status")).toContainText("different data release");
+  await expect(page.locator("#connected-controls")).toBeHidden();
+  await expect(page.locator("#download-button")).toBeDisabled();
+  await page.getByRole("tab", { name: "Build order", exact: true }).click();
+  await expect(page.locator("#portfolio-summary")).not.toBeEmpty();
+});
+
+test("rejects changed journey bytes even when their release ID still matches", async ({ page }) => {
+  const body = await serveReport(page);
+  await page.route("**/data/access-experiment.json", route => route.fulfill({ body: body + " ", contentType: "application/json" }));
+  await page.goto("/?offline=1&view=connected");
+  await expect(page.locator("#connected-status")).toContainText("Integrity check failed");
   await expect(page.locator("#connected-controls")).toBeHidden();
   await expect(page.locator("#download-button")).toBeDisabled();
   await page.getByRole("tab", { name: "Build order", exact: true }).click();

@@ -1,7 +1,8 @@
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vite";
+import { manifestWithJourneyReport } from "./report-integrity";
 
 const methodologySource = fileURLToPath(
   new URL("../documentation/methodology/methodology.md", import.meta.url),
@@ -32,6 +33,17 @@ export default defineConfig({
       name: "bundle-methodology",
       configureServer(server) {
         server.middlewares.use((request, response, next) => {
+          if (request.url?.split("?")[0] === "/data/manifest.json") {
+            try {
+              response.setHeader("Content-Type", "application/json");
+              response.setHeader("Cache-Control", "no-cache");
+              response.end(manifestWithJourneyReport("public/data"));
+            } catch (error) {
+              response.statusCode = 500;
+              response.end(error instanceof Error ? error.message : "Invalid journey report");
+            }
+            return;
+          }
           const name = request.url?.split("?")[0]?.replace(/^\/documentation\//, "");
           if (!name || !(name in documents) || !request.url?.startsWith("/documentation/")) return next();
           response.setHeader("Content-Type", "text/plain; charset=utf-8");
@@ -39,6 +51,9 @@ export default defineConfig({
         });
       },
       closeBundle() {
+        if (existsSync("dist/data/manifest.json")) {
+          writeFileSync("dist/data/manifest.json", manifestWithJourneyReport("dist/data"));
+        }
         mkdirSync("dist/documentation", { recursive: true });
         for (const [name, source] of Object.entries(documents)) copyFileSync(source, `dist/documentation/${name}`);
         // Vite leaves dotfiles in public/ behind; the Apache settings travel with the site.
