@@ -53,6 +53,17 @@
         "topologySha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
       }
     },
+    "compactCandidates": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "url", "sha256", "sourceSha256", "featureCount"],
+      "properties": {
+        "format": {"const": "span-candidates-v1"},
+        "url": {"const": "./data/candidates.compact.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sourceSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "featureCount": {"type": "integer", "minimum": 0}
+      }
+    },
     "effectiveNetwork": {
       "type": "object",
       "required": ["version", "method", "status", "runId", "topologySha256", "inventorySha256", "inventorySites", "matchedSites", "reviewSites", "directedMovements", "note"],

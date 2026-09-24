@@ -1,3 +1,4 @@
+import { decodeCompactCandidates } from "./candidate-codec";
 import {
   candidateFeatureSchema,
   featureCollectionSchema,
@@ -38,6 +39,15 @@ export async function loadManifest(url = "./data/manifest.json"): Promise<Manife
 
 export async function loadLayer(manifest: Manifest, layerId: string): Promise<GenericFeatureCollection> {
   const layer = layerSchema.parse(manifest.layers.find((item) => item.id === layerId));
+  if (layer.id === "candidates" && manifest.compactCandidates) {
+    const descriptor = manifest.compactCandidates;
+    if (descriptor.sourceSha256 !== layer.sha256) throw new Error("Compact candidates do not match the source layer");
+    const features = decodeCompactCandidates(await fetchVerifiedJson(descriptor.url, descriptor.sha256));
+    if (features.length !== descriptor.featureCount) throw new Error("Compact candidate count mismatch");
+    const collection: GenericFeatureCollection = { type: "FeatureCollection", features };
+    validatedCandidates.set(collection, features);
+    return collection;
+  }
   const collection = featureCollectionSchema.parse(await fetchVerifiedJson(layer.url, layer.sha256));
   if (layer.id === "candidates") {
     validatedCandidates.set(collection, collection.features.map(feature => candidateFeatureSchema.parse(feature)));

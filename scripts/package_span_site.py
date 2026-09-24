@@ -56,6 +56,23 @@ def main() -> None:
     if errors:
         raise ValueError("invalid site export: " + "; ".join(errors))
     manifest = json.loads((site / "data/manifest.json").read_text())
+    compact = manifest.get("compactCandidates")
+    if compact is not None:
+        source = next(layer for layer in manifest["layers"] if layer["id"] == "candidates")
+        compact_path = site / "data/candidates.compact.json"
+        if (
+            compact.get("format") != "span-candidates-v1"
+            or compact.get("url") != "./data/candidates.compact.json"
+            or compact.get("sourceSha256") != source["sha256"]
+            or not compact_path.is_file()
+            or compact.get("sha256") != sha256_file(compact_path)
+        ):
+            raise ValueError("compact candidate descriptor is stale or mismatched")
+        packed = json.loads(compact_path.read_text())
+        if packed.get("format") != compact["format"] or len(
+            packed.get("features", [])
+        ) != compact.get("featureCount"):
+            raise ValueError("compact candidate format or count mismatch")
     research = json.loads((site / "data/access-experiment.json").read_text())
     comparison = json.loads((site / "data/delay-comparison.json").read_text())
     evidence = manifest["effectiveNetwork"]

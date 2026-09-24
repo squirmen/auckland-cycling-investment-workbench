@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vite";
 import { manifestWithJourneyReport } from "./report-integrity";
+import { manifestWithCompactCandidates } from "./candidate-build";
 
 const methodologySource = fileURLToPath(
   new URL("../documentation/methodology/methodology.md", import.meta.url),
@@ -52,7 +53,7 @@ export default defineConfig({
       },
       closeBundle() {
         if (existsSync("dist/data/manifest.json")) {
-          writeFileSync("dist/data/manifest.json", manifestWithJourneyReport("dist/data"));
+          writeFileSync("dist/data/manifest.json", manifestWithCompactCandidates("dist/data", manifestWithJourneyReport("dist/data")));
         }
         mkdirSync("dist/documentation", { recursive: true });
         for (const [name, source] of Object.entries(documents)) copyFileSync(source, `dist/documentation/${name}`);

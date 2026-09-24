@@ -64,6 +64,14 @@ export const journeyReportDescriptorSchema = z.object({
   topologySha256: z.string().regex(/^[a-f0-9]{64}$/),
 });
 
+export const compactCandidatesDescriptorSchema = z.object({
+  format: z.literal("span-candidates-v1"),
+  url: localAssetUrlSchema,
+  sha256: z.string().regex(/^[a-f0-9]{64}$/),
+  sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
+  featureCount: z.number().int().nonnegative(),
+});
+
 export const summaryMetricSchema = z.object({
   purpose: z.enum(purposeIds),
   activityValue: z.number().nonnegative(),
@@ -301,6 +309,7 @@ export const manifestSchema = z.object({
   attribution: z.array(z.string().min(1)),
   methodologyUrl: localMethodologyUrlSchema,
   journeyReport: journeyReportDescriptorSchema.optional(),
+  compactCandidates: compactCandidatesDescriptorSchema.optional(),
   effectiveNetwork: z.object({
     version: z.string(), method: z.literal("unambiguous_at_grade_source_junctions"),
     status: z.literal("screening_sensitivity"), runId: z.string(),

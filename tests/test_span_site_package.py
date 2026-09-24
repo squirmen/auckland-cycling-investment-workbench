@@ -121,3 +121,36 @@ def test_site_gate_rejects_wrong_or_unsafe_packages(tmp_path, monkeypatch, condi
     with pytest.raises(ValueError):
         package.main()
     assert not output.exists()
+
+
+@pytest.mark.parametrize("fault", [None, "source", "bytes", "count", "url", "format"])
+def test_compact_candidate_package_integrity(tmp_path, monkeypatch, fault):
+    site, output = fixture(tmp_path, monkeypatch)
+    path = site / "data/candidates.compact.json"
+    path.write_text(json.dumps({"format": "span-candidates-v1", "metrics": [], "features": []}))
+    manifest_path = site / "data/manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["layers"] = [{"id": "candidates", "sha256": "source"}]
+    manifest["compactCandidates"] = {
+        "format": "span-candidates-v1",
+        "url": "./data/candidates.compact.json",
+        "sourceSha256": "source",
+        "sha256": sha256_file(path),
+        "featureCount": 0,
+    }
+    if fault == "source":
+        manifest["compactCandidates"]["sourceSha256"] = "wrong"
+    elif fault == "bytes":
+        path.write_text("changed")
+    elif fault == "count":
+        manifest["compactCandidates"]["featureCount"] = 10
+    elif fault in {"url", "format"}:
+        manifest["compactCandidates"][fault] = "wrong"
+    manifest_path.write_text(json.dumps(manifest))
+    if fault:
+        with pytest.raises(ValueError, match="compact candidate"):
+            package.main()
+        assert not output.exists()
+    else:
+        package.main()
+        assert output.exists()

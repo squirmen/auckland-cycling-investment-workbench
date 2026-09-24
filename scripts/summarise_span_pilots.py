@@ -9,6 +9,47 @@ from pathlib import Path
 from cycling_investment_workbench.provenance import sha256_file, write_json_atomic
 
 
+def budgeted_summary(report):
+    """Publish only aggregate comparison fields, never future per-journey additions."""
+    if not report:
+        return None
+    output = {
+        key: report[key]
+        for key in (
+            "status",
+            "sameJourneysAndWeights",
+            "originalRouteColumnsRetained",
+            "routeColumns",
+            "journeysWithRouteColumns",
+            "searchStopReasons",
+            "searchComplete",
+            "labelsExpanded",
+            "elapsedS",
+            "note",
+        )
+    }
+    output["solutions"] = [
+        {
+            key: solution[key]
+            for key in (
+                "selected",
+                "capital_cost",
+                "served_weight",
+                "served_journeys",
+                "method",
+                "optimal_within_columns",
+                "relative_gap",
+                "budget",
+                "shortConnectorCount",
+                "shortConnectorCostNzd",
+                "checkedRouteWitnesses",
+            )
+        }
+        for solution in report["solutions"]
+    ]
+    return output
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--reports", nargs="+", type=Path, required=True)
@@ -80,6 +121,9 @@ def main():
                     )
                 },
                 "reportSha256": sha256_file(path),
+                "budgetedConnectorComparison": budgeted_summary(
+                    report.get("budgetedConnectorComparison")
+                ),
                 "solutions": [
                     {
                         key: s[key]

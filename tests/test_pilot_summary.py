@@ -127,3 +127,26 @@ def test_summary_accepts_disabled_connector_diagnostic(tmp_path):
     process, path = run_summary(tmp_path, item)
     assert process.returncode == 0, process.stderr
     assert json.loads(path.read_text())["areas"][0]["shortConnectorDiagnostic"] is None
+
+
+def test_budgeted_summary_does_not_copy_future_raw_journey_fields(tmp_path):
+    item = report()
+    item["budgetedConnectorComparison"] = {
+        "status": "test",
+        "sameJourneysAndWeights": True,
+        "originalRouteColumnsRetained": 0,
+        "routeColumns": 1,
+        "journeysWithRouteColumns": 1,
+        "searchStopReasons": {},
+        "searchComplete": True,
+        "labelsExpanded": 1,
+        "elapsedS": 0.1,
+        "note": "test",
+        "solutions": [],
+        "privateJourneyCoordinates": [1, 2],
+    }
+    process, path = run_summary(tmp_path, item)
+    assert process.returncode == 0, process.stderr
+    comparison = json.loads(path.read_text())["areas"][0]["budgetedConnectorComparison"]
+    assert comparison["routeColumns"] == 1
+    assert "privateJourneyCoordinates" not in comparison

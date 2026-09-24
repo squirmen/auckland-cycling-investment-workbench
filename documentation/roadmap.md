@@ -18,9 +18,9 @@ Neither analysis is a calibrated forecast of intervention-induced cycling.
 | --- | --- | --- | --- |
 | 1 | Demand support and ranking stability | Reproduce the current result first; quantify influential source cells; generate independent spatial OD replicates and reroute; compare selection stability and observed behaviour without changing source totals or treating suppression as zero. | Influence audit and 291-pair stored-support rerouting complete; new spatial support and validation outstanding |
 | 2 | Broaden complete-route planning | Test contrasting inner-city, suburban and outer Auckland areas; disclose crop failures, search caps, runtime and memory; only then offer a citywide package workflow. | Four bounded area checks complete; citywide scaling and boundary sensitivity outstanding |
-| 3 | Buildable interventions | Checked existing/committed infrastructure, crossing movements and waits, street widths, facility alternatives and defensible cost ranges. AT evidence and engineering review are dependencies. | Short-link exclusions traced and restored in diagnostic-only tests; budgeted connectors and engineering evidence next |
+| 3 | Buildable interventions | Checked existing/committed infrastructure, crossing movements and waits, street widths, facility alternatives and defensible cost ranges. AT evidence and engineering review are dependencies. | Paired budgeted connector experiments complete in four areas; search convergence, crossing costs and engineering evidence next |
 | 4 | Tangible access outcomes | Checked place-based journey names, before/after routes and destination access. Reuse useful TEAM opportunities; connect CRANC only after scenario, graph, profile and weighting contracts are verified. | Planned |
-| 5 | Product reliability and practical use | Profile and reduce the 224 MiB uncompressed candidate payload without changing results; hash the journey report; saved alternatives, include/exclude controls and concise comparison exports. | Report integrity, duplicate validation and cached-artifact CLI fixes complete; payload reduction and planning features outstanding |
+| 5 | Product reliability and practical use | Profile and reduce the 224 MiB uncompressed candidate payload without changing results; hash the journey report; saved alternatives, include/exclude controls and concise comparison exports. | Verified compact payload reduces raw JSON by 59%; report integrity and CLI fixes complete; staged loading and planning features outstanding |
 | 6 | Benchmark and planner evaluation | Same inputs and budgets for SPAN, whole-route greedy and capable published methods; compare access, cost, robustness, runtime and planner task success. Report ties and losses as well as wins. | Three methods compared in four new areas; optimiser ties whole-route greedy; external benchmarks and planner study outstanding |
 
 Priority 6's evaluation design should inform priorities 1–3, not be added after
@@ -28,12 +28,13 @@ tuning the model. Priority 5's integrity and performance fixes can be undertaken
 without waiting for new AT data. New public controls should earn their place
 through a planning task; do not bring back the separate research interface.
 
-Latest evidence: [short-link exclusions and paired connector diagnostics](audit/span-candidate-coverage-2026-09-25.md),
-following [fresh routing, four-area checks and reliability fixes](audit/span-follow-up-progress-2026-09-24.md).
-Next: test explicit short connectors in budgeted complete-route packages, with
-unchanged paired journeys and realistic crossing/cost assumptions. Then test
-broader sampling and graph buffers. Do not present unrestricted diagnostic
-route counts as affordable programmes, or stress-relaxed routes as acceptable.
+Latest evidence: [budgeted connectors and smaller candidate loading](audit/span-budgeted-connectors-and-loading-2026-09-25.md),
+following [short-link diagnosis](audit/span-candidate-coverage-2026-09-25.md) and
+[demand-support checks](audit/span-follow-up-progress-2026-09-24.md).
+Next: test search-cap convergence on paired journeys, check crossing-specific
+treatments/costs, and stage browser loading. Broader sampling and graph buffers
+remain necessary. Do not present unrestricted diagnostics as affordable
+programmes or connected sample records as new cyclists.
 
 ## First implementation: fixed-support influence audit
 

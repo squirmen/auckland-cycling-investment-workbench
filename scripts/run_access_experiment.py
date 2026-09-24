@@ -37,6 +37,7 @@ from cycling_investment_workbench.research.behaviour import (
     assign_fixed_demand,
     preference_network,
 )
+from cycling_investment_workbench.research.connector_portfolios import compare_budgeted_connectors
 from cycling_investment_workbench.research.gaps import (
     all_projects_check,
     candidate_coverage_reasons,
@@ -68,6 +69,12 @@ def main() -> None:
         action="store_true",
         help="Diagnostic only: test all projects plus complete short excluded chains; "
         "does not add them to the budgeted portfolio",
+    )
+    parser.add_argument(
+        "--budget-short-connectors",
+        action="store_true",
+        help="Also compare budgeted hypothetical connectors on the same sampled journeys; "
+        "kept separate from the original portfolio and browser data",
     )
     args = parser.parse_args()
     if (
@@ -196,7 +203,7 @@ def main() -> None:
     graph = InvestmentGraph(arcs, costs, turns)
     connector_graph = None
     connector_context = None
-    if args.test_short_connectors:
+    if args.test_short_connectors or args.budget_short_connectors:
         candidate_manifest = json.loads((candidate_dir / "manifest.json").read_text())
         cost_per_m = candidate_manifest["screening_cost"]["base_nzd_per_m"]
         connector_graph = with_short_connector_diagnostic(graph, exclusions, cost_per_m=cost_per_m)
@@ -339,6 +346,21 @@ def main() -> None:
         s for s in solutions if s["budget"] == budget and s["method"] == "route_packages_milp"
     )
     selected = frozenset(final["selected"])
+    budgeted_connectors = None
+    if args.budget_short_connectors:
+        print("Comparing budgeted short connectors on the same journeys and standards…", flush=True)
+        budgeted_connectors = compare_budgeted_connectors(
+            connector_graph,
+            routes,
+            {
+                f"Journey {i + 1}": (od["origin_node_id"], od["destination_node_id"])
+                for i, od in enumerate(sample)
+            },
+            weights,
+            budget=budget,
+            standard=standard,
+            max_labels=args.max_labels,
+        )
     transform = Transformer.from_crs("EPSG:2193", "EPSG:4326", always_xy=True)
     edge_lookup = {e["id"]: e for e in edges}
 
@@ -556,6 +578,7 @@ def main() -> None:
         "cropCoverage": coverage,
         "candidateCoverage": candidate_coverage,
         "shortConnectorDiagnostic": connector_context,
+        "budgetedConnectorComparison": budgeted_connectors,
         "searchSummary": {
             "stopReasons": dict(sorted(Counter(r.stop_reason for r in searches.values()).items())),
             "labelsExpanded": sum(r.labels_expanded for r in searches.values()),
@@ -604,6 +627,7 @@ def main() -> None:
             "sampleSizeRequested": args.sample_size,
             "maxLabelsPerSearch": args.max_labels,
             "testShortConnectors": args.test_short_connectors,
+            "budgetShortConnectors": args.budget_short_connectors,
             "protectedCostSource": "candidate_ledger.capital_cost_base_nzd",
             "flatSpeedKph": 15,
             "uphillExponent": 3,

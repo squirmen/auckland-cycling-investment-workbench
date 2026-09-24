@@ -45,6 +45,8 @@ try {
     const context = await browser.newContext({ viewport, deviceScaleFactor: 1, acceptDownloads: true });
     const page = await context.newPage();
     const errors = [];
+    const requests = [];
+    page.on("request", request => requests.push(new URL(request.url()).pathname));
     page.on("pageerror", error => errors.push(error.message));
     page.on("response", response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
     await page.goto(`${base}?offline=1&layers=existing,intersections`, { waitUntil: "load" });
@@ -53,6 +55,10 @@ try {
     await expect(page.locator("#data-status")).toHaveText("Preliminary estimates");
     await expect(page.locator("#run-summary")).toContainText(manifest.runId);
     await expect(page.locator("#status-message")).not.toHaveClass(/error/);
+    if (manifest.compactCandidates) {
+      assert.ok(requests.some(url => url.endsWith("/data/candidates.compact.json")), "compact candidates must be used");
+      assert.ok(!requests.some(url => url.endsWith("/data/candidates.geojson")), "canonical candidate download must not be duplicated");
+    }
     await expect(page.locator("#layer-intersections")).toBeChecked();
     await expect(page.locator("#map-legend-items")).toContainText("Matched signal-controlled site");
     await expect(page.locator("#intersection-source-note")).toContainText(`${manifest.effectiveNetwork.matchedSites} of`);
@@ -152,7 +158,7 @@ try {
     assert.deepEqual(errors, [], `${name}: runtime or HTTP errors`);
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), `${name}: horizontal overflow`);
     checks.push({ viewport: name, branding: true, intersections: true, researchDelay: true,
-      export: true, relativeAssets: true, errors });
+      export: true, relativeAssets: true, compactCandidates: Boolean(manifest.compactCandidates), errors });
     await context.close();
   }
   await writeFile(path.join(output, "checks.json"), JSON.stringify({ runId: manifest.runId, checks }, null, 2));
