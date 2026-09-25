@@ -48,9 +48,10 @@ download cost.
   into a labelled information button. Its modal separates purpose, limitations,
   data credits, and methods in short sections while keeping basemap attribution
   visible on the map itself.
-- Equity and Appraisal controls are disabled when the export capability is
-  withheld. The sanitized Auckland asset contains null BCR fields, so this is
-  a data contract rather than presentation-only hiding.
+- Equity and Appraisal controls are disabled when an export capability is not
+  available. The source-resolution Auckland asset enables aggregate equity and
+  research-only appraisal while retaining their limitations in the data
+  contract and interface.
 - Candidate evidence separates modelled outcome, exact-edge provenance,
   evidence coverage, uncertainty stability, and warnings.
 - Zero budget has a genuine empty state; exports are disabled when neither a
@@ -84,16 +85,16 @@ download cost.
   screenshot states.
 - Desktop and mobile axe scans report zero automatically detectable
   violations.
-- All seven release screenshots load the sanitized Auckland asset with the
-  expected run ID, no console or page errors, and no external requests.
+- All seven release screenshots load the source-resolution Auckland asset with
+  the expected run ID, no console or page errors, and no external requests.
 
 ## Known experience constraints
 
-The Auckland export is 308.6 MB uncompressed because candidate metrics and
-geometry remain in one 207.7 MB layer and the exact-edge network is 88.7 MB.
-The compressed release asset is 18.9 MB, but first use still requires parsing
-the expanded layers; local testing took roughly 7–8 seconds on the review
-machine. Loading state and failure recovery are present, but a future schema
+The Auckland export is 326.1 MB uncompressed because candidate metrics and
+geometry remain in one 217.3 MB layer and the exact-edge network is 88.7 MB.
+The compressed release asset is 23.6 MB, but first use still requires parsing
+the expanded layers; local review confirmed visible loading and recovery on
+the review machine. Loading state and failure recovery are present, but a future schema
 should split geometry from scenario metrics and stream or index candidate
 records. That optimisation must preserve checksums, full-set search, exact
 exports, and deterministic screenshots.

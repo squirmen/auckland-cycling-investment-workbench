@@ -9,7 +9,13 @@ import pyarrow.parquet as pq
 from cycling_investment_workbench.config import PipelineStageConfig, load_config
 from cycling_investment_workbench.pipeline import StageContext
 from cycling_investment_workbench.production_portfolios_stage import production_portfolios_stage
-from cycling_investment_workbench.provenance import hash_path, read_json
+from cycling_investment_workbench.provenance import (
+    hash_path,
+    read_json,
+    sha256_file,
+    write_json_atomic,
+)
+from cycling_investment_workbench.sources import SourceRecord
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -68,6 +74,7 @@ def test_production_portfolio_stage_keeps_metric_rows_unique_and_recomputes_sequ
         [
             {
                 "od_id": f"{purpose}-od",
+                "origin_support_id": "sa1-7000001",
                 "purpose": purpose,
                 "weighted_eligible": 100.0,
                 "weighted_observed_cycle": 10.0 if purpose == "commute" else 0.0,
@@ -91,6 +98,21 @@ def test_production_portfolio_stage_keeps_metric_rows_unique_and_recomputes_sequ
 
     config = load_config(PROJECT_ROOT / "configs/auckland.yml")
     config = replace(config, root_dir=tmp_path)
+    nzdep_path = tmp_path / "nzdep.geojson"
+    write_json_atomic(
+        nzdep_path,
+        {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "geometry": None,
+                    "properties": {"SA12023_code": "7000001", "NZDep2023": 9},
+                }
+            ],
+        },
+    )
+    nzdep_digest = sha256_file(nzdep_path)
     run_dir = tmp_path / "runs" / "run-fixture"
     run_dir.mkdir(parents=True)
     context = StageContext(
@@ -98,7 +120,17 @@ def test_production_portfolio_stage_keeps_metric_rows_unique_and_recomputes_sequ
         run_id="run-fixture",
         run_dir=run_dir,
         stage=PipelineStageConfig("evaluate-portfolios", "test", (), {}),
-        sources={},
+        sources={
+            "nzdep2023_sa1": SourceRecord(
+                "nzdep2023_sa1",
+                nzdep_path,
+                False,
+                "available",
+                nzdep_path.stat().st_size,
+                nzdep_digest,
+                nzdep_digest,
+            )
+        },
         dependencies={
             "assign-routes": {"routes": hash_path(route_dir)},
             "generate-candidates": {"candidates": hash_path(candidate_dir)},
@@ -110,20 +142,28 @@ def test_production_portfolio_stage_keeps_metric_rows_unique_and_recomputes_sequ
     output_dir = Path(result.outputs["portfolios"])
     metrics = pq.read_table(output_dir / "candidate_counterfactuals.parquet").to_pylist()
     steps = pq.read_table(output_dir / "portfolio_steps.parquet").to_pylist()
-    assert len(metrics) == 5
+    assert len(metrics) == 7
     commute_metrics = [row for row in metrics if row["purpose"] == "commute"]
     assert all(row["annual_cycle_km"] > 0 for row in commute_metrics)
     assert all(row["additional_cycle_users"] > 0 for row in commute_metrics)
-    assert all(row["annual_cycle_km"] is None for row in metrics if row["purpose"] != "commute")
+    assert all(
+        row["annual_cycle_km"] is None
+        for row in metrics
+        if row["purpose"] not in {"commute", "equity"}
+    )
+    equity_metrics = [row for row in metrics if row["purpose"] == "equity"]
+    assert len(equity_metrics) == 2
+    assert all(row["additional_cycle_users"] > 0 for row in equity_metrics)
     assert len(
         {
             (row["scenario_id"], row["purpose"], row["objective"], row["candidate_id"])
             for row in metrics
         }
     ) == len(metrics)
-    assert len(steps) == 7
+    assert len(steps) == 9
     assert {row["preset"] for row in steps} == {
         "network",
+        "equity",
         "appraisal",
         "school",
         "everyday",
@@ -132,3 +172,4 @@ def test_production_portfolio_stage_keeps_metric_rows_unique_and_recomputes_sequ
     manifest = read_json(output_dir / "manifest.json")
     assert manifest["counterfactual"]["cumulative_recomputation"] is True
     assert manifest["counterfactual"]["candidate_limit"] is None
+    assert manifest["equity"]["high_deprivation_definition"] == "NZDep2023 deciles 8-10"

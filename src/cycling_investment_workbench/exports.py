@@ -16,7 +16,8 @@ from .config import ExportConfig
 from .provenance import ArtifactDigest, canonical_json, portable_path, sha256_bytes
 from .sources import SourceSpec
 
-LAYER_IDS = ("cells", "network", "candidates", "programmes", "counters")
+LAYER_IDS = ("cells", "network", "candidates", "programmes", "counters", "safety")
+OPTIONAL_LAYER_IDS = ("existing", "intersections")
 SCENARIO_IDS = (
     "baseline",
     "government_target",
@@ -214,10 +215,11 @@ def _validate_validation(value: Any) -> None:
         "matchedCount",
         "coverage",
         "purposeAlignment",
+        "status",
     }
     if set(validation) != required:
         raise ExportError("manifest.validation fields are incomplete or unknown")
-    for field in ("periodLabel", "purposeAlignment"):
+    for field in ("periodLabel", "purposeAlignment", "status"):
         if not isinstance(validation[field], str) or not validation[field].strip():
             raise ExportError(f"manifest.validation.{field} must be a non-empty string")
     for field in ("counterCount", "matchedCount"):
@@ -346,8 +348,11 @@ def export_web_payload(
     destination = Path(output_dir).resolve()
     destination.mkdir(parents=True, exist_ok=True)
     raw_layers = _mapping(root_payload["layers"], context="layers")
-    if set(raw_layers) != set(LAYER_IDS):
-        raise ExportError("layers must contain exactly: " + ", ".join(LAYER_IDS))
+    if not set(LAYER_IDS) <= set(raw_layers) or set(raw_layers) - set(
+        LAYER_IDS + OPTIONAL_LAYER_IDS
+    ):
+        raise ExportError("layers must contain the core layers and only recognised optional layers")
+    layer_ids = LAYER_IDS + tuple(layer for layer in OPTIONAL_LAYER_IDS if layer in raw_layers)
 
     manifest = _validate_manifest_base(root_payload["manifest"])
     descriptors = manifest["layers"]
@@ -357,7 +362,7 @@ def export_web_payload(
     for index, raw_descriptor in enumerate(descriptors):
         descriptor = dict(_mapping(raw_descriptor, context=f"manifest.layers[{index}]"))
         layer_id = descriptor.get("id")
-        if layer_id not in LAYER_IDS:
+        if layer_id not in layer_ids:
             raise ExportError(f"manifest.layers[{index}].id is invalid")
         if layer_id in descriptor_by_id:
             raise ExportError(f"manifest contains duplicate layer: {layer_id}")
@@ -365,16 +370,16 @@ def export_web_payload(
             if field not in descriptor:
                 raise ExportError(f"manifest layer {layer_id} is missing {field}")
         descriptor_by_id[layer_id] = descriptor
-    if set(descriptor_by_id) != set(LAYER_IDS):
-        raise ExportError("manifest.layers must describe all five exported layers")
+    if set(descriptor_by_id) != set(layer_ids):
+        raise ExportError("manifest.layers must describe every exported layer exactly once")
     _validate_public_rights(manifest, descriptor_by_id, source_specs)
 
     layer_digests: dict[str, ArtifactDigest] = {}
     final_descriptors: list[dict[str, Any]] = []
-    for layer_id in LAYER_IDS:
+    for layer_id in layer_ids:
         collection = _validate_feature_collection(raw_layers[layer_id], layer_id=layer_id)
         content = _json_bytes(collection, pretty=False)
-        filename = export_config.layer_filenames[layer_id]
+        filename = export_config.layer_filenames.get(layer_id, f"{layer_id}.geojson")
         path = destination / filename
         _write_bytes_atomic(path, content)
         digest = _artifact(path, content)
@@ -418,12 +423,14 @@ def verify_web_export(output_dir: str | Path, *, export_config: ExportConfig) ->
         for descriptor in descriptors
         if isinstance(descriptor, Mapping)
     }
-    for layer_id in LAYER_IDS:
+    if set(by_id) - set(LAYER_IDS + OPTIONAL_LAYER_IDS) or len(by_id) != len(descriptors):
+        problems.append("unknown or duplicate layer descriptor")
+    for layer_id in LAYER_IDS + tuple(layer for layer in OPTIONAL_LAYER_IDS if layer in by_id):
         descriptor = by_id.get(layer_id)
         if not isinstance(descriptor, Mapping):
             problems.append(f"layer descriptor is missing: {layer_id}")
             continue
-        filename = export_config.layer_filenames[layer_id]
+        filename = export_config.layer_filenames.get(layer_id, f"{layer_id}.geojson")
         expected_url = f"./data/{filename}"
         if descriptor.get("url") != expected_url:
             problems.append(f"layer URL is incorrect: {layer_id}")

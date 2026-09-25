@@ -16,11 +16,11 @@ for reuse under CC BY 4.0. Full dataset and database notices are in
 [`../../NOTICE.md`](../../NOTICE.md) and accompany the images when they are
 reused.
 
-The current set was captured from the completed Auckland research snapshot,
-run `run-224e9baa3be4ef73`. Each image visibly retains the research-snapshot
-status and run identifier. The set does not imply release approval: equity,
-appraisal, programme, and public-counter content is omitted or explicitly shown
-as withheld where rights, evidence, or lineage remain unresolved.
+The checked-in set was captured from the completed source-resolution research
+snapshot, run `run-313e0277521633d3`. It shows research-only appraisal,
+aggregate equity, programme, approximate counter and disclosure-safe safety
+context without presenting any of them as decision-ready. Full-network
+low-stress connectivity remains deliberately unreported.
 
 Store each capture under the same basename in three subdirectories:
 
@@ -32,7 +32,7 @@ Store each capture under the same basename in three subdirectories:
 viewport, device scale, scenario, purpose, budget, selected candidate, run ID,
 data status, capture date, basemap state, and master/web/thumbnail SHA-256
 checksums. All seven Auckland research-snapshot rows are complete for run
-`run-224e9baa3be4ef73`. The responsive capture records its native 390 × 844 CSS
+`run-313e0277521633d3`. The responsive capture records its native 390 × 844 CSS
 viewport separately from the neutral 1800 × 1100 master canvas.
 
 Required basenames:
@@ -41,9 +41,9 @@ Required basenames:
 | --- | --- | --- |
 | `workbench-overview` | Hero overview with 8% sensitivity, core KPIs, map, selected portfolio, budget, and run identity | “Auckland Cycling Investment Workbench showing the 8% commute sensitivity, model indicators, regional candidate map, and a cumulative 100 million dollar portfolio.” |
 | `pareto-frontier` | Go Dutch trade-off view with axes and units visible; dominated and non-dominated candidates distinguishable | “Auckland candidate trade-off plot showing lifecycle cost against additional usual commute cyclists, with the non-dominated frontier highlighted.” |
-| `candidate-evidence` | Beach Road exact-edge treatment, counterfactual outcome, evidence profile, public-appraisal gate, and warnings | “Beach Road candidate inspector showing exact-edge treatment, capital and lifecycle cost screens, additional commute cyclists, evidence coverage, frontier stability, and the withheld public appraisal status.” |
-| `equity-purpose-portfolio` | School-purpose preset and cumulative portfolio; caption states that equity remains omitted pending NZDep rights | “Auckland school-access portfolio showing a cumulative 100 million dollar screen and person-equivalent impedance improvement; the equity preset is not displayed because NZDep redistribution rights remain unresolved.” |
-| `network-validation-overlays` | Exact candidate-edge graph with the unavailable programme and public-counter layers explicitly declared | “Present-day Auckland view showing the exact candidate-edge graph and controls for programme and validation layers, with both overlays explicitly empty pending rights and source-lineage resolution.” |
+| `candidate-evidence` | Exact-edge treatment, research-only indicative appraisal interval, evidence profile and warnings | “Auckland candidate inspector showing an exact-edge treatment, lifecycle costs, an indicative BCR interval, evidence coverage, frontier stability and the research-only appraisal warning.” |
+| `equity-purpose-portfolio` | NZDep decile 8–10 origin objective and cumulative portfolio with the distributional boundary visible | “Auckland equity portfolio showing additional usual commuters from high-deprivation origins, cumulative cost and the warning that the view is not a causal equity effect or welfare weight.” |
+| `network-validation-overlays` | Exact candidate-edge graph with Future Connect, RLTP, approximate counter and disclosure-safe safety layers | “Present-day Auckland view showing candidate edges, Future Connect and RLTP context, approximate July 2026 cycle-counter sites and suppressed 500 metre cycle-crash cells.” |
 | `custom-corridor` | Graph-snapped Beach Road path, edge-level status, and the selection/export controls | “Auckland workbench showing a 1.57 kilometre graph-snapped Beach Road corridor, its edge-level screening summary, and controls for exporting the declared portfolio and exact edge identifiers.” |
 | `responsive-mobile` | Narrow responsive map and selected-candidate evidence with attribution and run context still usable | “Narrow responsive Auckland workbench showing the regional map, persistent run context, compact attribution, analysis tabs, and Beach Road candidate evidence within a 390 by 844 CSS-pixel viewport.” |
 
@@ -64,7 +64,7 @@ with the curated Auckland asset extracted over its `data/` directory:
 
 ```sh
 CIW_SCREENSHOT_BASE_URL=http://127.0.0.1:4175/ \
-CIW_EXPECTED_RUN_ID=run-224e9baa3be4ef73 \
+CIW_EXPECTED_RUN_ID=run-313e0277521633d3 \
 npm --prefix web run capture:screenshots
 ```
 

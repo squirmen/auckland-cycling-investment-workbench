@@ -58,6 +58,23 @@ def test_export_is_byte_deterministic(tmp_path: Path) -> None:
     assert first_hashes == {name: item.sha256 for name, item in second.layers.items()}
 
 
+def test_optional_existing_layer_is_hashed_and_verified(tmp_path: Path) -> None:
+    config = load_config(PROJECT_ROOT / "configs/auckland.yml")
+    payload = copy.deepcopy(web_export_payload())
+    payload["layers"]["existing"] = {"type": "FeatureCollection", "features": []}
+    descriptor = dict(
+        next(layer for layer in payload["manifest"]["layers"] if layer["id"] == "network")
+    )
+    descriptor.update(id="existing", label="Existing low-stress network")
+    payload["manifest"]["layers"].append(descriptor)
+    result = export_web_payload(payload, export_config=config.export, output_dir=tmp_path)
+    assert verify_web_export(tmp_path, export_config=config.export) == ()
+    result.layers["existing"].path.write_bytes(b"{}")
+    assert "layer integrity check failed: existing" in verify_web_export(
+        tmp_path, export_config=config.export
+    )
+
+
 def test_verifier_detects_exact_byte_change(tmp_path: Path) -> None:
     config = load_config(PROJECT_ROOT / "configs/auckland.yml")
     output = tmp_path / "data"

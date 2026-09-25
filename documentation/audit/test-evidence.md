@@ -9,6 +9,11 @@ or an Auckland regression run.
 
 | Check | Result | Release interpretation |
 | --- | --- | --- |
+| Source-resolution Auckland run, 2026-09-02 | Run `run-313e0277521633d3` completed all nine stages: 42,551 of 42,708 selected records assigned, 157 failures retained, 131,316 paths, 12,580 candidates and 191,539 exact candidate-edge rows. Exact run-and-web validation returned zero errors and zero warnings | Current local Auckland research-snapshot evidence; low-stress connectivity remains deliberately unreported |
+| Deterministic replacement asset, 2026-09-02 | Two 23,646,468-byte packages matched SHA-256 `544f920eff526aecaf03176eadceaa5ec42c3dafbe4fd614ce883d6ccc7816b8`; web manifest SHA-256 `8166ea14b64b6ca36410c4915ffbd66f8c7568db777a8923bb54f918d0a95d40` | Local immutable replacement asset only; upload and deployment remain separately gated |
+| Final local browser and screenshot review, 2026-09-02 | The deterministic fixture ran 24 Playwright project/test combinations: 15 passed and nine intentional device-scope skips. Seven full-Auckland states loaded from the production asset with the expected run ID and no status, console or external-request errors; desktop, overlays, evidence and 390×844 responsive output were visually reviewed | Current local UI, accessibility, responsive and screenshot evidence; repeat hosted checks on the eventual PR head |
+| Final local code checks, 2026-09-02 | Python 3.11.16: all 188 tests passed; Ruff lint and format passed across 67 files. Frontend: 15 Vitest assertions, ESLint, TypeScript and Vite production build passed | Current-tree evidence after the release-schema and plain-language warning corrections |
+| Source-resolution implementation, 2026-09-01 | Python 3.11.16: all 188 tests passed in 24.59 s; Ruff lint passed and formatting was applied and rechecked; configuration/source validation returned zero errors and zero warnings. Frontend: 15 Vitest assertions, ESLint, TypeScript and Vite production build passed | Current-tree local evidence for transit, equity, programme, counter, safety, appraisal and release-schema changes; repeat after the final production asset and on the pull-request head |
 | Frontend map-chrome refinement, 2026-08-31 | ESLint and TypeScript passed; 15 Vitest assertions passed; Vite production build completed with a 250.90 kB primary JavaScript bundle (71.51 kB gzip) and a separately loaded 945.76 kB MapLibre chunk (248.09 kB gzip); npm reported zero production vulnerabilities | Local Node 23.11 compatibility evidence; repeat under the pinned Node 24 environment on the pull-request head |
 | Browser, basemap, and dialog suite, 2026-08-31 | Playwright ran 24 project/test combinations: 15 passed and nine intentional cross-project scope skips; desktop and mobile axe scans, including the open map-information dialog, reported zero violations; all seven deterministic states had no console, page, or external-request errors | Local Chromium evidence for the compact header, map notes, offline gate, URL state, and responsive layout; repeat in hosted CI |
 | Locked Python suite, 2026-08-30 | Python 3.11.16; 185 tests passed; branch coverage 80.27% against the enforced 80% floor | Current-tree local evidence including counter-source, fail-closed appraisal, deterministic-release-asset, complete miniature candidate-stage, complete routing-orchestration, and CLI contract tests; repeat in clean CI and container |
@@ -36,9 +41,10 @@ or an Auckland regression run.
 - repeat the complete suite on the final pull-request head and tag candidate;
 - complete amd64 container reproduction and close corresponding-source
   obligations;
-- close the declared full-network connectivity, purpose-compatible predictive
-  counter validation, local-cost, uncertainty-prior, and visual-map audit gates
-  identified by the Auckland snapshot; and
+- preserve the deliberate full-network connectivity hold; complete
+  purpose-compatible predictive counter validation, local-cost,
+  uncertainty-prior, and visual-map audit gates before any decision-use claim;
+  and
 - repeat the publication scan over the final pull-request head and complete
   history immediately before merge and tag.
 

@@ -1,0 +1,1608 @@
+{
+  "cases": [
+    {
+      "assignedRecords": 20,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "eligibleMass": 555.0,
+          "knownRouteUseMass": 88.8,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 22.2,
+            "knownRouteUseMass": 22.2,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.16,
+          "routeUseShareUpper": 0.36000000000000004,
+          "unassignedMass": 111.0
+        }
+      ],
+      "case": "case-01",
+      "failureReasons": {
+        "no_compatible_snap_pair": 5
+      },
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-504e47db5d6b70c5",
+              "eligibleMass": 555.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 555.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-504e47db5d6b70c5",
+              "eligibleMass": 555.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 555.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-504e47db5d6b70c5",
+              "eligibleMass": 555.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 555.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-504e47db5d6b70c5",
+              "eligibleMass": 555.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 555.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-504e47db5d6b70c5",
+              "eligibleMass": 555.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.2,
+              "unassignedMass": 111.0
+            }
+          ],
+          "estimatedEligibleMass": 555.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-504e47db5d6b70c5",
+              "eligibleMass": 555.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.4,
+              "unassignedMass": 222.0
+            }
+          ],
+          "estimatedEligibleMass": 555.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 555.0,
+      "supportRecords": 25
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "eligibleMass": 462.0,
+          "knownRouteUseMass": 343.66146669556963,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 18.48,
+            "knownRouteUseMass": 18.48,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.743855988518549,
+          "routeUseShareUpper": 0.743855988518549,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-02",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2adbcf7a8cd91c4e",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 443.52,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2adbcf7a8cd91c4e",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 443.52,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2adbcf7a8cd91c4e",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 443.52,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2adbcf7a8cd91c4e",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 318.89072815668294,
+              "routeUseShareLower": 0.7189996576404287,
+              "routeUseShareUpper": 0.7189996576404287,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2adbcf7a8cd91c4e",
+              "eligibleMass": 532.2239999999999,
+              "knownRouteUseMass": 532.2239999999999,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 532.2239999999999,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2adbcf7a8cd91c4e",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 318.89072815668294,
+              "routeUseShareLower": 0.7189996576404287,
+              "routeUseShareUpper": 0.7189996576404287,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 462.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "eligibleMass": 492.0,
+          "knownRouteUseMass": 161.53432803596402,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 19.68,
+            "knownRouteUseMass": 19.68,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.3283218049511464,
+          "routeUseShareUpper": 0.3283218049511464,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-03",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2913f3ba205d34fd",
+              "eligibleMass": 472.32,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 472.32,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2913f3ba205d34fd",
+              "eligibleMass": 472.32,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 472.32,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2913f3ba205d34fd",
+              "eligibleMass": 472.32,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 472.32,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2913f3ba205d34fd",
+              "eligibleMass": 472.32,
+              "knownRouteUseMass": 119.73746720209621,
+              "routeUseShareLower": 0.2535092039339774,
+              "routeUseShareUpper": 0.2535092039339774,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 472.32,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2913f3ba205d34fd",
+              "eligibleMass": 472.32,
+              "knownRouteUseMass": 197.84083560601778,
+              "routeUseShareLower": 0.41887033283794417,
+              "routeUseShareUpper": 0.41887033283794417,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 472.32,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2913f3ba205d34fd",
+              "eligibleMass": 472.32,
+              "knownRouteUseMass": 145.94288841328222,
+              "routeUseShareLower": 0.30899154897798575,
+              "routeUseShareUpper": 0.30899154897798575,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 472.32,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 492.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "eligibleMass": 462.0,
+          "knownRouteUseMass": 185.14191573302162,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 18.48,
+            "knownRouteUseMass": 18.48,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.40074007734420264,
+          "routeUseShareUpper": 0.40074007734420264,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-04",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-7752cbaf3904bd63",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-7752cbaf3904bd63",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-7752cbaf3904bd63",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-7752cbaf3904bd63",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 87.8190577033844,
+              "routeUseShareLower": 0.1980047296703292,
+              "routeUseShareUpper": 0.1980047296703292,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-7752cbaf3904bd63",
+              "eligibleMass": 532.2239999999999,
+              "knownRouteUseMass": 177.408,
+              "routeUseShareLower": 0.33333333333333337,
+              "routeUseShareUpper": 0.33333333333333337,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 532.2239999999999,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-7752cbaf3904bd63",
+              "eligibleMass": 443.52,
+              "knownRouteUseMass": 177.40799999999996,
+              "routeUseShareLower": 0.3999999999999999,
+              "routeUseShareUpper": 0.3999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 443.52,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 462.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-2923bae90b476f70",
+          "eligibleMass": 453.0,
+          "knownRouteUseMass": 434.88,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 18.12,
+            "knownRouteUseMass": 18.12,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.96,
+          "routeUseShareUpper": 0.96,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-05",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2923bae90b476f70",
+              "eligibleMass": 434.88,
+              "knownRouteUseMass": 434.88,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 434.88,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2923bae90b476f70",
+              "eligibleMass": 434.88,
+              "knownRouteUseMass": 434.88,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 434.88,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2923bae90b476f70",
+              "eligibleMass": 434.88,
+              "knownRouteUseMass": 434.88,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 434.88,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2923bae90b476f70",
+              "eligibleMass": 521.856,
+              "knownRouteUseMass": 521.856,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 521.856,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2923bae90b476f70",
+              "eligibleMass": 434.88,
+              "knownRouteUseMass": 434.88,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 434.88,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-2923bae90b476f70",
+              "eligibleMass": 521.856,
+              "knownRouteUseMass": 521.856,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 521.856,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 453.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 25,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-93dcb500489db8cd",
+          "eligibleMass": 531.0,
+          "knownRouteUseMass": 382.32000000000005,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 21.240000000000002,
+            "knownRouteUseMass": 21.240000000000002,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.7200000000000001,
+          "routeUseShareUpper": 0.7200000000000001,
+          "unassignedMass": 0.0
+        },
+        {
+          "candidateId": "candidate-4697f902d93de075",
+          "eligibleMass": 531.0,
+          "knownRouteUseMass": 318.6,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 21.240000000000002,
+            "knownRouteUseMass": 21.240000000000002,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.6000000000000001,
+          "routeUseShareUpper": 0.6000000000000001,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-06",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-93dcb500489db8cd",
+              "eligibleMass": 531.0,
+              "knownRouteUseMass": 531.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            },
+            {
+              "candidateId": "candidate-4697f902d93de075",
+              "eligibleMass": 531.0,
+              "knownRouteUseMass": 531.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 531.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-93dcb500489db8cd",
+              "eligibleMass": 531.0,
+              "knownRouteUseMass": 531.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            },
+            {
+              "candidateId": "candidate-4697f902d93de075",
+              "eligibleMass": 531.0,
+              "knownRouteUseMass": 531.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 531.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-93dcb500489db8cd",
+              "eligibleMass": 531.0,
+              "knownRouteUseMass": 531.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            },
+            {
+              "candidateId": "candidate-4697f902d93de075",
+              "eligibleMass": 531.0,
+              "knownRouteUseMass": 531.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 531.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-93dcb500489db8cd",
+              "eligibleMass": 531.0000000000001,
+              "knownRouteUseMass": 318.6,
+              "routeUseShareLower": 0.5999999999999999,
+              "routeUseShareUpper": 0.5999999999999999,
+              "unassignedMass": 0.0
+            },
+            {
+              "candidateId": "candidate-4697f902d93de075",
+              "eligibleMass": 531.0000000000001,
+              "knownRouteUseMass": 424.80000000000007,
+              "routeUseShareLower": 0.7999999999999999,
+              "routeUseShareUpper": 0.7999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 531.0000000000001,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-93dcb500489db8cd",
+              "eligibleMass": 531.0000000000001,
+              "knownRouteUseMass": 531.0000000000001,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            },
+            {
+              "candidateId": "candidate-4697f902d93de075",
+              "eligibleMass": 531.0000000000001,
+              "knownRouteUseMass": 318.6,
+              "routeUseShareLower": 0.5999999999999999,
+              "routeUseShareUpper": 0.5999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 531.0000000000001,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-93dcb500489db8cd",
+              "eligibleMass": 531.0000000000001,
+              "knownRouteUseMass": 424.80000000000007,
+              "routeUseShareLower": 0.7999999999999999,
+              "routeUseShareUpper": 0.7999999999999999,
+              "unassignedMass": 0.0
+            },
+            {
+              "candidateId": "candidate-4697f902d93de075",
+              "eligibleMass": 531.0000000000001,
+              "knownRouteUseMass": 424.80000000000007,
+              "routeUseShareLower": 0.7999999999999999,
+              "routeUseShareUpper": 0.7999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 531.0000000000001,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 531.0,
+      "supportRecords": 25
+    },
+    {
+      "assignedRecords": 25,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "eligibleMass": 597.0,
+          "knownRouteUseMass": 238.79999999999998,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 23.88,
+            "knownRouteUseMass": 23.879999999999995,
+            "routeUseShareLower": 0.9999999999999999,
+            "routeUseShareUpper": 0.9999999999999999,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.39999999999999997,
+          "routeUseShareUpper": 0.39999999999999997,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-07",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-8d60dfb42cab4400",
+              "eligibleMass": 597.0,
+              "knownRouteUseMass": 597.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 597.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-8d60dfb42cab4400",
+              "eligibleMass": 597.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 597.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-8d60dfb42cab4400",
+              "eligibleMass": 597.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 597.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-8d60dfb42cab4400",
+              "eligibleMass": 597.0,
+              "knownRouteUseMass": 238.79999999999995,
+              "routeUseShareLower": 0.3999999999999999,
+              "routeUseShareUpper": 0.3999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 597.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-8d60dfb42cab4400",
+              "eligibleMass": 597.0,
+              "knownRouteUseMass": 477.5999999999999,
+              "routeUseShareLower": 0.7999999999999998,
+              "routeUseShareUpper": 0.7999999999999998,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 597.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-8d60dfb42cab4400",
+              "eligibleMass": 597.0,
+              "knownRouteUseMass": 238.79999999999998,
+              "routeUseShareLower": 0.39999999999999997,
+              "routeUseShareUpper": 0.39999999999999997,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 597.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 597.0,
+      "supportRecords": 25
+    },
+    {
+      "assignedRecords": 23,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "eligibleMass": 300.0,
+          "knownRouteUseMass": 181.5879767431787,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 12.0,
+            "knownRouteUseMass": 12.0,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.6052932558105957,
+          "routeUseShareUpper": 0.6052932558105957,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-08",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-b60a1202854aa4d2",
+              "eligibleMass": 276.0,
+              "knownRouteUseMass": 276.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 276.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-b60a1202854aa4d2",
+              "eligibleMass": 276.0,
+              "knownRouteUseMass": 276.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 276.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-b60a1202854aa4d2",
+              "eligibleMass": 276.0,
+              "knownRouteUseMass": 276.0,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 276.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-b60a1202854aa4d2",
+              "eligibleMass": 331.2,
+              "knownRouteUseMass": 220.79999999999998,
+              "routeUseShareLower": 0.6666666666666666,
+              "routeUseShareUpper": 0.6666666666666666,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 331.2,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-b60a1202854aa4d2",
+              "eligibleMass": 331.2,
+              "knownRouteUseMass": 155.32650090769505,
+              "routeUseShareLower": 0.4689809810014947,
+              "routeUseShareUpper": 0.4689809810014947,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 331.2,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-b60a1202854aa4d2",
+              "eligibleMass": 276.0,
+              "knownRouteUseMass": 165.6,
+              "routeUseShareLower": 0.6,
+              "routeUseShareUpper": 0.6,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 276.0,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 300.0,
+      "supportRecords": 23
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-d29af3b7143689a7",
+          "eligibleMass": 348.0,
+          "knownRouteUseMass": 100.17815741823497,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 27.84,
+            "knownRouteUseMass": 27.84,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.28786826844320396,
+          "routeUseShareUpper": 0.28786826844320396,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-09",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-d29af3b7143689a7",
+              "eligibleMass": 334.08,
+              "knownRouteUseMass": 334.08,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 334.08,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-d29af3b7143689a7",
+              "eligibleMass": 334.08,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 334.08,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-d29af3b7143689a7",
+              "eligibleMass": 334.08,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 334.08,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-d29af3b7143689a7",
+              "eligibleMass": 334.08000000000004,
+              "knownRouteUseMass": 267.264,
+              "routeUseShareLower": 0.7999999999999999,
+              "routeUseShareUpper": 0.7999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 334.08000000000004,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-d29af3b7143689a7",
+              "eligibleMass": 334.08000000000004,
+              "knownRouteUseMass": 13.143155607527865,
+              "routeUseShareLower": 0.039341342216019703,
+              "routeUseShareUpper": 0.039341342216019703,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 334.08000000000004,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-d29af3b7143689a7",
+              "eligibleMass": 334.08000000000004,
+              "knownRouteUseMass": 66.816,
+              "routeUseShareLower": 0.19999999999999998,
+              "routeUseShareUpper": 0.19999999999999998,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 334.08000000000004,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 348.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "eligibleMass": 240.0,
+          "knownRouteUseMass": 124.79999999999998,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 9.6,
+            "knownRouteUseMass": 9.6,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.5199999999999999,
+          "routeUseShareUpper": 0.5199999999999999,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-10",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-411d92bafee5f5d1",
+              "eligibleMass": 230.39999999999998,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 230.39999999999998,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-411d92bafee5f5d1",
+              "eligibleMass": 460.79999999999995,
+              "knownRouteUseMass": 460.79999999999995,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 460.79999999999995,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-411d92bafee5f5d1",
+              "eligibleMass": 230.39999999999998,
+              "knownRouteUseMass": 230.39999999999998,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 230.39999999999998,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-411d92bafee5f5d1",
+              "eligibleMass": 230.39999999999998,
+              "knownRouteUseMass": 92.16,
+              "routeUseShareLower": 0.4,
+              "routeUseShareUpper": 0.4,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 230.39999999999998,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-411d92bafee5f5d1",
+              "eligibleMass": 276.48,
+              "knownRouteUseMass": 184.32,
+              "routeUseShareLower": 0.6666666666666666,
+              "routeUseShareUpper": 0.6666666666666666,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 276.48,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-411d92bafee5f5d1",
+              "eligibleMass": 230.39999999999998,
+              "knownRouteUseMass": 46.08,
+              "routeUseShareLower": 0.2,
+              "routeUseShareUpper": 0.2,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 230.39999999999998,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 240.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 24,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "eligibleMass": 165.0,
+          "knownRouteUseMass": 59.400000000000006,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 13.200000000000001,
+            "knownRouteUseMass": 13.200000000000001,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.36000000000000004,
+          "routeUseShareUpper": 0.36000000000000004,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-11",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-3bfdf65225ae782f",
+              "eligibleMass": 158.4,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 158.4,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-3bfdf65225ae782f",
+              "eligibleMass": 158.4,
+              "knownRouteUseMass": 158.4,
+              "routeUseShareLower": 1.0,
+              "routeUseShareUpper": 1.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 158.4,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-3bfdf65225ae782f",
+              "eligibleMass": 158.4,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 158.4,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-3bfdf65225ae782f",
+              "eligibleMass": 158.4,
+              "knownRouteUseMass": 63.36,
+              "routeUseShareLower": 0.39999999999999997,
+              "routeUseShareUpper": 0.39999999999999997,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 158.4,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-3bfdf65225ae782f",
+              "eligibleMass": 158.4,
+              "knownRouteUseMass": 63.36,
+              "routeUseShareLower": 0.39999999999999997,
+              "routeUseShareUpper": 0.39999999999999997,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 158.4,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-3bfdf65225ae782f",
+              "eligibleMass": 158.4,
+              "knownRouteUseMass": 126.72,
+              "routeUseShareLower": 0.7999999999999999,
+              "routeUseShareUpper": 0.7999999999999999,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 158.4,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 165.0,
+      "supportRecords": 24
+    },
+    {
+      "assignedRecords": 25,
+      "candidateUsage": [
+        {
+          "candidateId": "candidate-0792220e8369e029",
+          "eligibleMass": 237.0,
+          "knownRouteUseMass": 67.6985500083695,
+          "publishedSampleFreshRouteUseShare": {
+            "eligibleMass": 9.48,
+            "knownRouteUseMass": 9.48,
+            "routeUseShareLower": 1.0,
+            "routeUseShareUpper": 1.0,
+            "unassignedMass": 0.0
+          },
+          "routeUseShareLower": 0.28564789033067295,
+          "routeUseShareUpper": 0.28564789033067295,
+          "unassignedMass": 0.0
+        }
+      ],
+      "case": "case-12",
+      "failureReasons": {},
+      "publishedSampleRecords": 1,
+      "publishedSampleRouteParity": true,
+      "replicates": [
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-0792220e8369e029",
+              "eligibleMass": 237.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 237.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-0792220e8369e029",
+              "eligibleMass": 237.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 237.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-0792220e8369e029",
+              "eligibleMass": 237.0,
+              "knownRouteUseMass": 0.0,
+              "routeUseShareLower": 0.0,
+              "routeUseShareUpper": 0.0,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 237.0,
+          "recordsRequested": 1,
+          "recordsSelected": 1,
+          "seed": 20260926
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-0792220e8369e029",
+              "eligibleMass": 237.00000000000003,
+              "knownRouteUseMass": 52.58917325542699,
+              "routeUseShareLower": 0.2218952458034894,
+              "routeUseShareUpper": 0.2218952458034894,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 237.00000000000003,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260924
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-0792220e8369e029",
+              "eligibleMass": 237.00000000000003,
+              "knownRouteUseMass": 47.400000000000006,
+              "routeUseShareLower": 0.2,
+              "routeUseShareUpper": 0.2,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 237.00000000000003,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260925
+        },
+        {
+          "candidateUsage": [
+            {
+              "candidateId": "candidate-0792220e8369e029",
+              "eligibleMass": 237.00000000000003,
+              "knownRouteUseMass": 47.400000000000006,
+              "routeUseShareLower": 0.2,
+              "routeUseShareUpper": 0.2,
+              "unassignedMass": 0.0
+            }
+          ],
+          "estimatedEligibleMass": 237.00000000000003,
+          "recordsRequested": 5,
+          "recordsSelected": 5,
+          "seed": 20260926
+        }
+      ],
+      "sourceEligibleMass": 237.0,
+      "supportRecords": 25
+    }
+  ],
+  "elapsedS": 151.53488049993757,
+  "engineStartupS": 76.11950333300047,
+  "freshlyRouted": 291,
+  "implementationHashes": {
+    "pilotScript": "aa28cc193adc6331c91130654d697abf0761a395a43b471b98638e5c4a780cf4",
+    "r5_routing.py": "4eac1adc7a0a0ca2208a6f834c16922c66f5fa160d3fc85789a98ed3eccd8f6b",
+    "research/stability.py": "98b4946fb19cd35212f8123b766f5f758d47d87999ffe9b5eec94e495cf6ddb1",
+    "research/support.py": "73258a12c322cec72075083549e9e48e1532bfae209d0b3cb92fcdfcb58d6ad6"
+  },
+  "limitations": [
+    "Targeted influential cells, not a representative Auckland sample.",
+    "Enumerates existing stored locations; no new within-cell locations are generated.",
+    "Route use means any part of a candidate occurs on a retained plausible path.",
+    "Failures remain in the denominator with explicit lower and upper usage bounds.",
+    "Seeded HT mass estimates vary with unequal record masses; no renormalisation.",
+    "Source support masses are unchanged; suppressed demand is not reconstructed.",
+    "No demand response, ridership forecast, project ranking or reoptimisation is run.",
+    "Full bounded source network, with existing source boundaries and routing assumptions.",
+    "Warm/cold runtime and cached runs are distinguished; RSS includes Python and JVM."
+  ],
+  "peakProcessRssRaw": 5203066880,
+  "peakRssUnit": "bytes on macOS; KiB on Linux",
+  "reusedCacheRecords": 0,
+  "routingS": 17.698664961499162,
+  "runId": "run-313e0277521633d3",
+  "sampling": {
+    "design": "stratified_simple_random_without_replacement",
+    "estimator": "Horvitz-Thompson",
+    "newSpatialLocations": false,
+    "recordsPerCell": [
+      1,
+      5
+    ],
+    "seeds": [
+      20260924,
+      20260925,
+      20260926
+    ]
+  },
+  "sourceHashes": {
+    "audit": "861053a5568df7a82307d5ea27f3b6aef6156fd0a6b15b4fbf736565e027e461",
+    "candidateLedger": "f9334b5b083dd3ada394a6a29064313ab101705d4811b23e61eed2c518ebc773",
+    "config": "5e5a1f1c29b94f56103b36a1cfd7da4f11160c58979b7646052d3240c340c30e",
+    "odLedger": "9e89176035853da46bba4061d986ee9713e06fc140dafb2115c1f3158b8b6614",
+    "pathLedger": "570b5d6c20725f4fe7559fb37a3ffedcfd860cdd24414131a43cbf34c90dc031",
+    "pbf": "a898cef7aad0b076fa4d61b21254340ce35929b42dbdbf5c21a1a50642a8816d",
+    "r5Jar": "d50be106cadd7b636cfc0e209052767d7df570629f79fdf98ecd5cf5d2d89be7",
+    "topology": "33fc0b546326193333c382cbdae742aa9acc41a5ed4e9a235a3c2257dfd1d66e"
+  },
+  "sourceRecords": 291,
+  "status": "targeted_finite_support_routing_pilot"
+}

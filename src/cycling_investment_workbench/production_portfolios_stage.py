@@ -20,7 +20,7 @@ from .portfolio_analysis import (
     greedy_choice_set_sequence,
     pareto_frontier_benefit_cost,
 )
-from .provenance import content_hash, sha256_file, write_json_atomic
+from .provenance import content_hash, read_json, sha256_file, write_json_atomic
 
 PORTFOLIO_OUTPUT_SCHEMA_VERSION = 3
 
@@ -185,7 +185,7 @@ def _path_and_od_inputs(
     savings: Mapping[tuple[str, str], float],
 ) -> tuple[
     dict[str, tuple[ChoicePath, ...]],
-    dict[str, tuple[str, float, float, float]],
+    dict[str, tuple[str, float, float, float, str]],
     dict[str, set[str]],
     list[dict[str, Any]],
 ]:
@@ -225,7 +225,7 @@ def _path_and_od_inputs(
                 }
             )
 
-    od_rows: dict[str, tuple[str, float, float]] = {}
+    od_rows: dict[str, tuple[str, float, float, float, str]] = {}
     parquet = pq.ParquetFile(_artifact_file(route_dir, "od_ledger.parquet"))
     for batch in parquet.iter_batches(
         batch_size=50_000,
@@ -235,6 +235,7 @@ def _path_and_od_inputs(
             "weighted_eligible",
             "weighted_observed_cycle",
             "shortest_distance_m",
+            "origin_support_id",
             "status",
         ],
     ):
@@ -245,6 +246,7 @@ def _path_and_od_inputs(
                     float(row["weighted_eligible"]),
                     float(row["weighted_observed_cycle"]),
                     float(row["shortest_distance_m"]) / 1_000,
+                    str(row["origin_support_id"]),
                 )
     if set(paths_by_od) != set(od_rows):
         raise ProductionBlocker(
@@ -278,15 +280,19 @@ def _scenario_activity(route_dir: Path) -> Mapping[str, Mapping[str, float]]:
 
 def _choice_sets(
     paths_by_od: Mapping[str, tuple[ChoicePath, ...]],
-    od_rows: Mapping[str, tuple[str, float, float, float]],
+    od_rows: Mapping[str, tuple[str, float, float, float, str]],
     *,
     purpose: str,
     activity_by_od: Mapping[str, float] | None = None,
+    allowed_origin_supports: frozenset[str] | None = None,
+    choice_purpose: str | None = None,
 ) -> dict[str, ODChoiceSet]:
     result: dict[str, ODChoiceSet] = {}
     for od_id, paths in paths_by_od.items():
-        od_purpose, eligible, observed, distance_km = od_rows[od_id]
+        od_purpose, eligible, observed, distance_km, origin_support_id = od_rows[od_id]
         if od_purpose != purpose:
+            continue
+        if allowed_origin_supports is not None and origin_support_id not in allowed_origin_supports:
             continue
         activity = (
             float(activity_by_od[od_id])
@@ -297,13 +303,71 @@ def _choice_sets(
         )
         result[od_id] = ODChoiceSet(
             od_id,
-            purpose,
+            choice_purpose or purpose,
             eligible,
             activity,
             paths,
             distance_km,
         )
     return result
+
+
+def _nzdep_deciles(context: StageContext) -> tuple[dict[str, int], dict[str, Any]]:
+    """Load an optional, pinned SA1 NZDep source without exposing its raw polygons."""
+
+    source = context.sources.get("nzdep2023_sa1")
+    if source is None or not source.usable:
+        return {}, {"status": "unavailable", "reason": "registered_source_not_available"}
+    payload = read_json(source.path)
+    features = payload.get("features") if isinstance(payload, Mapping) else None
+    if not isinstance(features, list):
+        raise ProductionBlocker(
+            stage="evaluate-portfolios",
+            code="invalid_nzdep_source",
+            message="NZDep source must be a GeoJSON FeatureCollection",
+        )
+    deciles: dict[str, int] = {}
+    missing = 0
+    for feature in features:
+        properties = feature.get("properties") if isinstance(feature, Mapping) else None
+        if not isinstance(properties, Mapping):
+            continue
+        code = str(properties.get("SA12023_code", "")).strip()
+        value = properties.get("NZDep2023")
+        if not code or value is None:
+            missing += 1
+            continue
+        try:
+            decile = int(value)
+        except (TypeError, ValueError) as exc:
+            raise ProductionBlocker(
+                stage="evaluate-portfolios",
+                code="invalid_nzdep_source",
+                message="NZDep deciles must be integers",
+                evidence={"sa1_code": code, "value": value},
+            ) from exc
+        if not 1 <= decile <= 10 or code in deciles:
+            raise ProductionBlocker(
+                stage="evaluate-portfolios",
+                code="invalid_nzdep_source",
+                message="NZDep records must have unique SA1 codes and deciles in 1..10",
+                evidence={"sa1_code": code, "value": decile},
+            )
+        deciles[f"sa1-{code}"] = decile
+    if not deciles:
+        raise ProductionBlocker(
+            stage="evaluate-portfolios",
+            code="invalid_nzdep_source",
+            message="NZDep source contains no usable SA1 deciles",
+        )
+    return deciles, {
+        "status": "available",
+        "source_id": "nzdep2023_sa1",
+        "sa1_with_decile": len(deciles),
+        "records_without_decile_or_code": missing,
+        "high_deprivation_definition": "NZDep2023 deciles 8-10",
+        "raw_polygons_exposed_in_public_output": False,
+    }
 
 
 def _single_candidate_metrics(
@@ -338,7 +402,7 @@ def _single_candidate_metrics(
             float(getattr(evaluation, objective)) for _, evaluation in evaluations
         )
         counts[candidate_id] = len(relevant)
-        if all(choice.purpose == "commute" for choice, _ in evaluations):
+        if all(choice.purpose in {"commute", "equity"} for choice, _ in evaluations):
             additional_users[candidate_id] = sum(
                 evaluation.activity_addition for _, evaluation in evaluations
             )
@@ -407,6 +471,28 @@ def production_portfolios_stage(context: StageContext) -> StageResult:
     )
     paths_by_od, od_rows, candidate_to_od, saving_rows = _path_and_od_inputs(route_dir, savings)
     scenario_activity = _scenario_activity(route_dir)
+    nzdep_deciles, equity_context = _nzdep_deciles(context)
+    high_deprivation_origins = frozenset(
+        support_id for support_id, decile in nzdep_deciles.items() if decile >= 8
+    )
+    commute_od = [row for row in od_rows.values() if row[0] == "commute"]
+    assigned_commute_eligible = sum(row[1] for row in commute_od)
+    mapped_commute_eligible = sum(row[1] for row in commute_od if row[4] in nzdep_deciles)
+    high_deprivation_eligible = sum(
+        row[1] for row in commute_od if row[4] in high_deprivation_origins
+    )
+    equity_context.update(
+        {
+            "assigned_commute_eligible": assigned_commute_eligible,
+            "nzdep_mapped_commute_eligible": mapped_commute_eligible,
+            "high_deprivation_commute_eligible": high_deprivation_eligible,
+            "nzdep_mapping_coverage": (
+                mapped_commute_eligible / assigned_commute_eligible
+                if assigned_commute_eligible > 0
+                else 0.0
+            ),
+        }
+    )
 
     output_dir = context.artifact_dir / (
         "portfolios-"
@@ -438,6 +524,24 @@ def production_portfolios_stage(context: StageContext) -> StageResult:
         analyses.append(
             (scenario_id, "appraisal", "commute", "activity_addition", True, commute_choices)
         )
+        if high_deprivation_origins:
+            analyses.append(
+                (
+                    scenario_id,
+                    "equity",
+                    "equity",
+                    "activity_addition",
+                    True,
+                    _choice_sets(
+                        paths_by_od,
+                        od_rows,
+                        purpose="commute",
+                        activity_by_od=activity,
+                        allowed_origin_supports=high_deprivation_origins,
+                        choice_purpose="equity",
+                    ),
+                )
+            )
     analyses.extend(
         (
             "access_baseline",
@@ -595,7 +699,27 @@ def production_portfolios_stage(context: StageContext) -> StageResult:
                 "everyday": "maximise everyday access impedance improvement per NZD",
                 "transit": "maximise transit access impedance improvement per NZD",
                 "appraisal": "screen commute activity improvement per NZD before appraisal",
-                "equity": "unavailable_pending_separately_licensed_nzdep_adapter",
+                "equity": (
+                    "maximise additional usual commute cyclists from NZDep2023 decile 8-10 "
+                    "origins per NZD"
+                    if high_deprivation_origins
+                    else "unavailable_without_registered_nzdep_source"
+                ),
+            },
+            "equity": {
+                **equity_context,
+                "scenario_activity": {
+                    scenario_id: sum(
+                        float(activity.get(od_id, 0.0))
+                        for od_id, row in od_rows.items()
+                        if row[0] == "commute" and row[4] in high_deprivation_origins
+                    )
+                    for scenario_id, activity in sorted(scenario_activity.items())
+                },
+                "interpretation": (
+                    "distributional subgroup objective, not a causal equity effect or welfare "
+                    "weight"
+                ),
             },
             "row_counts": {
                 "path_candidate_savings": len(saving_rows),
@@ -607,10 +731,9 @@ def production_portfolios_stage(context: StageContext) -> StageResult:
             "sequence_counts": sequence_counts,
             "publication_grade_ready": False,
             "publication_blockers": [
-                "full_network_low_stress_reroute_check_pending",
-                "capital_unit_cost_evidence_pending",
-                "equity_preset_disabled_pending_nzdep_rights",
-                "appraisal_and_uncertainty_pending",
+                "full_network_low_stress_reserved_for_separate_research",
+                "appraisal_inputs_require_local_review_for_decision_use",
+                "stratified_manual_audits_required_for_decision_use",
             ],
             "files": files,
         },

@@ -81,7 +81,7 @@ _STAGE_SOURCE_SCOPES: Mapping[str, frozenset[str] | None] = {
     ),
     "assign-routes": frozenset(),
     "generate-candidates": frozenset(),
-    "evaluate-portfolios": frozenset(),
+    "evaluate-portfolios": frozenset({"nzdep2023_sa1"}),
     "appraisal-uncertainty-validation": frozenset(
         {"cycle_counter_locations", "cycle_counter_observations"}
     ),
@@ -167,7 +167,15 @@ STANDARD_STAGE_CONTRACTS: Mapping[str, StageContract] = {
     ),
     "export-outputs": StageContract(("web_payload",), ("row_counts",)),
     "export-web": StageContract(
-        ("web_manifest", "cells", "network", "candidates", "programmes", "counters"),
+        (
+            "web_manifest",
+            "cells",
+            "network",
+            "candidates",
+            "programmes",
+            "counters",
+            "safety",
+        ),
         ("row_counts",),
     ),
 }

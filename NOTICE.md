@@ -2,6 +2,9 @@
 
 Copyright © 2026 Tim Welch.
 
+SPAN (Spending Priorities for Active Networks) was released as the Auckland
+Cycling Investment Workbench (CIW) up to version 1.0.0.
+
 The software is licensed under the MIT License. That licence does not grant
 rights to third-party datasets, publications, logos, basemaps, or provider
 trademarks.
@@ -13,7 +16,7 @@ described in the published Propensity to Cycle Tool literature and manual. No
 PCT source code or user-interface assets are included in this repository. The
 licences of the PCT applications and packages therefore do not replace or
 extend the licence of this independently implemented software. Users should
-cite both this workbench and the relevant PCT publications:
+cite both SPAN and the relevant PCT publications:
 
 - Lovelace et al. (2017), *The Propensity to Cycle Tool: An open source online
   system for sustainable transport planning*, DOI: 10.5198/jtlu.2016.862.
@@ -27,9 +30,9 @@ License v3.0; its project description and licence statement are at
 [`pct.bike/about`](https://www.pct.bike/about.html). The separate official
 [`pct` R package](https://github.com/ITSLeeds/pct) is distributed under GNU
 General Public License v3.0. These projects were used as attributed method and
-behavioural comparison references, not as CIW software dependencies. Their
-licences govern their own code and assets; they neither apply to CIW data nor
-replace the licence of independently written CIW source. The project-specific
+behavioural comparison references, not as SPAN software dependencies. Their
+licences govern their own code and assets; they neither apply to SPAN data nor
+replace the licence of independently written SPAN source. The project-specific
 comparison and release conditions are recorded in
 [`documentation/audit/pct-provenance-review.md`](documentation/audit/pct-provenance-review.md).
 
@@ -61,8 +64,12 @@ and basemap providers. At minimum, applicable builds should acknowledge:
   adapted or collected Stats NZ content;
 - “Contains data sourced from the LINZ Data Service licensed for reuse under
   CC BY 4.0” for the configured elevation source;
-- Auckland Transport for any exact AT dataset whose terms permit inclusion;
-  and
+- Auckland Transport for the Cycle Facility Network, GTFS, Future Connect,
+  RLTP and cycle-monitoring inputs used in a build;
+- University of Otago NZDep2023, Stats NZ and the source public ArcGIS service
+  for aggregate deprivation-origin metrics;
+- NZ Transport Agency Waka Kotahi for disclosure-safe aggregates derived from
+  CAS open data; and
 - any third-party basemap provider exactly as required by that provider.
 
 The Light and Streets choices request vector styles and tiles from
@@ -78,8 +85,8 @@ subject to its Stats NZ CC BY 4.0 source terms. `network.geojson` and
 `candidates.geojson` contain an OSM-derived database and must be distributed
 under ODbL 1.0 with OpenStreetMap attribution, while their Stats NZ, Ministry
 of Education, Auckland Transport, and LINZ components retain their own CC BY
-4.0 attribution requirements. The exact permitted hashes and deliberately
-empty or withheld layers are recorded in
+4.0 attribution requirements. The exact permitted hashes, disclosure controls
+and deliberately omitted full-network low-stress result are recorded in
 `documentation/audit/public-layer-rights.csv`.
 
 ## Frontend map components
@@ -94,7 +101,7 @@ subject to their own notices and licence terms.
 The optional reproducibility container installs third-party command-line
 programs from the Debian snapshot dated 3 August 2026. They are separate
 runtime components, and their own licences govern their binaries and source;
-the root MIT licence applies to CIW source and does not replace those terms.
+the root MIT licence applies to SPAN source and does not replace those terms.
 
 - `osmium-tool` 1.15.0 is distributed under GNU General Public License v3.0.
   Upstream source and licence: [tag
@@ -114,4 +121,4 @@ exact installed binaries and their bundled libraries. Before publishing a
 container image, preserve those files and complete the corresponding-source
 and notice obligations for `osmium-tool` and every other redistributed
 dependency. These runtime notices do not imply endorsement or change the
-licence of CIW's own source files.
+licence of SPAN's own source files.

@@ -1,0 +1,107 @@
+{
+  "status": "local_candidate_codec_benchmark_not_browser_speed_estimate",
+  "date": "2026-09-25",
+  "featureCount": 12580,
+  "exactValidatedValuesVerified": true,
+  "sampleOrder": [
+    "canonical",
+    "compact",
+    "compact",
+    "canonical",
+    "canonical",
+    "compact"
+  ],
+  "samples": [
+    {
+      "mode": "canonical",
+      "features": 12580,
+      "bytes": 234894737,
+      "gzipBytes": 14103477,
+      "sha256": "21190f0bf77577a1f48fe5f48add935061dd1221b322905abce1db942b76e165",
+      "parseMs": 510.49245799999994,
+      "validationMs": 668.253708,
+      "totalDecodeMs": 1178.746166,
+      "peakRssKiB": 1371952,
+      "runtime": "v24.19.0",
+      "platform": "darwin",
+      "note": "Single fresh Node process; excludes network, hashing, map rendering and gzip timing. Not a browser or mobile-device speed estimate."
+    },
+    {
+      "mode": "compact",
+      "features": 12580,
+      "bytes": 96057996,
+      "gzipBytes": 12568753,
+      "sha256": "7138984f5100c93e1186acecaa4ec3ba66c6d09a20d006e6042e3022ddedb2b2",
+      "parseMs": 238.25054199999997,
+      "validationMs": 622.8207080000001,
+      "totalDecodeMs": 861.0712500000001,
+      "peakRssKiB": 867568,
+      "runtime": "v24.19.0",
+      "platform": "darwin",
+      "note": "Single fresh Node process; excludes network, hashing, map rendering and gzip timing. Not a browser or mobile-device speed estimate."
+    },
+    {
+      "mode": "compact",
+      "features": 12580,
+      "bytes": 96057996,
+      "gzipBytes": 12568753,
+      "sha256": "7138984f5100c93e1186acecaa4ec3ba66c6d09a20d006e6042e3022ddedb2b2",
+      "parseMs": 245.29537499999998,
+      "validationMs": 659.555208,
+      "totalDecodeMs": 904.8505829999999,
+      "peakRssKiB": 866752,
+      "runtime": "v24.19.0",
+      "platform": "darwin",
+      "note": "Single fresh Node process; excludes network, hashing, map rendering and gzip timing. Not a browser or mobile-device speed estimate."
+    },
+    {
+      "mode": "canonical",
+      "features": 12580,
+      "bytes": 234894737,
+      "gzipBytes": 14103477,
+      "sha256": "21190f0bf77577a1f48fe5f48add935061dd1221b322905abce1db942b76e165",
+      "parseMs": 466.37529099999995,
+      "validationMs": 663.3267079999999,
+      "totalDecodeMs": 1129.701999,
+      "peakRssKiB": 1372768,
+      "runtime": "v24.19.0",
+      "platform": "darwin",
+      "note": "Single fresh Node process; excludes network, hashing, map rendering and gzip timing. Not a browser or mobile-device speed estimate."
+    },
+    {
+      "mode": "canonical",
+      "features": 12580,
+      "bytes": 234894737,
+      "gzipBytes": 14103477,
+      "sha256": "21190f0bf77577a1f48fe5f48add935061dd1221b322905abce1db942b76e165",
+      "parseMs": 467.09962500000006,
+      "validationMs": 672.6744580000001,
+      "totalDecodeMs": 1139.7740830000002,
+      "peakRssKiB": 1372048,
+      "runtime": "v24.19.0",
+      "platform": "darwin",
+      "note": "Single fresh Node process; excludes network, hashing, map rendering and gzip timing. Not a browser or mobile-device speed estimate."
+    },
+    {
+      "mode": "compact",
+      "features": 12580,
+      "bytes": 96057996,
+      "gzipBytes": 12568753,
+      "sha256": "7138984f5100c93e1186acecaa4ec3ba66c6d09a20d006e6042e3022ddedb2b2",
+      "parseMs": 235.32925,
+      "validationMs": 601.554041,
+      "totalDecodeMs": 836.883291,
+      "peakRssKiB": 867312,
+      "runtime": "v24.19.0",
+      "platform": "darwin",
+      "note": "Single fresh Node process; excludes network, hashing, map rendering and gzip timing. Not a browser or mobile-device speed estimate."
+    }
+  ],
+  "limitations": [
+    "Three fresh Node processes per representation, alternating order on one local machine.",
+    "Decode timing excludes filesystem reads, hashing, network transfer, gzip work and map rendering.",
+    "Peak RSS is for each whole Node process, not browser heap or a real mobile device.",
+    "Canonical GeoJSON is retained; the compact representation preserves every browser-validated candidate value.",
+    "Gzip byte sizes are locally computed estimates, not measured live-server transfer sizes."
+  ]
+}

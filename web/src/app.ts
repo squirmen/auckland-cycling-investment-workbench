@@ -1,96 +1,111 @@
 import "./style.css";
+import { ConnectedJourneys, CONNECTED_QUERY_KEYS } from "./connected";
 
+import { GOALS, SCENARIOS, dataStatusName, money, snapshotDate, withNewName } from "./copy";
 import { candidateFeatures, loadDefaultLayers, loadLayer, loadManifest } from "./data";
-import { BASEMAP_IDS, WorkbenchMap, type BasemapId } from "./map";
+import { create, requiredElement } from "./dom";
+import { loadDemandDiagnostics, type DemandDiagnostics } from "./diagnostics";
+import { DEFAULT_JOURNEY_ASSUMPTIONS, journeyAssumptionsFromQuery } from "./journeys";
+import { BASEMAP_IDS, SpanMap, type BasemapId, type MapPadding } from "./map";
+import { connectedGroups, metricFor, packageKey, paretoFront, portfolioAtBudget, portfolioGeoJson, type SketchResult } from "./model";
+import { purposeIds, type AppState, type CandidateFeature, type LoadedLayers, type Manifest, type PortfolioStep, type PurposeId, type ScenarioId } from "./types";
 import {
-  compactNumber,
-  formatCost,
-  formatPercent,
-  metricFor,
-  objectiveValue,
-  paretoFront,
-  portfolioAtBudget,
-  portfolioGeoJson,
-  purposeBenefit,
-  type SketchResult,
-} from "./model";
-import type {
-  AppState,
-  CandidateFeature,
-  CandidateMetric,
-  LoadedLayers,
-  Manifest,
-  PortfolioStep,
-  PurposeId,
-  ScenarioId,
-  SummaryMetric,
-} from "./types";
+  renderBuildList,
+  renderGoalPicker,
+  renderHero,
+  renderLayerControls,
+  renderLegend,
+  renderLinkCard,
+  renderMethodNote,
+  renderNotes,
+  renderNetworkGroups,
+  renderPareto,
+  renderSketchResult,
+  type ViewContext,
+} from "./views";
 
+const PAGE_SIZE = 100;
 const app = requiredElement("app");
 const statusMessage = requiredElement("status-message");
 const loadingPanel = requiredElement("loading-panel");
-const PORTFOLIO_PAGE_SIZE = 100;
-const PARETO_POINT_LIMIT = 1_500;
+const panelToggle = requiredElement<HTMLButtonElement>("panel-toggle");
 let manifest: Manifest;
 let layers: LoadedLayers;
 let candidates: CandidateFeature[] = [];
+let byId = new Map<string, CandidateFeature>();
 let currentSketch: SketchResult | null = null;
 let desiredSketchNodeIds: string[] = [];
-let candidateFilter = "";
-let candidateDisplayLimit = PORTFOLIO_PAGE_SIZE;
+let filter = "";
+let limit = PAGE_SIZE;
 let statusTimer: number | undefined;
-let budgetRenderTimer: number | undefined;
+let budgetTimer: number | undefined;
 const paretoCache = new Map<string, Set<string>>();
 let state: AppState;
-let stateIsReady = false;
-const initialQuery = new URLSearchParams(window.location.search);
-const offlineMode = initialQuery.get("offline") === "1";
-const initialBasemap = offlineMode
-  ? "analysis"
-  : basemapId(initialQuery.get("basemap")) ?? "light";
+let ready = false;
+let connected: ConnectedJourneys;
+let journeyAssumptions = { ...DEFAULT_JOURNEY_ASSUMPTIONS };
+let demandDiagnostics: DemandDiagnostics | undefined;
+const offlineMode = new URLSearchParams(window.location.search).get("offline") === "1";
 
-const mapController = new WorkbenchMap(requiredElement("map"), {
-  onCandidateSelected: (candidateId) => selectCandidate(candidateId),
-  onSketchChanged: (result, error) => renderSketch(result, error),
+const mapController = new SpanMap(requiredElement("map"), {
+  onCandidateSelected: (candidateId) => selectCandidate(candidateId, false),
+  onSketchChanged: (result, error) => onSketch(result, error),
   onBasemapChanged: () => {
     renderBasemapControls();
-    if (stateIsReady) syncQueryState();
+    if (ready) syncQueryState();
   },
 }, {
   allowHostedBasemaps: !offlineMode,
-  initialBasemap,
+  initialBasemap: offlineMode ? "analysis" : basemapId(new URLSearchParams(window.location.search).get("basemap")) ?? "light",
+  padding: mapPadding,
 });
 
+setPanelOpen(true);
 void initialise();
 
 async function initialise(): Promise<void> {
   try {
     manifest = await loadManifest();
     layers = await loadDefaultLayers(manifest);
-    candidates = candidateFeatures(layers);
-    paretoCache.clear();
+    setCandidates();
     state = initialState(manifest);
-    stateIsReady = true;
+    connected = new ConnectedJourneys(mapController, manifest);
+    ready = true;
     populateControls();
     await applyQueryState(false);
     bindEvents();
-    mapController.setLayers(layers);
+    mapController.setData(layers, candidates);
     mapController.setSketchNodes(desiredSketchNodeIds);
     renderAll();
     loadingPanel.hidden = true;
     app.setAttribute("aria-busy", "false");
+    void loadDemandDiagnostics(manifest).then((diagnostics) => {
+      demandDiagnostics = diagnostics;
+      renderLinkCard(context());
+    });
   } catch (error) {
     app.setAttribute("aria-busy", "false");
-    const message = error instanceof Error ? error.message : "The verified model run could not be loaded.";
+    const message = error instanceof Error ? error.message : "The data could not be loaded.";
     statusMessage.textContent = message;
     statusMessage.classList.add("error");
     loadingPanel.classList.add("error");
     loadingPanel.replaceChildren(
-      create("strong", { text: "The model run could not be loaded" }),
+      create("strong", { text: "The data could not be loaded" }),
       create("span", { text: message }),
-      create("span", { text: "Check that the verified web-data bundle is present, then reload this page." }),
+      create("span", { text: "Check that the data folder is present, then reload the page." }),
     );
   }
+}
+
+function setCandidates(): void {
+  candidates = candidateFeatures(layers);
+  byId = new Map(candidates.map((candidate) => [candidate.properties.candidateId, candidate]));
+  paretoCache.clear();
+}
+
+function defaultLayers(data: Manifest): Set<string> {
+  // The other 12,000-odd links are off to start with, so the build order reads clearly.
+  return new Set(data.layers.filter((layer) => layer.defaultVisible && layer.id !== "candidates").map((layer) => layer.id));
 }
 
 function initialState(data: Manifest): AppState {
@@ -99,119 +114,123 @@ function initialState(data: Manifest): AppState {
     purpose: data.defaultPurpose,
     budgetNzd: data.defaultBudgetNzd,
     selectedCandidateId: null,
-    visibleLayerIds: new Set(data.layers.filter((layer) => layer.defaultVisible).map((layer) => layer.id)),
+    visibleLayerIds: defaultLayers(data),
     portfolioIds: new Set(),
     activeTab: "portfolio",
     sketching: false,
+    focusedGroupIds: new Set(),
   };
 }
 
 function populateControls(): void {
-  requiredElement<HTMLDetailsElement>("map-legend").open =
-    !window.matchMedia("(max-width: 520px)").matches;
+  requiredElement<HTMLDetailsElement>("map-legend").open = !window.matchMedia("(max-width: 760px)").matches;
   const scenarioSelect = requiredElement<HTMLSelectElement>("scenario-select");
-  const purposeSelect = requiredElement<HTMLSelectElement>("purpose-select");
-  replaceChildren(
-    scenarioSelect,
-    manifest.scenarios.map((scenario) => option(scenario.id, scenario.label)),
-  );
-  replaceChildren(
-    purposeSelect,
-    manifest.purposes.map((purpose) => purposeOption(purpose.id, purpose.label)),
-  );
-  scenarioSelect.value = state.scenario;
-  purposeSelect.value = state.purpose;
-
+  scenarioSelect.replaceChildren(...manifest.scenarios.map((scenario) => {
+    const item = create("option", { value: scenario.id, text: SCENARIOS[scenario.id].label });
+    return item;
+  }));
   const budget = requiredElement<HTMLInputElement>("budget-slider");
-  const budgetStepMillions = budgetStep(manifest.maxBudgetNzd);
-  budget.step = String(budgetStepMillions);
+  budget.step = String(budgetStep(manifest.maxBudgetNzd));
   budget.max = queryNumber(manifest.maxBudgetNzd / 1_000_000);
-  budget.value = String(state.budgetNzd / 1_000_000);
-  requiredElement("budget-maximum").textContent = formatCost(manifest.maxBudgetNzd);
-
-  const controls = requiredElement("layer-controls");
-  replaceChildren(
-    controls,
-    manifest.layers.map((layer) => {
-      const input = create("input", { type: "checkbox", id: `layer-${layer.id}` });
-      input.checked = state.visibleLayerIds.has(layer.id);
-      input.dataset.layerId = layer.id;
-      const row = create("label", { className: "check-row", htmlFor: input.id });
-      row.append(input, create("span", { text: layer.label }));
-      return row;
-    }),
-  );
+  requiredElement("budget-maximum").textContent = money(manifest.maxBudgetNzd);
+  renderLayerControls(requiredElement("layer-controls"), manifest, state.visibleLayerIds);
   renderBasemapControls();
 }
 
 function bindEvents(): void {
+  requiredElement("journey-controls").addEventListener("change", () => {
+    const days = requiredElement<HTMLInputElement>("journey-days");
+    if (!days.reportValidity() || days.value === "") return;
+    journeyAssumptions = journeyAssumptionsFromQuery(new URLSearchParams({
+      journeys: requiredElement<HTMLSelectElement>("journey-period").value,
+      cyclingDays: days.value,
+      journeyLegs: requiredElement<HTMLSelectElement>("journey-legs").value,
+    }));
+    renderAll();
+  });
   requiredElement<HTMLSelectElement>("scenario-select").addEventListener("change", (event) => {
     state.scenario = (event.currentTarget as HTMLSelectElement).value as ScenarioId;
-    state.selectedCandidateId = null;
-    candidateFilter = "";
-    candidateDisplayLimit = PORTFOLIO_PAGE_SIZE;
-    requiredElement<HTMLInputElement>("candidate-search").value = "";
+    resetList();
     renderAll();
+    mapController.fitBuildOrder();
   });
-  requiredElement<HTMLSelectElement>("purpose-select").addEventListener("change", (event) => {
-    state.purpose = (event.currentTarget as HTMLSelectElement).value as PurposeId;
-    state.selectedCandidateId = null;
-    candidateFilter = "";
-    candidateDisplayLimit = PORTFOLIO_PAGE_SIZE;
-    requiredElement<HTMLInputElement>("candidate-search").value = "";
-    renderAll();
-  });
+  requiredElement("purpose-picker").addEventListener("keydown", handleGoalKeydown);
   requiredElement<HTMLInputElement>("budget-slider").addEventListener("input", (event) => {
-    state.budgetNzd = Math.min(
-      Number((event.currentTarget as HTMLInputElement).value) * 1_000_000,
-      manifest.maxBudgetNzd,
-    );
-    candidateDisplayLimit = PORTFOLIO_PAGE_SIZE;
-    requiredElement("budget-output").textContent = formatCost(state.budgetNzd);
-    (event.currentTarget as HTMLInputElement).setAttribute(
-      "aria-valuetext",
-      formatCost(state.budgetNzd),
-    );
-    if (budgetRenderTimer !== undefined) window.clearTimeout(budgetRenderTimer);
-    budgetRenderTimer = window.setTimeout(() => renderAll(), 120);
+    const input = event.currentTarget as HTMLInputElement;
+    state.budgetNzd = Math.min(Number(input.value) * 1_000_000, manifest.maxBudgetNzd);
+    limit = PAGE_SIZE;
+    requiredElement("budget-output").textContent = money(state.budgetNzd);
+    input.setAttribute("aria-valuetext", money(state.budgetNzd));
+    if (budgetTimer !== undefined) window.clearTimeout(budgetTimer);
+    budgetTimer = window.setTimeout(() => renderAll(), 120);
   });
   requiredElement<HTMLInputElement>("candidate-search").addEventListener("input", (event) => {
-    candidateFilter = (event.currentTarget as HTMLInputElement).value
-      .trim()
-      .toLocaleLowerCase("en-NZ");
-    candidateDisplayLimit = PORTFOLIO_PAGE_SIZE;
-    renderPortfolio();
+    filter = (event.currentTarget as HTMLInputElement).value.trim().toLocaleLowerCase("en-NZ");
+    limit = PAGE_SIZE;
+    renderBuildList(context(), filter, limit);
   });
   requiredElement("show-more-button").addEventListener("click", () => {
-    candidateDisplayLimit += PORTFOLIO_PAGE_SIZE;
-    renderPortfolio();
+    limit += PAGE_SIZE;
+    renderBuildList(context(), filter, limit);
   });
   requiredElement("layer-controls").addEventListener("change", (event) => void handleLayerToggle(event));
-  requiredElement("sketch-toggle").addEventListener("click", () => {
-    state.sketching = !state.sketching;
-    renderSketchControls();
-    mapController.update(state);
-  });
+  requiredElement("sketch-toggle").addEventListener("click", () => void toggleSketch());
   requiredElement("sketch-clear").addEventListener("click", () => mapController.clearSketch());
-  requiredElement("download-button").addEventListener("click", downloadPortfolio);
+  requiredElement("download-button").addEventListener("click", downloadBuildOrder);
   requiredElement("share-button").addEventListener("click", () => void copyViewLink());
   requiredElement("reset-button").addEventListener("click", () => void resetView());
   requiredElement("print-button").addEventListener("click", () => window.print());
+  requiredElement("programme-zoom").addEventListener("click", () => mapController.fitBuildOrder());
+  requiredElement("link-close").addEventListener("click", closeCard);
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !state.selectedCandidateId) return;
+    if (requiredElement<HTMLDialogElement>("map-info-dialog").open) return;
+    if (event.target instanceof HTMLInputElement && event.target.type === "search" && event.target.value) return;
+    closeCard();
+  });
   requiredElement("basemap-switcher").addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
     const button = event.target.closest<HTMLButtonElement>("button[data-basemap]");
-    const selectedBasemap = basemapId(button?.dataset.basemap ?? null);
-    if (!button || !selectedBasemap || button.disabled) return;
-    mapController.setBasemap(selectedBasemap);
+    const selected = basemapId(button?.dataset.basemap ?? null);
+    if (button && selected && !button.disabled) mapController.setBasemap(selected);
   });
-  bindMapInfoDialog();
+  bindAboutDialog();
+  panelToggle.addEventListener("click", () => setPanelOpen(document.body.dataset.panel === "collapsed"));
   document.querySelectorAll<HTMLButtonElement>("button.tab").forEach((button) => {
-    button.addEventListener("click", () => {
-      activateTab(button.dataset.tab as AppState["activeTab"]);
-    });
+    button.addEventListener("click", () => activateTab(button.dataset.tab as AppState["activeTab"]));
     button.addEventListener("keydown", handleTabKeydown);
   });
   window.addEventListener("popstate", () => void applyQueryState());
+}
+
+function resetList(): void {
+  filter = "";
+  limit = PAGE_SIZE;
+  requiredElement<HTMLInputElement>("candidate-search").value = "";
+}
+
+function setPurpose(purpose: PurposeId): void {
+  if (purpose === state.purpose || !isPurposeAvailable(purpose)) return;
+  state.purpose = purpose;
+  if (purpose === "appraisal" && state.scenario !== "commute_8pct") {
+    state.scenario = "commute_8pct";
+    setStatus("Benefit–cost ratios are only worked out for the 8% scenario, so the scenario has changed to 8% of commutes.");
+  }
+  resetList();
+  renderAll();
+  mapController.fitBuildOrder();
+}
+
+function handleGoalKeydown(event: KeyboardEvent): void {
+  const order = purposeIds.filter(isPurposeAvailable);
+  const current = order.indexOf(state.purpose);
+  let next = current;
+  if (event.key === "ArrowRight" || event.key === "ArrowDown") next = (current + 1) % order.length;
+  else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = (current - 1 + order.length) % order.length;
+  else return;
+  event.preventDefault();
+  setPurpose(order[next]!);
+  document.querySelector<HTMLButtonElement>(`#purpose-picker [data-purpose="${order[next]!}"]`)?.focus();
 }
 
 async function handleLayerToggle(event: Event): Promise<void> {
@@ -221,354 +240,120 @@ async function handleLayerToggle(event: Event): Promise<void> {
   if (input.checked) {
     state.visibleLayerIds.add(layerId);
     if (!layers[layerId as keyof LoadedLayers]) {
-      setStatus(`Loading ${layerId}…`);
+      setStatus(layerId === "network" ? "Loading the street network. This is a large file." : "Loading…");
       try {
         layers[layerId as keyof LoadedLayers] = await loadLayer(manifest, layerId);
-        candidates = candidateFeatures(layers);
-        paretoCache.clear();
-        mapController.setLayers(layers);
+        mapController.setData(layers, candidates);
         setStatus("");
       } catch (error) {
         state.visibleLayerIds.delete(layerId);
         input.checked = false;
-        setStatus(error instanceof Error ? error.message : `Unable to load ${layerId}`, true);
+        setStatus(error instanceof Error ? error.message : "That layer could not be loaded.", true);
       }
     }
   } else {
     state.visibleLayerIds.delete(layerId);
   }
-  renderOverlayContext();
-  mapController.update(state);
-  syncQueryState();
+  renderAll();
 }
 
-function renderAll(): void {
-  const scenario = manifest.scenarios.find((item) => item.id === state.scenario)!;
-  const purpose = manifest.purposes.find((item) => item.id === state.purpose)!;
-  requiredElement("scenario-note").textContent = scenario.description;
-  requiredElement("purpose-note").textContent = `${purpose.description} Objective: ${purpose.objectiveLabel}.`;
-  const summary = currentSummary();
-  const context = summary.odLowStressShare === null
-    ? `CIW OD low-stress connectivity is not yet available for this run. Routing coverage ${formatPercent(summary.routingCoverage)}.`
-    : `CIW OD low-stress connectivity · ${purpose.label} purpose · ` +
-      `${formatDemand(summary.odLowStressConnectedWeight ?? 0)} connected of complete denominator ` +
-      `${formatDemand(summary.odLowStressDenominatorWeight ?? 0)} weighted activity · ` +
-      `LTS ≤ ${summary.maximumLts} · detour ≤ ${summary.maximumDetourRatio.toFixed(1)} · ` +
-      `routing coverage ${formatPercent(summary.routingCoverage)}.`;
-  requiredElement("connectivity-context").textContent = [context, ...summary.warnings].join(" ");
-  requiredElement("data-status").textContent = dataStatusName(manifest.dataStatus);
-  requiredElement("data-status").className = `data-status ${manifest.dataStatus}`;
-  requiredElement("run-summary").textContent = `Run ${manifest.runId} · model ${manifest.modelVersion}`;
-  requiredElement("map-provenance-text").textContent =
-    `${manifest.dataStatusLabel} · run ${manifest.runId} · model ${manifest.modelVersion}.`;
-  requiredElement("mobile-map-status").textContent =
-    `${dataStatusName(manifest.dataStatus)} · ${scenario.label} · ${purpose.label} · ${manifest.runId}`;
-  requiredElement<HTMLAnchorElement>("methodology-link").href = manifest.methodologyUrl;
-  requiredElement("budget-output").textContent = formatCost(state.budgetNzd);
-  requiredElement<HTMLInputElement>("budget-slider").setAttribute(
-    "aria-valuetext",
-    formatCost(state.budgetNzd),
-  );
-  requiredElement("attribution").textContent = manifest.attribution.join(" · ");
-  renderKpis();
-  renderPortfolio();
-  if (state.activeTab === "pareto") renderPareto();
-  if (state.activeTab === "evidence") renderCandidateDetail();
-  renderTabs();
-  renderSketchControls();
-  renderLegend();
-  renderOverlayContext();
-  mapController.update(state);
-  syncQueryState();
-  requiredElement("view-announcement").textContent =
-    `${scenario.label}, ${purpose.label} lens, ${formatCost(state.budgetNzd)} budget. ` +
-    `${selectedPortfolio().length} ${selectedPortfolio().length === 1 ? "project" : "projects"} in the portfolio.`;
+async function ensureNetwork(): Promise<void> {
+  if (layers.network) return;
+  setStatus("Loading the street network. This is a large file.");
+  layers.network = await loadLayer(manifest, "network");
+  mapController.setData(layers, candidates);
+  setStatus("");
 }
 
-function renderKpis(): void {
-  const summary = currentSummary();
-  const cards: Array<[string, string, string]> = [
-    [
-      compactNumber.format(summary.activityValue),
-      summary.activityUnit,
-      "Scenario activity represented by this planning lens.",
-    ],
-    [
-      summary.odLowStressShare === null ? "—" : formatPercent(summary.odLowStressShare),
-      "low-stress OD share",
-      "Demand-weighted share connected at the stated stress and detour thresholds.",
-    ],
-    [
-      formatPercent(summary.routingCoverage),
-      "routing coverage",
-      "Share of eligible weighted activity represented by successful routes.",
-    ],
-    [String(summary.candidateCount), "screened corridors", "Candidate corridors evaluated in this run."],
-  ];
-  replaceChildren(
-    requiredElement("headline-kpis"),
-    cards.map(([value, label, explanation]) => {
-      const card = create("div", { className: "kpi", title: explanation });
-      card.append(create("strong", { text: value }), create("span", { text: label }));
-      return card;
-    }),
-  );
-}
-
-function selectedPortfolio(): PortfolioStep[] {
+function selectedSteps(): PortfolioStep[] {
   return portfolioAtBudget(manifest, state.scenario, state.purpose, state.budgetNzd);
 }
 
-function renderPortfolio(): void {
-  const steps = selectedPortfolio();
-  const selectedIds = new Set(steps.map((step) => step.candidateId));
-  state.portfolioIds = selectedIds;
-  const selectedItems = steps
-    .map((step) => ({
-      step,
-      candidate: candidates.find((candidate) => candidate.properties.candidateId === step.candidateId),
-    }))
-    .filter((item): item is { step: PortfolioStep; candidate: CandidateFeature } =>
-      Boolean(item.candidate)
-    );
-  const matchingItems = selectedItems.filter(({ candidate }) => {
-    if (!candidateFilter) return true;
-    const haystack = [
-      candidate.properties.name,
-      candidate.properties.facilityType,
-      programmeLabel(candidate.properties.programmeStatus),
-      candidate.properties.candidateId,
-    ]
-      .join(" ")
-      .toLocaleLowerCase("en-NZ");
-    return haystack.includes(candidateFilter);
-  });
-  const visibleItems = matchingItems.slice(0, candidateDisplayLimit);
-  requiredElement("portfolio-count").textContent = candidateFilter
-    ? `${matchingItems.length} of ${steps.length}`
-    : `${steps.length} ${steps.length === 1 ? "project" : "projects"}`;
-  requiredElement("candidate-search-status").textContent = matchingItems.length > visibleItems.length
-    ? `Showing ${visibleItems.length} of ${matchingItems.length} matches; search covers the complete ${steps.length}-project portfolio.`
-    : `${matchingItems.length} of ${steps.length} portfolio projects shown.`;
-  const finalStep = steps.at(-1);
-  const summaryCards: Array<[string, string]> = [
-    [formatCost(finalStep?.cumulativeCostNzd ?? 0), "capital screen"],
-    [
-      formatMetricValue(finalStep?.cumulativeObjective ?? 0, finalStep?.objectiveUnit ?? "modelled activity"),
-      finalStep?.objectiveUnit ?? "modelled objective",
-    ],
-  ];
-  replaceChildren(
-    requiredElement("portfolio-summary"),
-    summaryCards.map(([value, label]) => {
-      const card = create("div");
-      card.append(create("strong", { text: value }), create("span", { text: label }));
-      return card;
-    }),
-  );
-  const list = requiredElement("candidate-list");
-  if (visibleItems.length) {
-    replaceChildren(list, visibleItems.map(({ candidate, step }) => candidateRow(candidate, step)));
-  } else {
-    replaceChildren(
-      list,
-      [create("li", {
-        className: "empty-state",
-        text: steps.length
-          ? "No portfolio corridors match this search."
-          : "No projects fit this budget. Increase the budget to begin a portfolio.",
-      })],
-    );
-  }
-  const search = requiredElement<HTMLInputElement>("candidate-search");
-  search.disabled = steps.length === 0;
-  const showMore = requiredElement<HTMLButtonElement>("show-more-button");
-  showMore.hidden = matchingItems.length <= visibleItems.length;
-  showMore.textContent = `Show ${Math.min(PORTFOLIO_PAGE_SIZE, matchingItems.length - visibleItems.length)} more`;
-  requiredElement<HTMLButtonElement>("download-button").disabled =
-    steps.length === 0 && currentSketch === null;
-  if (!state.selectedCandidateId && selectedItems.length) {
-    state.selectedCandidateId = selectedItems[0]!.candidate.properties.candidateId;
-  }
+function context(steps = selectedSteps()): ViewContext {
+  return {
+    journeyAssumptions,
+    demandDiagnostics,
+    manifest,
+    state,
+    byId,
+    steps,
+    sequence: manifest.portfolios[state.scenario][state.purpose],
+    front: currentFront,
+    select: (candidateId) => selectCandidate(candidateId, true),
+    zoom: (candidateId) => mapController.focusCandidate(candidateId),
+    focusGroup: (ids) => {
+      state.selectedCandidateId = ids.includes(state.selectedCandidateId ?? "") ? state.selectedCandidateId : ids[0] ?? null;
+      state.focusedGroupIds = new Set(ids);
+      renderAll();
+      window.requestAnimationFrame(() => mapController.focusCandidates(ids));
+    },
+    packageEvaluation: (ids) => {
+      const key = packageKey(ids);
+      return manifest.networkContext?.packages.find((item) => item.scenario === state.scenario && packageKey(item.candidateIds) === key);
+    },
+  };
 }
 
-function candidateRow(candidate: CandidateFeature, step: PortfolioStep): HTMLElement {
-  const metric = metricFor(candidate, state.scenario, state.purpose);
-  const button = create("button", {
-    type: "button",
-    className: candidate.properties.candidateId === state.selectedCandidateId ? "candidate-button selected" : "candidate-button",
-    "data-candidate-id": candidate.properties.candidateId,
-  });
-  button.addEventListener("click", () => selectCandidate(candidate.properties.candidateId));
-  const heading = create("div", { className: "candidate-heading" });
-  heading.append(
-    create("span", { className: "rank", text: String(step.step) }),
-    create("strong", { text: candidate.properties.name }),
-    create("span", { className: `status ${candidate.properties.programmeStatus}`, text: programmeLabel(candidate.properties.programmeStatus) }),
-  );
-  const metrics = create("div", { className: "candidate-metrics" });
-  const metricPairs = [
-    metricPair("Capital screen", formatCost(metric.capitalCostNzd)),
-    metricPair(
-      "Objective",
-      `${formatMetricValue(metric.objectiveValue ?? 0, metric.objectiveUnit)} ${metric.objectiveUnit}`,
-    ),
-    metricPair("Marginal", formatMetricValue(step.marginalObjective, step.objectiveUnit)),
-  ];
-  if (manifest.capabilities.appraisal !== "withheld") {
-    metricPairs.splice(2, 0, metricPair("Indicative BCR", formatBcr(metric)));
+function renderAll(): void {
+  requiredElement("journey-controls").hidden = !GOALS[state.purpose].commute;
+  const steps = selectedSteps();
+  state.portfolioIds = new Set(steps.map((step) => step.candidateId));
+  if (state.focusedGroupIds.size) {
+    const groups = connectedGroups(steps.flatMap((step) => byId.get(step.candidateId) ?? []));
+    const group = groups.find((items) => items.some((item) => item.properties.candidateId === state.selectedCandidateId));
+    state.focusedGroupIds = new Set(group?.map((item) => item.properties.candidateId) ?? []);
   }
-  metrics.append(...metricPairs);
-  button.append(heading, metrics);
-  const item = create("li");
-  item.append(button);
-  return item;
+  const ctx = context(steps);
+  const goal = GOALS[state.purpose];
+  renderGoalPicker(requiredElement("purpose-picker"), state.purpose, isPurposeAvailable, setPurpose, purposeIds);
+  renderNotes(ctx);
+  const scenarioSelect = requiredElement<HTMLSelectElement>("scenario-select");
+  scenarioSelect.value = state.scenario;
+  scenarioSelect.disabled = !goal.commute || state.purpose === "appraisal";
+  requiredElement("budget-output").textContent = money(state.budgetNzd);
+  requiredElement<HTMLInputElement>("budget-slider").setAttribute("aria-valuetext", money(state.budgetNzd));
+  requiredElement("lede").textContent = "Compare cycling upgrades: what to build, what they connect and what they could change.";
+  renderHero(requiredElement("portfolio-summary"), ctx);
+  renderNetworkGroups(ctx);
+  renderBuildList(ctx, filter, limit);
+  renderMethodNote(requiredElement("connectivity-context"), ctx);
+  if (state.activeTab === "pareto") renderPareto(ctx);
+  renderLinkCard(ctx);
+  document.body.dataset.card = state.selectedCandidateId && byId.has(state.selectedCandidateId) ? "open" : "closed";
+  mapController.update(state, steps);
+  renderLegend(requiredElement("map-legend-items"), ctx, {
+    breaks: mapController.demandBreaks,
+    empty: mapController.demandEmpty,
+  });
+  renderSketchControls();
+  renderFooter(steps);
+  requiredElement<HTMLButtonElement>("download-button").disabled = steps.length === 0 && currentSketch === null;
+  syncQueryState();
+  requiredElement("view-announcement").textContent =
+    `${goal.chip}, ${SCENARIOS[state.scenario].label}, ${money(state.budgetNzd)} budget: ` +
+    `${String(steps.length)} ${steps.length === 1 ? "link" : "links"} in the build order.`;
+  renderTabs();
 }
 
-function renderPareto(): void {
-  const front = currentParetoFront();
-  const chart = requiredElement("pareto-chart");
-  chart.replaceChildren();
-  const eligibleCandidates = candidates.filter((candidate) =>
-    metricFor(candidate, state.scenario, state.purpose).available
+function renderFooter(steps: PortfolioStep[]): void {
+  const status = requiredElement("data-status");
+  status.textContent = dataStatusName(manifest.dataStatus);
+  status.className = `data-status ${manifest.dataStatus}`;
+  requiredElement("run-summary").textContent = `Data of ${snapshotDate(manifest.generatedAtUtc)} · ${manifest.runId}`;
+  requiredElement("map-provenance-text").textContent =
+    `${withNewName(manifest.dataStatusLabel)}. Run ${manifest.runId}, model ${manifest.modelVersion}.`;
+  requiredElement("attribution").replaceChildren(
+    ...manifest.attribution.map((line) => create("li", { text: withNewName(line) })),
   );
-  if (!eligibleCandidates.length) {
-    chart.append(create("p", {
-      className: "help",
-      text: "This purpose is not available for the selected run.",
-    }));
-    requiredElement("pareto-list").replaceChildren();
-    requiredElement("pareto-plot-status").textContent = "No eligible corridors are available for this view.";
-    return;
-  }
-  const benefitLabel = manifest.purposes.find(
-    (item) => item.id === state.purpose,
-  )!.objectiveLabel;
-  const objectiveUnit = metricFor(
-    eligibleCandidates[0]!,
-    state.scenario,
-    state.purpose,
-  ).objectiveUnit;
-  const plotCandidates = paretoPlotCandidates(eligibleCandidates, front);
-  const frontierCount = eligibleCandidates.filter((candidate) =>
-    front.has(candidate.properties.candidateId)
-  ).length;
-  requiredElement("pareto-plot-status").textContent =
-    plotCandidates.length < eligibleCandidates.length
-      ? `Showing all ${frontierCount} frontier corridors and a deterministic visual sample of ` +
-        `${plotCandidates.length - frontierCount} of ${eligibleCandidates.length - frontierCount} other corridors. ` +
-        `Frontier calculations use all ${eligibleCandidates.length} eligible corridors.`
-      : `Showing all ${eligibleCandidates.length} eligible corridors; ${frontierCount} are on the frontier.`;
-  requiredElement("pareto-description").textContent =
-    `Frontier projects are not dominated on lifecycle cost and ${benefitLabel.toLowerCase()}.`;
-  requiredElement("pareto-heading").textContent = `Cost and ${benefitLabel.toLowerCase()}`;
-  const width = 620;
-  const height = 330;
-  const margin = { top: 22, right: 22, bottom: 48, left: 62 };
-  const maxCost = Math.max(
-    ...eligibleCandidates.map(
-      (candidate) => metricFor(candidate, state.scenario, state.purpose).lifecycleCostNzd,
-    ),
-  );
-  const maxBenefit = Math.max(
-    ...eligibleCandidates.map((candidate) =>
-      purposeBenefit(metricFor(candidate, state.scenario, state.purpose), state.purpose),
-    ),
-    0.001,
-  );
-  const svg = svgElement("svg", {
-    viewBox: `0 0 ${width} ${height}`,
-    role: "img",
-    "aria-label": `Candidate lifecycle cost versus ${benefitLabel.toLowerCase()}`,
-  });
-  const x = (value: number) => margin.left + (value / maxCost) * (width - margin.left - margin.right);
-  const y = (value: number) =>
-    height - margin.bottom - (value / maxBenefit) * (height - margin.top - margin.bottom);
-  for (let tick = 0; tick <= 4; tick += 1) {
-    const fraction = tick / 4;
-    const xPosition = x(maxCost * fraction);
-    const yPosition = y(maxBenefit * fraction);
-    svg.append(
-      svgElement("line", {
-        x1: xPosition,
-        y1: margin.top,
-        x2: xPosition,
-        y2: height - margin.bottom,
-        class: "grid-line",
-      }),
-      svgElement("line", {
-        x1: margin.left,
-        y1: yPosition,
-        x2: width - margin.right,
-        y2: yPosition,
-        class: "grid-line",
-      }),
-      svgText(xPosition, height - margin.bottom + 18, axisCost(maxCost * fraction), "tick-label"),
-      svgText(
-        margin.left - 8,
-        yPosition + 4,
-        formatMetricValue(maxBenefit * fraction, objectiveUnit),
-        "tick-label end",
-      ),
-    );
-  }
-  svg.append(
-    svgElement("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "axis" }),
-    svgElement("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "axis" }),
-    svgText(width / 2, height - 10, "Lifecycle cost screen (NZD)", "axis-label"),
-    svgText(16, height / 2, benefitLabel, "axis-label rotated"),
-  );
-  for (const candidate of plotCandidates) {
-    const metric = metricFor(candidate, state.scenario, state.purpose);
-    const benefit = purposeBenefit(metric, state.purpose);
-    const circle = svgElement("circle", {
-      cx: x(metric.lifecycleCostNzd),
-      cy: y(benefit),
-      r: front.has(candidate.properties.candidateId) ? 7 : 4.5,
-      class: front.has(candidate.properties.candidateId) ? "point frontier" : "point",
-      tabindex: "0",
-      role: "button",
-      "data-candidate-id": candidate.properties.candidateId,
-      "aria-label": `${candidate.properties.name}, ${formatCost(metric.lifecycleCostNzd)}, ${benefitLabel.toLowerCase()} ${formatMetricValue(benefit, metric.objectiveUnit)}`,
-    });
-    circle.append(svgElement("title", { textContent: candidate.properties.name }));
-    circle.addEventListener("click", () => selectCandidate(candidate.properties.candidateId));
-    circle.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        selectCandidate(candidate.properties.candidateId);
-      }
-    });
-    svg.append(circle);
-  }
-  chart.append(svg);
-  const frontCandidates = eligibleCandidates
-    .filter((candidate) => front.has(candidate.properties.candidateId))
-    .sort((a, b) => objectiveValue(metricFor(b, state.scenario, state.purpose), state.purpose) - objectiveValue(metricFor(a, state.scenario, state.purpose), state.purpose));
-  replaceChildren(
-    requiredElement("pareto-list"),
-    frontCandidates.map((candidate) => {
-      const metric = metricFor(candidate, state.scenario, state.purpose);
-      const benefit = purposeBenefit(metric, state.purpose);
-      const row = create("button", {
-        type: "button",
-        className: "compact-row",
-        "data-candidate-id": candidate.properties.candidateId,
-      });
-      row.append(
-        create("strong", { text: candidate.properties.name }),
-        create("span", {
-          text: `${formatCost(metric.lifecycleCostNzd)} · ${formatMetricValue(benefit, metric.objectiveUnit)}`,
-        }),
-      );
-      row.addEventListener("click", () => selectCandidate(candidate.properties.candidateId));
-      return row;
-    }),
-  );
+  requiredElement<HTMLAnchorElement>("methodology-link").href = manifest.methodologyUrl;
+  const last = steps.at(-1);
+  requiredElement("mobile-map-status").textContent = last
+    ? `${GOALS[state.purpose].chip} · ${String(steps.length)} links · ${money(last.cumulativeCostNzd)}`
+    : `${GOALS[state.purpose].chip} · no links within ${money(state.budgetNzd)}`;
 }
 
-function currentParetoFront(): Set<string> {
-  const key = `${manifest.runId}|${state.scenario}|${state.purpose}|${candidates.length}`;
+function currentFront(): Set<string> {
+  const key = `${state.scenario}|${state.purpose}`;
   const cached = paretoCache.get(key);
   if (cached) return cached;
   const front = paretoFront(candidates, state.scenario, state.purpose);
@@ -576,114 +361,20 @@ function currentParetoFront(): Set<string> {
   return front;
 }
 
-function paretoPlotCandidates(
-  eligible: CandidateFeature[],
-  front: Set<string>,
-): CandidateFeature[] {
-  if (eligible.length <= PARETO_POINT_LIMIT) return eligible;
-  const frontierCandidates = eligible.filter((candidate) =>
-    front.has(candidate.properties.candidateId)
-  );
-  const otherCandidates = eligible
-    .filter((candidate) => !front.has(candidate.properties.candidateId))
-    .sort((left, right) =>
-      left.properties.candidateId.localeCompare(right.properties.candidateId)
-    );
-  const capacity = Math.max(0, PARETO_POINT_LIMIT - frontierCandidates.length);
-  if (capacity === 0) return frontierCandidates;
-  if (otherCandidates.length <= capacity) return [...frontierCandidates, ...otherCandidates];
-  if (capacity === 1) return [...frontierCandidates, otherCandidates[0]!];
-  const sampled = Array.from({ length: capacity }, (_, index) =>
-    otherCandidates[Math.round(index * (otherCandidates.length - 1) / (capacity - 1))]!
-  );
-  return [...frontierCandidates, ...sampled];
-}
-
-function selectCandidate(candidateId: string): void {
+function selectCandidate(candidateId: string, focusMap: boolean): void {
+  if (!byId.has(candidateId)) return;
   state.selectedCandidateId = candidateId;
-  state.activeTab = "evidence";
+  state.focusedGroupIds.clear();
   renderAll();
+  if (focusMap) window.requestAnimationFrame(() => mapController.focusCandidate(candidateId));
 }
 
-function renderCandidateDetail(): void {
-  const candidate = candidates.find((item) => item.properties.candidateId === state.selectedCandidateId);
-  const title = requiredElement("candidate-title");
-  const detail = requiredElement("candidate-detail");
-  if (!candidate) {
-    title.textContent = "Choose a corridor";
-    detail.replaceChildren(create("p", { className: "help", text: "Select a portfolio row, map corridor, or trade-off point." }));
-    return;
-  }
-  const metric = metricFor(candidate, state.scenario, state.purpose);
-  const purposeDefinition = manifest.purposes.find((item) => item.id === state.purpose)!;
-  const frontier = currentParetoFront();
-  title.textContent = candidate.properties.name;
-  const facts = create("dl", { className: "facts" });
-  const factRows: Array<[string, string]> = [
-    ["Facility", candidate.properties.facilityType],
-    ["Programme", programmeLabel(candidate.properties.programmeStatus)],
-    ["Capital cost screen", formatCost(metric.capitalCostNzd)],
-    ["Lifecycle cost screen", formatCost(metric.lifecycleCostNzd)],
-    [purposeDefinition.objectiveLabel, metric.available
-      ? `${formatMetricValue(metric.objectiveValue ?? 0, metric.objectiveUnit)} ${metric.objectiveUnit}`
-      : "Not available"],
-    ["Additional commute cyclists", optionalNumber(metric.additionalCycleUsers)],
-    ["Annual cycling distance", optionalNumber(metric.annualBikeKmDelta, " km")],
-    ["CIW OD low-stress share", metric.odLowStressShareDelta === null
-      ? "Not available"
-      : `+${formatPercent(metric.odLowStressShareDelta, 2)}`],
-    [manifest.capabilities.appraisal === "withheld" ? "Appraisal status" : "Indicative BCR", formatBcr(metric)],
-    ["Pareto frontier", frontier.has(candidate.properties.candidateId) ? "Member" : "Not a member"],
-    ["Exact network edges", String(candidate.properties.edgeIds.length)],
-  ];
-  for (const [term, value] of factRows) {
-    facts.append(create("dt", { text: term }), create("dd", { text: value }));
-  }
-  const evidence = create("div", { className: "evidence-bars" });
-  evidence.append(
-    evidenceBar("Routed demand coverage", metric.routeCoverage),
-    evidenceBar("Top-k inclusion", metric.topKProbability),
-    evidenceBar("Pareto-frontier stability", metric.frontierProbability),
-  );
-  const warnings = create("ul", { className: "warning-list" });
-  for (const warning of metric.warnings) warnings.append(create("li", { text: warning }));
-  detail.replaceChildren(
-    create("p", { className: "rationale", text: candidate.properties.rationale }),
-    facts,
-    create("h3", { text: "Evidence profile" }),
-    evidence,
-    create("p", {
-      className: "help",
-      text: `Mean uncertainty rank: ${metric.meanRank?.toFixed(1) ?? "not available"}. Values are conditional scenario screens, not causal forecasts.`,
-    }),
-    warnings,
-  );
-}
-
-function evidenceBar(label: string, value: number | null): HTMLElement {
-  const wrapper = create("div", { className: "evidence-row" });
-  const header = create("div");
-  header.append(
-    create("span", { text: label }),
-    create("strong", { text: value === null ? "Not available" : formatPercent(value, 0) }),
-  );
-  if (value === null) {
-    wrapper.append(header);
-    return wrapper;
-  }
-  const track = create("div", {
-    className: "bar-track",
-    role: "progressbar",
-    "aria-label": label,
-    "aria-valuemin": "0",
-    "aria-valuemax": "100",
-    "aria-valuenow": String(Math.round(value * 100)),
-  });
-  const fill = create("span", { className: "bar-fill" });
-  fill.style.width = `${Math.round(value * 100)}%`;
-  track.append(fill);
-  wrapper.append(header, track);
-  return wrapper;
+function closeCard(): void {
+  const id = state.selectedCandidateId;
+  state.selectedCandidateId = null;
+  state.focusedGroupIds.clear();
+  renderAll();
+  if (id) document.querySelector<HTMLButtonElement>(`#candidate-list [data-candidate-id="${CSS.escape(id)}"]`)?.focus();
 }
 
 function renderTabs(): void {
@@ -693,26 +384,36 @@ function renderTabs(): void {
     button.setAttribute("aria-selected", String(active));
     button.tabIndex = active ? 0 : -1;
   });
-  for (const id of ["portfolio", "pareto", "evidence"] as const) {
-    const panel = requiredElement(`tab-${id}`);
-    panel.classList.toggle("hidden", state.activeTab !== id);
-    panel.hidden = state.activeTab !== id;
+  for (const id of ["portfolio", "pareto", "connected"] as const) requiredElement(`tab-${id}`).hidden = state.activeTab !== id;
+  const journeyView = state.activeTab === "connected";
+  requiredElement("map").setAttribute("aria-label", journeyView ? "Whole journey and required upgrades" : "Map of candidate cycling links in Auckland");
+  for (const id of ["ranking-controls", "sketch-disclosure", "layers-disclosure"]) requiredElement(id).hidden = journeyView;
+  if (journeyView) {
+    requiredElement("link-card").hidden = true;
+    document.body.dataset.card = "closed";
+    requiredElement("lede").textContent = "Which upgrades are needed to make a whole journey work?";
+    const key = requiredElement("map-legend-items");
+    key.replaceChildren(...[["#ea580c", "Funded upgrade"], ["#b42318", "Unfunded gap (red dashes)"], ["#1f7a4d", "Existing cycleway / path"], ["#9aa5ab", "Other usable street"]].map(([colour, label], index) => {
+      const row = create("p", { className: "connected-key", "data-route-only": String(index > 0) });
+      const swatch = create("i"); swatch.style.backgroundColor = colour!;
+      row.append(swatch, document.createTextNode(label!)); return row;
+    }), create("p", { id: "connected-map-caption", className: "help", text: "A → B: whole journey. Dashed orange: rest of the upgrade." }));
   }
+  const download = requiredElement<HTMLButtonElement>("download-button");
+  download.textContent = journeyView ? "Download package and route (GeoJSON)" : "Download build order (GeoJSON)";
+  if (journeyView) download.disabled = !connected.canExport;
+  connected.setActive(journeyView);
 }
 
 function activateTab(tab: AppState["activeTab"], focus = false): void {
   state.activeTab = tab;
-  renderTabs();
-  if (tab === "pareto") renderPareto();
-  if (tab === "evidence") renderCandidateDetail();
-  syncQueryState();
-  if (focus) {
-    document.querySelector<HTMLButtonElement>(`button.tab[data-tab="${tab}"]`)?.focus();
-  }
+  if (tab === "connected") state.sketching = false;
+  renderAll();
+  if (focus) document.querySelector<HTMLButtonElement>(`button.tab[data-tab="${tab}"]`)?.focus();
 }
 
 function handleTabKeydown(event: KeyboardEvent): void {
-  const tabs = ["portfolio", "pareto", "evidence"] as const;
+  const tabs = ["portfolio", "pareto", "connected"] as const;
   const current = tabs.indexOf(state.activeTab);
   let next = current;
   if (event.key === "ArrowRight") next = (current + 1) % tabs.length;
@@ -724,150 +425,77 @@ function handleTabKeydown(event: KeyboardEvent): void {
   activateTab(tabs[next]!, true);
 }
 
+async function toggleSketch(): Promise<void> {
+  if (!state.sketching) {
+    try {
+      await ensureNetwork();
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "The street network could not be loaded.", true);
+      return;
+    }
+  }
+  state.sketching = !state.sketching;
+  renderSketchControls();
+  mapController.update(state, selectedSteps());
+}
+
 function renderSketchControls(): void {
   const button = requiredElement<HTMLButtonElement>("sketch-toggle");
-  const unavailable = manifest.capabilities.sketchEvaluation === "unavailable";
-  button.disabled = unavailable;
-  requiredElement("sketch-help").textContent = unavailable
-    ? "Corridor sketch evaluation is unavailable for this run."
-    : manifest.capabilities.sketchEvaluation === "same_pipeline"
-      ? "Select points to route and evaluate a corridor through the same model pipeline."
-      : "Select points on exported edges, then export the exact edge IDs for canonical pipeline evaluation.";
-  button.textContent = state.sketching ? "Finish sketch" : "Start sketch";
+  const capability = manifest.capabilities.sketchEvaluation;
+  button.disabled = capability === "unavailable";
+  requiredElement("sketch-help").textContent = capability === "unavailable"
+    ? "Drawing is not available for this run."
+    : capability === "same_pipeline"
+      ? "Click points on the map. SPAN joins them along the street network and runs the result through the model."
+      : "Click points on the map. SPAN joins them along the street network and gives the length and a rough cost.";
+  button.textContent = state.sketching ? "Finish drawing" : "Start drawing";
   button.setAttribute("aria-pressed", String(state.sketching));
   document.body.classList.toggle("sketching", state.sketching);
   if (state.sketching) requiredElement<HTMLDetailsElement>("sketch-disclosure").open = true;
 }
 
-function renderSketch(result: SketchResult | null, error?: string): void {
+function onSketch(result: SketchResult | null, error?: string): void {
   currentSketch = result;
-  requiredElement<HTMLButtonElement>("download-button").disabled =
-    selectedPortfolio().length === 0 && currentSketch === null;
-  if (result) requiredElement<HTMLDetailsElement>("sketch-disclosure").open = true;
   desiredSketchNodeIds = result?.nodeIds ?? [];
-  const panel = requiredElement("sketch-result");
-  if (error) {
-    panel.replaceChildren(create("p", { className: "error-text", text: error }));
-    syncQueryState();
-    return;
-  }
-  if (!result || result.edgeIds.length === 0) {
-    panel.replaceChildren(create("p", { className: "help", text: "Choose at least two map points." }));
-    syncQueryState();
-    return;
-  }
-  const list = create("dl", { className: "mini-facts" });
-  const sketchRows: Array<[string, string]> = [
-    ["Length", `${result.lengthKm.toFixed(2)} km`],
-    ["Capital screen", formatCost(result.capitalCostNzd)],
-    ["Edge commute-activity attribute", compactNumber.format(result.dailyTripsDelta)],
-  ];
-  if (result.odLowStressShareDelta > 0) {
-    sketchRows.push([
-      "Edge connectivity attribute sum",
-      formatPercent(result.odLowStressShareDelta, 2),
-    ]);
-  }
-  for (const [label, value] of sketchRows) {
-    list.append(create("dt", { text: label }), create("dd", { text: value }));
-  }
-  panel.replaceChildren(
-    list,
-    create("p", {
-      className: "help",
-      text:
-        "Browser display sums exported edge attributes only; it is not a counterfactual, appraisal, " +
-        "or uncertainty result. Export the exact edge IDs for canonical pipeline evaluation.",
-    }),
-  );
+  renderSketchResult(requiredElement("sketch-result"), result, error);
+  if (result) requiredElement<HTMLDetailsElement>("sketch-disclosure").open = true;
+  if (!ready) return;
+  requiredElement<HTMLButtonElement>("download-button").disabled = selectedSteps().length === 0 && result === null;
   syncQueryState();
-}
-
-function renderLegend(): void {
-  const legend = requiredElement("map-legend-items");
-  const items: Array<[string, string]> = [
-    ["#08766c", "Higher purpose potential"],
-    ["#007f73", "Existing protected network"],
-    ["#0f5c6e", "Screened candidate"],
-    ["#ea580c", "Selected or sketched corridor"],
-    ["#a855f7", "Planned/funded programme"],
-  ];
-  replaceChildren(
-    legend,
-    items.map(([colour, label]) => {
-      const row = create("div");
-      const swatch = create("span", { className: "legend-swatch" });
-      swatch.style.backgroundColor = colour;
-      row.append(swatch, create("span", { text: label }));
-      return row;
-    }),
-  );
-}
-
-function renderOverlayContext(): void {
-  const panel = requiredElement("overlay-context");
-  const notes: HTMLElement[] = [];
-  if (state.visibleLayerIds.has("programmes")) {
-    const programmeFeatures = layers.programmes?.features ?? [];
-    const fundedCount = programmeFeatures.filter(
-      (feature) => feature.properties.status === "funded",
-    ).length;
-    notes.push(
-      create("p", {
-        text:
-          `Programmes · ${fundedCount} funded of ${programmeFeatures.length} shown` +
-          (manifest.dataStatus === "synthetic_demo" ? " · synthetic fixture." : "."),
-      }),
-    );
-  }
-  if (state.visibleLayerIds.has("counters")) {
-    const validation = manifest.validation;
-    notes.push(
-      create("p", {
-        text:
-          `Validation · ${validation.matchedCount}/${validation.counterCount} counter sites matched ` +
-          `(${formatPercent(validation.coverage)}) · ${validation.periodLabel} · ` +
-          `${validation.purposeAlignment}.`,
-      }),
-    );
-  }
-  replaceChildren(panel, notes);
-  panel.hidden = notes.length === 0;
-  if (notes.length) requiredElement<HTMLDetailsElement>("layers-disclosure").open = true;
 }
 
 async function copyViewLink(): Promise<void> {
   syncQueryState();
   try {
     await navigator.clipboard.writeText(window.location.href);
-    setStatus("Shareable view link copied.");
+    setStatus("Link to this view copied.");
   } catch {
-    setStatus("The link is ready in the address bar; copy it from there.");
+    setStatus("Copy the link from the address bar.");
   }
 }
 
 async function resetView(): Promise<void> {
   window.history.replaceState(null, "", window.location.pathname);
-  candidateFilter = "";
-  requiredElement<HTMLInputElement>("candidate-search").value = "";
   currentSketch = null;
+  resetList();
   await applyQueryState();
-  setStatus("View reset to the published defaults.");
+  mapController.fitBuildOrder();
+  setStatus("Reset to the starting view.");
 }
 
-function downloadPortfolio(): void {
-  const ids = new Set(selectedPortfolio().map((step) => step.candidateId));
-  const collection = portfolioGeoJson(candidates, ids);
+function downloadBuildOrder(): void {
+  if (state.activeTab === "connected") { connected.download(); return; }
+  const collection = portfolioGeoJson(candidates, new Set(selectedSteps().map((step) => step.candidateId)));
+  const rank = new Map(selectedSteps().map((step) => [step.candidateId, step]));
   for (const feature of collection.features) {
-    const rawCandidateId = feature.properties.candidate_id;
-    const candidateId =
-      typeof rawCandidateId === "string" || typeof rawCandidateId === "number"
-        ? String(rawCandidateId)
-        : "";
-    const candidate = candidates.find((item) => item.properties.candidateId === candidateId);
+    const id = String(feature.properties.candidate_id);
+    const candidate = byId.get(id);
     if (!candidate) continue;
     const metric = metricFor(candidate, state.scenario, state.purpose);
+    const withheld = manifest.capabilities.appraisal === "withheld";
     Object.assign(feature.properties, {
+      build_order: rank.get(id)?.step ?? null,
+      marginal_objective: rank.get(id)?.marginalObjective ?? null,
       scenario: state.scenario,
       purpose: state.purpose,
       capital_cost_nzd: metric.capitalCostNzd,
@@ -877,9 +505,9 @@ function downloadPortfolio(): void {
       additional_cycle_users: metric.additionalCycleUsers,
       annual_cycle_km: metric.annualBikeKmDelta,
       od_low_stress_share_delta: metric.odLowStressShareDelta,
-      indicative_bcr_p5: manifest.capabilities.appraisal === "withheld" ? null : metric.bcrP5,
-      indicative_bcr_p50: manifest.capabilities.appraisal === "withheld" ? null : metric.bcrP50,
-      indicative_bcr_p95: manifest.capabilities.appraisal === "withheld" ? null : metric.bcrP95,
+      indicative_bcr_p5: withheld ? null : metric.bcrP5,
+      indicative_bcr_p50: withheld ? null : metric.bcrP50,
+      indicative_bcr_p95: withheld ? null : metric.bcrP95,
     });
   }
   if (currentSketch) {
@@ -888,7 +516,7 @@ function downloadPortfolio(): void {
       geometry: { type: "MultiLineString", coordinates: currentSketch.coordinates },
       properties: {
         candidate_id: "user-sketch",
-        name: "User corridor sketch",
+        name: "Drawn link",
         scenario: state.scenario,
         purpose: state.purpose,
         ordered_edge_ids: currentSketch.edgeIds,
@@ -903,9 +531,9 @@ function downloadPortfolio(): void {
       },
     });
   }
-  const exportCollection = {
+  const exported = {
     ...collection,
-    ciw_export: {
+    span_export: {
       schema_version: manifest.schemaVersion,
       run_id: manifest.runId,
       model_version: manifest.modelVersion,
@@ -918,12 +546,9 @@ function downloadPortfolio(): void {
       generated_at_utc: new Date().toISOString(),
     },
   };
-  const blob = new Blob([JSON.stringify(exportCollection, null, 2)], {
-    type: "application/geo+json",
-  });
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = `ciw-${state.scenario}-${state.purpose}-${queryNumber(state.budgetNzd / 1_000_000)}m.geojson`;
+  link.href = URL.createObjectURL(new Blob([JSON.stringify(exported, null, 2)], { type: "application/geo+json" }));
+  link.download = `span-${state.scenario}-${state.purpose}-${queryNumber(state.budgetNzd / 1_000_000)}m.geojson`;
   link.hidden = true;
   document.body.append(link);
   link.click();
@@ -935,60 +560,45 @@ function downloadPortfolio(): void {
 
 async function applyQueryState(render = true): Promise<void> {
   const params = new URLSearchParams(window.location.search);
-  candidateFilter = "";
-  candidateDisplayLimit = PORTFOLIO_PAGE_SIZE;
-  state.scenario = manifest.defaultScenario;
-  state.purpose = manifest.defaultPurpose;
-  state.budgetNzd = manifest.defaultBudgetNzd;
-  state.selectedCandidateId = null;
-  state.activeTab = "portfolio";
-  state.portfolioIds = new Set();
-  state.sketching = false;
-  state.visibleLayerIds = new Set(
-    manifest.layers.filter((layer) => layer.defaultVisible).map((layer) => layer.id),
-  );
+  journeyAssumptions = journeyAssumptionsFromQuery(params);
+  requiredElement<HTMLSelectElement>("journey-period").value = journeyAssumptions.period;
+  requiredElement<HTMLInputElement>("journey-days").value = String(journeyAssumptions.daysPerYear);
+  requiredElement<HTMLSelectElement>("journey-legs").value = String(journeyAssumptions.legsPerDay);
+  resetList();
+  Object.assign(state, initialState(manifest));
   desiredSketchNodeIds = [];
-  const requestedBasemap = offlineMode
-    ? "analysis"
-    : basemapId(params.get("basemap")) ?? "light";
-  mapController.setBasemap(requestedBasemap, false);
+  mapController.setBasemap(offlineMode ? "analysis" : basemapId(params.get("basemap")) ?? "light", false);
   renderBasemapControls();
-
   const scenario = params.get("scenario");
   const purpose = params.get("purpose");
   const tab = params.get("view");
   if (isScenarioId(scenario)) state.scenario = scenario;
   if (isPurposeId(purpose) && isPurposeAvailable(purpose)) state.purpose = purpose;
-  if (isTab(tab)) state.activeTab = tab;
+  if (state.purpose === "appraisal") state.scenario = "commute_8pct";
+  if (tab === "portfolio" || tab === "pareto" || tab === "connected") state.activeTab = tab;
   if (params.has("budget")) {
     const budget = Number(params.get("budget"));
-    if (Number.isFinite(budget) && budget >= 0) {
-      state.budgetNzd = Math.min(budget * 1_000_000, manifest.maxBudgetNzd);
-    }
+    if (Number.isFinite(budget) && budget >= 0) state.budgetNzd = Math.min(budget * 1_000_000, manifest.maxBudgetNzd);
   }
   if (params.has("layers")) {
-    const validLayerIds = new Set(manifest.layers.map((layer) => layer.id));
-    state.visibleLayerIds = new Set(
-      (params.get("layers") ?? "")
-        .split(",")
-        .map((value) => value.trim())
-        .filter((value) => validLayerIds.has(value as Manifest["layers"][number]["id"])),
-    );
+    const valid = new Set<string>(manifest.layers.map((layer) => layer.id));
+    state.visibleLayerIds = new Set((params.get("layers") ?? "").split(",").map((value) => value.trim()).filter((value) => valid.has(value)));
   }
-  desiredSketchNodeIds = (params.get("sketch") ?? "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean)
-    .slice(0, 20);
-
+  desiredSketchNodeIds = (params.get("sketch") ?? "").split(",").map((value) => value.trim()).filter(Boolean).slice(0, 20);
   await ensureVisibleLayersLoaded();
-  const candidate = params.get("candidate");
-  if (candidate && candidates.some((item) => item.properties.candidateId === candidate)) {
-    state.selectedCandidateId = candidate;
+  if (desiredSketchNodeIds.length >= 2) {
+    try {
+      await ensureNetwork();
+    } catch (error) {
+      desiredSketchNodeIds = [];
+      setStatus(error instanceof Error ? error.message : "The street network could not be loaded.", true);
+    }
   }
+  const candidate = params.get("candidate");
+  if (candidate && byId.has(candidate)) state.selectedCandidateId = candidate;
   syncControlsFromState();
   if (render) {
-    mapController.setLayers(layers);
+    mapController.setData(layers, candidates);
     mapController.setSketchNodes(desiredSketchNodeIds);
     renderAll();
   }
@@ -1002,21 +612,16 @@ async function ensureVisibleLayersLoaded(): Promise<void> {
     } catch (error) {
       if (!layer.optional) throw error;
       state.visibleLayerIds.delete(layer.id);
-      setStatus(
-        error instanceof Error ? error.message : `The optional ${layer.label} layer is unavailable.`,
-        true,
-      );
+      setStatus(error instanceof Error ? error.message : "A map layer could not be loaded.", true);
     }
   }
-  candidates = candidateFeatures(layers);
-  paretoCache.clear();
+  setCandidates();
 }
 
 function syncControlsFromState(): void {
   requiredElement<HTMLSelectElement>("scenario-select").value = state.scenario;
-  requiredElement<HTMLSelectElement>("purpose-select").value = state.purpose;
   requiredElement<HTMLInputElement>("budget-slider").value = String(state.budgetNzd / 1_000_000);
-  requiredElement<HTMLInputElement>("candidate-search").value = candidateFilter;
+  requiredElement<HTMLInputElement>("candidate-search").value = filter;
   for (const layer of manifest.layers) {
     requiredElement<HTMLInputElement>(`layer-${layer.id}`).checked = state.visibleLayerIds.has(layer.id);
   }
@@ -1024,23 +629,21 @@ function syncControlsFromState(): void {
 
 function syncQueryState(): void {
   const params = new URLSearchParams();
+  const previous = new URLSearchParams(window.location.search);
+  for (const key of CONNECTED_QUERY_KEYS) { const value = previous.get(key); if (value !== null) params.set(key, value); }
+  params.set("journeys", journeyAssumptions.period);
+  params.set("cyclingDays", String(journeyAssumptions.daysPerYear));
+  params.set("journeyLegs", String(journeyAssumptions.legsPerDay));
   params.set("scenario", state.scenario);
   params.set("purpose", state.purpose);
   params.set("view", state.activeTab);
   params.set("budget", queryNumber(state.budgetNzd / 1_000_000));
-  if (offlineMode) {
-    params.set("offline", "1");
-  } else {
-    params.set("basemap", mapController.activeBasemap);
-  }
-  const layerIds = manifest.layers
-    .map((layer) => layer.id)
-    .filter((layerId) => state.visibleLayerIds.has(layerId));
-  params.set("layers", layerIds.join(","));
+  if (offlineMode) params.set("offline", "1");
+  else params.set("basemap", mapController.activeBasemap);
+  params.set("layers", manifest.layers.map((layer) => layer.id).filter((id) => state.visibleLayerIds.has(id)).join(","));
   if (state.selectedCandidateId) params.set("candidate", state.selectedCandidateId);
   if (desiredSketchNodeIds.length >= 2) params.set("sketch", desiredSketchNodeIds.join(","));
-  const next = `${window.location.pathname}?${params.toString()}`;
-  window.history.replaceState(null, "", next);
+  window.history.replaceState(null, "", `${window.location.pathname}?${params.toString()}`);
 }
 
 function renderBasemapControls(): void {
@@ -1051,15 +654,30 @@ function renderBasemapControls(): void {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
     button.disabled = unavailable;
-    if (unavailable) {
-      button.title = "Hosted basemaps are unavailable in the reproducible offline view.";
-    } else {
-      button.removeAttribute("title");
-    }
+    if (unavailable) button.title = "Background maps are off in the offline view.";
+    else button.removeAttribute("title");
   });
 }
 
-function bindMapInfoDialog(): void {
+/** Room the map keeps clear for the panel and the link card when it fits or flies. */
+function mapPadding(): MapPadding {
+  const panel = requiredElement("controls-panel").getBoundingClientRect();
+  const card = requiredElement("link-card");
+  if (window.matchMedia("(max-width: 760px)").matches) {
+    const sheet = card.hidden ? panel : card.getBoundingClientRect();
+    return { topLeft: [24, 72], bottomRight: [24, Math.max(24, Math.round(window.innerHeight - sheet.top) + 16)] };
+  }
+  const cardWidth = card.hidden ? 0 : card.getBoundingClientRect().width;
+  return { topLeft: [Math.round(panel.right) + 24, 72], bottomRight: [cardWidth ? Math.round(cardWidth) + 48 : 72, 48] };
+}
+
+function setPanelOpen(open: boolean): void {
+  document.body.dataset.panel = open ? "open" : "collapsed";
+  panelToggle.setAttribute("aria-expanded", String(open));
+  panelToggle.setAttribute("aria-label", open ? "Hide controls" : "Show controls");
+}
+
+function bindAboutDialog(): void {
   const button = requiredElement<HTMLButtonElement>("map-info-button");
   const dialog = requiredElement<HTMLDialogElement>("map-info-dialog");
   const closeButton = requiredElement<HTMLButtonElement>("map-info-close");
@@ -1072,12 +690,9 @@ function bindMapInfoDialog(): void {
   dialog.addEventListener("click", (event) => {
     if (event.target !== dialog) return;
     const bounds = dialog.getBoundingClientRect();
-    const outside =
-      event.clientX < bounds.left ||
-      event.clientX > bounds.right ||
-      event.clientY < bounds.top ||
-      event.clientY > bounds.bottom;
-    if (outside) dialog.close();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+      dialog.close();
+    }
   });
   dialog.addEventListener("close", () => {
     button.setAttribute("aria-expanded", "false");
@@ -1089,36 +704,11 @@ function setStatus(message: string, error = false): void {
   if (statusTimer !== undefined) window.clearTimeout(statusTimer);
   statusMessage.textContent = message;
   statusMessage.classList.toggle("error", error);
-  if (message && !error) {
-    statusTimer = window.setTimeout(() => {
-      statusMessage.textContent = "";
-    }, 3500);
-  }
-}
-
-function dataStatusName(dataStatus: Manifest["dataStatus"]): string {
-  return {
-    synthetic_demo: "Synthetic demo",
-    research_snapshot: "Research snapshot",
-    validated_release: "Validated release",
-  }[dataStatus];
+  if (message && !error) statusTimer = window.setTimeout(() => (statusMessage.textContent = ""), 4000);
 }
 
 function basemapId(value: string | null): BasemapId | null {
   return BASEMAP_IDS.find((candidate) => candidate === value) ?? null;
-}
-
-function programmeLabel(status: CandidateFeature["properties"]["programmeStatus"]): string {
-  return {
-    unprogrammed: "Unprogrammed",
-    aligned: "Strategic alignment",
-    funded: "Funded overlap",
-    possible_duplicate: "Check overlap",
-  }[status];
-}
-
-function currentSummary(): SummaryMetric {
-  return manifest.summaries[state.scenario][state.purpose];
 }
 
 function isScenarioId(value: string | null): value is ScenarioId {
@@ -1135,10 +725,6 @@ function isPurposeAvailable(value: PurposeId): boolean {
   return true;
 }
 
-function isTab(value: string | null): value is AppState["activeTab"] {
-  return value === "portfolio" || value === "pareto" || value === "evidence";
-}
-
 function budgetStep(maxBudgetNzd: number): number {
   if (maxBudgetNzd <= 10_000_000) return 0.1;
   if (maxBudgetNzd <= 50_000_000) return 1;
@@ -1147,93 +733,4 @@ function budgetStep(maxBudgetNzd: number): number {
 
 function queryNumber(value: number): string {
   return String(Number(value.toFixed(3)));
-}
-
-function formatDemand(value: number): string {
-  return new Intl.NumberFormat("en-NZ", { maximumFractionDigits: 1 }).format(value);
-}
-
-function axisCost(value: number): string {
-  return `$${compactNumber.format(value)}`;
-}
-
-function formatMetricValue(value: number, unit: string): string {
-  if (unit.toLowerCase().includes("share")) return formatPercent(value, 2);
-  if (unit.toLowerCase().includes("bcr") || unit.toLowerCase().includes("ratio")) {
-    return value.toFixed(2);
-  }
-  return compactNumber.format(value);
-}
-
-function optionalNumber(value: number | null, suffix = ""): string {
-  return value === null ? "Not available" : `${compactNumber.format(value)}${suffix}`;
-}
-
-function formatBcr(metric: CandidateMetric): string {
-  if (manifest.capabilities.appraisal === "withheld") {
-    return "withheld — release inputs unresolved";
-  }
-  if (metric.bcrP5 === null || metric.bcrP50 === null || metric.bcrP95 === null) {
-    return "not available";
-  }
-  return `${metric.bcrP50.toFixed(2)} (${metric.bcrP5.toFixed(2)}–${metric.bcrP95.toFixed(2)})`;
-}
-
-function metricPair(label: string, value: string): HTMLElement {
-  const pair = create("span", { className: "metric-pair" });
-  pair.append(create("small", { text: label }), create("span", { text: value }));
-  return pair;
-}
-
-function requiredElement<T extends HTMLElement = HTMLElement>(id: string): T {
-  const element = document.getElementById(id);
-  if (!element) throw new Error(`Required interface element is missing: ${id}`);
-  return element as T;
-}
-
-function create<K extends keyof HTMLElementTagNameMap>(
-  tag: K,
-  attributes: Record<string, string> & { text?: string; className?: string } = {},
-): HTMLElementTagNameMap[K] {
-  const element = document.createElement(tag);
-  for (const [key, value] of Object.entries(attributes)) {
-    if (key === "text") element.textContent = value;
-    else if (key === "className") element.className = value;
-    else if (key === "htmlFor" && element instanceof HTMLLabelElement) element.htmlFor = value;
-    else element.setAttribute(key, value);
-  }
-  return element;
-}
-
-function option(value: string, label: string): HTMLOptionElement {
-  const item = document.createElement("option");
-  item.value = value;
-  item.textContent = label;
-  return item;
-}
-
-function purposeOption(value: PurposeId, label: string): HTMLOptionElement {
-  const item = option(value, label);
-  if (!isPurposeAvailable(value)) {
-    item.disabled = true;
-    item.textContent = `${label} — withheld`;
-  }
-  return item;
-}
-
-function replaceChildren(parent: Element, children: Node[]): void {
-  parent.replaceChildren(...children);
-}
-
-function svgElement(tag: string, attributes: Record<string, string | number>): SVGElement {
-  const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
-  for (const [key, value] of Object.entries(attributes)) {
-    if (key === "textContent") element.textContent = String(value);
-    else element.setAttribute(key, String(value));
-  }
-  return element;
-}
-
-function svgText(x: number, y: number, text: string, className: string): SVGElement {
-  return svgElement("text", { x, y, class: className, "text-anchor": "middle", textContent: text });
 }

@@ -1,0 +1,1376 @@
+{
+  "auditedCandidates": [
+    {
+      "additionalUsualCommuters": 54.47631095244859,
+      "baselineStandaloneRank": 1,
+      "candidateId": "candidate-2923bae90b476f70",
+      "effectiveContributingSourceCells": 1.1164350260015818,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.9460897457751946,
+      "maximumRankAcrossTestedDeletions": 1544,
+      "minimumRankAcrossTestedDeletions": 1,
+      "positiveContributingSourceCells": 65,
+      "topThreeSourceCellShare": 0.979414658569827
+    },
+    {
+      "additionalUsualCommuters": 52.52668943895969,
+      "baselineStandaloneRank": 2,
+      "candidateId": "candidate-8d60dfb42cab4400",
+      "effectiveContributingSourceCells": 2.0749266803261044,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.6857497692688311,
+      "maximumRankAcrossTestedDeletions": 101,
+      "minimumRankAcrossTestedDeletions": 1,
+      "positiveContributingSourceCells": 209,
+      "topThreeSourceCellShare": 0.8087574281907587
+    },
+    {
+      "additionalUsualCommuters": 52.25182161016295,
+      "baselineStandaloneRank": 3,
+      "candidateId": "candidate-504e47db5d6b70c5",
+      "effectiveContributingSourceCells": 1.002045464566532,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.998978556779617,
+      "maximumRankAcrossTestedDeletions": 8797,
+      "minimumRankAcrossTestedDeletions": 2,
+      "positiveContributingSourceCells": 9,
+      "topThreeSourceCellShare": 0.999993568181278
+    },
+    {
+      "additionalUsualCommuters": 51.382417199741255,
+      "baselineStandaloneRank": 4,
+      "candidateId": "candidate-b60a1202854aa4d2",
+      "effectiveContributingSourceCells": 1.082098227344934,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.9612486842530703,
+      "maximumRankAcrossTestedDeletions": 2192,
+      "minimumRankAcrossTestedDeletions": 3,
+      "positiveContributingSourceCells": 97,
+      "topThreeSourceCellShare": 0.9732206047091726
+    },
+    {
+      "additionalUsualCommuters": 51.35570111124668,
+      "baselineStandaloneRank": 5,
+      "candidateId": "candidate-7752cbaf3904bd63",
+      "effectiveContributingSourceCells": 1.1582891730495417,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.9288191869223058,
+      "maximumRankAcrossTestedDeletions": 1229,
+      "minimumRankAcrossTestedDeletions": 4,
+      "positiveContributingSourceCells": 158,
+      "topThreeSourceCellShare": 0.9580856393352087
+    },
+    {
+      "additionalUsualCommuters": 50.8968610332903,
+      "baselineStandaloneRank": 6,
+      "candidateId": "candidate-0792220e8369e029",
+      "effectiveContributingSourceCells": 2.312942116793201,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.6211971443816795,
+      "maximumRankAcrossTestedDeletions": 67,
+      "minimumRankAcrossTestedDeletions": 5,
+      "positiveContributingSourceCells": 89,
+      "topThreeSourceCellShare": 0.8705616370983594
+    },
+    {
+      "additionalUsualCommuters": 45.14299172909914,
+      "baselineStandaloneRank": 7,
+      "candidateId": "candidate-411d92bafee5f5d1",
+      "effectiveContributingSourceCells": 17.11981708540254,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.18063627664421508,
+      "maximumRankAcrossTestedDeletions": 9,
+      "minimumRankAcrossTestedDeletions": 6,
+      "positiveContributingSourceCells": 398,
+      "topThreeSourceCellShare": 0.357682434373948
+    },
+    {
+      "additionalUsualCommuters": 43.683378461003684,
+      "baselineStandaloneRank": 8,
+      "candidateId": "candidate-d29af3b7143689a7",
+      "effectiveContributingSourceCells": 1.039157236140031,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.9809687478312225,
+      "maximumRankAcrossTestedDeletions": 3948,
+      "minimumRankAcrossTestedDeletions": 7,
+      "positiveContributingSourceCells": 163,
+      "topThreeSourceCellShare": 0.9846301718161163
+    },
+    {
+      "additionalUsualCommuters": 37.922949322086936,
+      "baselineStandaloneRank": 9,
+      "candidateId": "candidate-93dcb500489db8cd",
+      "effectiveContributingSourceCells": 2.7711397094384727,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.5668196700671787,
+      "maximumRankAcrossTestedDeletions": 103,
+      "minimumRankAcrossTestedDeletions": 8,
+      "positiveContributingSourceCells": 114,
+      "topThreeSourceCellShare": 0.8167059672296844
+    },
+    {
+      "additionalUsualCommuters": 35.428373643589936,
+      "baselineStandaloneRank": 10,
+      "candidateId": "candidate-3bfdf65225ae782f",
+      "effectiveContributingSourceCells": 2.2473035097988716,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.6619433430689338,
+      "maximumRankAcrossTestedDeletions": 188,
+      "minimumRankAcrossTestedDeletions": 9,
+      "positiveContributingSourceCells": 427,
+      "topThreeSourceCellShare": 0.7513640361270466
+    },
+    {
+      "additionalUsualCommuters": 33.38594822398091,
+      "baselineStandaloneRank": 11,
+      "candidateId": "candidate-2adbcf7a8cd91c4e",
+      "effectiveContributingSourceCells": 1.4774157789429827,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.8154143570044959,
+      "maximumRankAcrossTestedDeletions": 611,
+      "minimumRankAcrossTestedDeletions": 10,
+      "positiveContributingSourceCells": 27,
+      "topThreeSourceCellShare": 0.9447693060665725
+    },
+    {
+      "additionalUsualCommuters": 32.375084773649185,
+      "baselineStandaloneRank": 12,
+      "candidateId": "candidate-2913f3ba205d34fd",
+      "effectiveContributingSourceCells": 1.587918634944472,
+      "inPublishedProgramme": false,
+      "largestSourceCellShare": 0.7753879454392751,
+      "maximumRankAcrossTestedDeletions": 470,
+      "minimumRankAcrossTestedDeletions": 11,
+      "positiveContributingSourceCells": 172,
+      "topThreeSourceCellShare": 0.9616583084467806
+    },
+    {
+      "additionalUsualCommuters": 16.17870257673322,
+      "baselineStandaloneRank": 111,
+      "candidateId": "candidate-4697f902d93de075",
+      "effectiveContributingSourceCells": 5.112493022510495,
+      "inPublishedProgramme": true,
+      "largestSourceCellShare": 0.41195420380566294,
+      "maximumRankAcrossTestedDeletions": 283,
+      "minimumRankAcrossTestedDeletions": 110,
+      "positiveContributingSourceCells": 126,
+      "topThreeSourceCellShare": 0.5796180787390725
+    }
+  ],
+  "baselineReconciliation": {
+    "candidateUniverseIncludingUnaffected": 12580,
+    "publishedProgrammeJointGain": 548.2000873183761,
+    "sourceStandaloneRecords": 12371,
+    "status": "passed"
+  },
+  "baselineStandaloneTopCandidateIds": [
+    "candidate-2923bae90b476f70",
+    "candidate-8d60dfb42cab4400",
+    "candidate-504e47db5d6b70c5",
+    "candidate-b60a1202854aa4d2",
+    "candidate-7752cbaf3904bd63",
+    "candidate-0792220e8369e029",
+    "candidate-411d92bafee5f5d1",
+    "candidate-d29af3b7143689a7",
+    "candidate-93dcb500489db8cd",
+    "candidate-3bfdf65225ae782f",
+    "candidate-2adbcf7a8cd91c4e",
+    "candidate-2913f3ba205d34fd"
+  ],
+  "budgetNzd": 100000000,
+  "candidateCount": 12580,
+  "caseSelection": "Largest contributor to each positive top-K standalone or published candidate; unique source cells only.",
+  "cases": [
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 0.053372268936364264,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 8797
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-01",
+      "dominantContributorToCandidateIds": [
+        "candidate-504e47db5d6b70c5"
+      ],
+      "excludedEligibleWeight": 555.0,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 496.00163797714936,
+      "fixedProgrammeGainRemovedShare": 0.09521787856066412,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 6.162566719938123,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 611
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-02",
+      "dominantContributorToCandidateIds": [
+        "candidate-2adbcf7a8cd91c4e"
+      ],
+      "excludedEligibleWeight": 443.52,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 520.9767058143332,
+      "fixedProgrammeGainRemovedShare": 0.04965957163051741,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 7.271834307586982,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 470
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-03",
+      "dominantContributorToCandidateIds": [
+        "candidate-2913f3ba205d34fd"
+      ],
+      "excludedEligibleWeight": 472.32,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 548.200087318376,
+      "fixedProgrammeGainRemovedShare": 0.0,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 3.6555405612735825,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 1229
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-04",
+      "dominantContributorToCandidateIds": [
+        "candidate-7752cbaf3904bd63"
+      ],
+      "excludedEligibleWeight": 443.52,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 500.4999267684029,
+      "fixedProgrammeGainRemovedShare": 0.08701231840970224,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 2.936831772676058,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1544
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-05",
+      "dominantContributorToCandidateIds": [
+        "candidate-2923bae90b476f70"
+      ],
+      "excludedEligibleWeight": 434.88,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 496.66060813860344,
+      "fixedProgrammeGainRemovedShare": 0.09401581716611468,
+      "standaloneTopCandidateIds": [
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 16.42747569936728,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 103
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 9.513818038126459,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 283
+        }
+      ],
+      "case": "case-06",
+      "dominantContributorToCandidateIds": [
+        "candidate-93dcb500489db8cd",
+        "candidate-4697f902d93de075"
+      ],
+      "excludedEligibleWeight": 531.0,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 514.4309759237993,
+      "fixedProgrammeGainRemovedShare": 0.0615999744906364,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 16.506524275737533,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 101
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 111
+        }
+      ],
+      "case": "case-07",
+      "dominantContributorToCandidateIds": [
+        "candidate-8d60dfb42cab4400"
+      ],
+      "excludedEligibleWeight": 597.0,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 512.1799221551538,
+      "fixedProgrammeGainRemovedShare": 0.06570623755173333,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 1.9911362727476458,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 2192
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-08",
+      "dominantContributorToCandidateIds": [
+        "candidate-b60a1202854aa4d2"
+      ],
+      "excludedEligibleWeight": 276.0,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 498.80880639138235,
+      "fixedProgrammeGainRemovedShare": 0.09009717814639609,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 0.8313493910755057,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 3948
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-09",
+      "dominantContributorToCandidateIds": [
+        "candidate-d29af3b7143689a7"
+      ],
+      "excludedEligibleWeight": 668.16,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 505.3480582484478,
+      "fixedProgrammeGainRemovedShare": 0.07816859220060864,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 36.98852978657407,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 12
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 111
+        }
+      ],
+      "case": "case-10",
+      "dominantContributorToCandidateIds": [
+        "candidate-411d92bafee5f5d1"
+      ],
+      "excludedEligibleWeight": 230.39999999999998,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 540.0456253758509,
+      "fixedProgrammeGainRemovedShare": 0.014874973811868862,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-411d92bafee5f5d1",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd"
+      ],
+      "standaloneTopOverlapShare": 1.0
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 50.8968610332903,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 11.976797554456713,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 188
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 110
+        }
+      ],
+      "case": "case-11",
+      "dominantContributorToCandidateIds": [
+        "candidate-3bfdf65225ae782f"
+      ],
+      "excludedEligibleWeight": 316.8,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 524.7485112292427,
+      "fixedProgrammeGainRemovedShare": 0.04277922720488978,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-0792220e8369e029",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    },
+    {
+      "candidateRanks": [
+        {
+          "additionalUsualCommuters": 54.47631095244859,
+          "candidateId": "candidate-2923bae90b476f70",
+          "rank": 1
+        },
+        {
+          "additionalUsualCommuters": 52.52668943895969,
+          "candidateId": "candidate-8d60dfb42cab4400",
+          "rank": 2
+        },
+        {
+          "additionalUsualCommuters": 52.25182161016295,
+          "candidateId": "candidate-504e47db5d6b70c5",
+          "rank": 3
+        },
+        {
+          "additionalUsualCommuters": 51.382417199741255,
+          "candidateId": "candidate-b60a1202854aa4d2",
+          "rank": 4
+        },
+        {
+          "additionalUsualCommuters": 51.35570111124668,
+          "candidateId": "candidate-7752cbaf3904bd63",
+          "rank": 5
+        },
+        {
+          "additionalUsualCommuters": 19.27987630141919,
+          "candidateId": "candidate-0792220e8369e029",
+          "rank": 67
+        },
+        {
+          "additionalUsualCommuters": 45.14299172909914,
+          "candidateId": "candidate-411d92bafee5f5d1",
+          "rank": 6
+        },
+        {
+          "additionalUsualCommuters": 43.683378461003684,
+          "candidateId": "candidate-d29af3b7143689a7",
+          "rank": 7
+        },
+        {
+          "additionalUsualCommuters": 37.922949322086936,
+          "candidateId": "candidate-93dcb500489db8cd",
+          "rank": 8
+        },
+        {
+          "additionalUsualCommuters": 35.428373643589936,
+          "candidateId": "candidate-3bfdf65225ae782f",
+          "rank": 9
+        },
+        {
+          "additionalUsualCommuters": 33.38594822398091,
+          "candidateId": "candidate-2adbcf7a8cd91c4e",
+          "rank": 10
+        },
+        {
+          "additionalUsualCommuters": 32.375084773649185,
+          "candidateId": "candidate-2913f3ba205d34fd",
+          "rank": 11
+        },
+        {
+          "additionalUsualCommuters": 16.17870257673322,
+          "candidateId": "candidate-4697f902d93de075",
+          "rank": 111
+        }
+      ],
+      "case": "case-12",
+      "dominantContributorToCandidateIds": [
+        "candidate-0792220e8369e029"
+      ],
+      "excludedEligibleWeight": 237.0,
+      "excludedSampledRecords": 1,
+      "excludedSourceCells": 1,
+      "fixedProgrammeAdditionalUsualCommuters": 516.5831025865049,
+      "fixedProgrammeGainRemovedShare": 0.057674169456140637,
+      "standaloneTopCandidateIds": [
+        "candidate-2923bae90b476f70",
+        "candidate-8d60dfb42cab4400",
+        "candidate-504e47db5d6b70c5",
+        "candidate-b60a1202854aa4d2",
+        "candidate-7752cbaf3904bd63",
+        "candidate-411d92bafee5f5d1",
+        "candidate-d29af3b7143689a7",
+        "candidate-93dcb500489db8cd",
+        "candidate-3bfdf65225ae782f",
+        "candidate-2adbcf7a8cd91c4e",
+        "candidate-2913f3ba205d34fd",
+        "candidate-56d61bacd5acfab4"
+      ],
+      "standaloneTopOverlapShare": 0.9166666666666666
+    }
+  ],
+  "eligibleWeight": 619441.4318831406,
+  "fixedProgramme": {
+    "additionalUsualCommuters": 548.200087318376,
+    "candidateIds": [
+      "candidate-2923bae90b476f70",
+      "candidate-8d60dfb42cab4400",
+      "candidate-504e47db5d6b70c5",
+      "candidate-b60a1202854aa4d2",
+      "candidate-7752cbaf3904bd63",
+      "candidate-0792220e8369e029",
+      "candidate-411d92bafee5f5d1",
+      "candidate-d29af3b7143689a7",
+      "candidate-93dcb500489db8cd",
+      "candidate-4697f902d93de075",
+      "candidate-3bfdf65225ae782f",
+      "candidate-2adbcf7a8cd91c4e"
+    ],
+    "effectiveContributingSourceCells": 17.150806935689697,
+    "largestSourceCellShare": 0.09521787856066412,
+    "positiveContributingSourceCells": 1736,
+    "topThreeSourceCellShare": 0.2793308738731749
+  },
+  "implementationHashes": {
+    "auditScript": "2a7054e1ada2e3670a64454db4a0ca94658e0f4c744646b74f579f5104c6925c",
+    "portfolioAnalysis": "6b118b5f963da81b3a80a92d6d2b26282f484ad7a61799dac77a3bc5abcf3b8a",
+    "stability": "98b4946fb19cd35212f8123b766f5f758d47d87999ffe9b5eec94e495cf6ddb1"
+  },
+  "limitations": [
+    "Deletion reduces the evaluated population; other weights are not redistributed.",
+    "Cases are targeted influence tests, not random replicates or confidence intervals.",
+    "Standalone ranks are not a reoptimised cumulative investment programme.",
+    "The published programme is fixed; its benefit is evaluated jointly, not summed.",
+    "Retained routes, source locations, costs and response assumptions are unchanged.",
+    "Only assigned commutes are represented; omitted and failed demand is not repaired.",
+    "Cases do not test new locations within cells, new routing or calibrated uptake.",
+    "Rank ranges cover the tested deletions only, not every possible uncertainty.",
+    "Effective contributing cells measures concentration, not inferential sample size."
+  ],
+  "parameters": {
+    "costScale": 0.002,
+    "minimumProbability": 1e-05,
+    "responseElasticity": 1.0,
+    "sourceSampling": {
+      "design": "stratified_simple_random_without_replacement",
+      "estimator": "Horvitz-Thompson",
+      "records_per_stratum_by_purpose": {
+        "commute": 1,
+        "everyday": 3,
+        "school": 3,
+        "transit": 3
+      },
+      "seed": 20260301,
+      "stratum": "source_cell_id"
+    }
+  },
+  "programmeCostNzd": 97049225.83581392,
+  "rankingTieBreak": "Standalone benefit descending, then candidate ID ascending; zero-score candidates retain deterministic ranks.",
+  "runId": "run-313e0277521633d3",
+  "sampledRecords": 28056,
+  "sampledSourceCells": 28056,
+  "scenario": "commute_8pct",
+  "sourceHashes": {
+    "browserManifest": "223761b2813e191d31e4c410deb8a88afe198bedd96bdc83d5220e1f371fc6b5",
+    "candidate_counterfactuals.parquet": "0066bd574aa65052475562dc92094b0915b398229c2254d77bea11ce7b36bd59",
+    "candidate_ledger.parquet": "f9334b5b083dd3ada394a6a29064313ab101705d4811b23e61eed2c518ebc773",
+    "config.snapshot.json": "5e5a1f1c29b94f56103b36a1cfd7da4f11160c58979b7646052d3240c340c30e",
+    "od_ledger.parquet": "9e89176035853da46bba4061d986ee9713e06fc140dafb2115c1f3158b8b6614",
+    "path_candidate_savings.parquet": "2f7e36f3b811c6c52ec7af0d64a02fffb39beccf3574703e284cda595a296464",
+    "path_ledger.parquet": "570b5d6c20725f4fe7559fb37a3ffedcfd860cdd24414131a43cbf34c90dc031",
+    "scenario_od_ledger.parquet": "53ea020501e12d497ad9ec389421eca9edfb8dc45b18a5a5ddf3fc81d530c08b",
+    "sourceRunManifest": "17917701d6a9451dcce72ec7255c6bbc6d6f73182f59c5e33d17f9eef793239a"
+  },
+  "status": "fixed_support_source_cell_deletion_stress_test",
+  "topK": 12
+}

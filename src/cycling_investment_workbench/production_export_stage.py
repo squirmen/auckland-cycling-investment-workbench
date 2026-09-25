@@ -10,13 +10,15 @@ from typing import Any
 import pyarrow.parquet as pq
 from pyproj import Transformer
 from shapely import from_wkb
-from shapely.geometry import LineString, Polygon, mapping
+from shapely.geometry import LineString, MultiLineString, Polygon, mapping, shape
 from shapely.ops import substring, transform
+from shapely.strtree import STRtree
 
 from . import __version__
 from .exports import PURPOSE_IDS, SCENARIO_IDS, export_web_payload, load_web_payload
 from .pipeline import ProductionBlocker, StageContext, StageResult
 from .provenance import content_hash, read_json, write_json_atomic
+from .web_context import add_web_context
 
 _COMMUTE_PURPOSES = frozenset({"network", "appraisal"})
 _ACCESS_PURPOSES = frozenset({"school", "everyday", "transit"})
@@ -33,6 +35,14 @@ _INCLUDED_PUBLIC_SOURCE_IDS = frozenset(
         "auckland_transport_cycle_network",
         "linz_auckland_dem",
         "linz_auckland_dem_manifest",
+        "nzdep2023_sa1",
+        "at_gtfs_schedule_2026_09_01",
+        "major_transit_nodes",
+        "auckland_transport_future_connect",
+        "auckland_transport_rltp",
+        "cycle_counter_locations",
+        "cycle_counter_observations",
+        "crash_safety_aggregate",
     }
 )
 
@@ -119,7 +129,9 @@ def _coverage_by_purpose(route_manifest: Mapping[str, Any]) -> dict[str, float]:
     }
 
 
-def _activity_totals(route_manifest: Mapping[str, Any]) -> dict[tuple[str, str], float]:
+def _activity_totals(
+    route_manifest: Mapping[str, Any], portfolio_manifest: Mapping[str, Any]
+) -> dict[tuple[str, str], float]:
     coverage = route_manifest.get("coverage")
     by_purpose = coverage.get("by_purpose") if isinstance(coverage, Mapping) else None
     denominators: dict[str, float] = {}
@@ -139,7 +151,13 @@ def _activity_totals(route_manifest: Mapping[str, Any]) -> dict[tuple[str, str],
         )
         result[(scenario, "network")] = commute
         result[(scenario, "appraisal")] = commute
-        result[(scenario, "equity")] = 0.0
+        equity = portfolio_manifest.get("equity")
+        equity_activity = equity.get("scenario_activity") if isinstance(equity, Mapping) else None
+        result[(scenario, "equity")] = (
+            float(equity_activity.get(scenario, 0.0))
+            if isinstance(equity_activity, Mapping)
+            else 0.0
+        )
         for purpose in _ACCESS_PURPOSES:
             result[(scenario, purpose)] = denominators.get(purpose, 0.0)
     return result
@@ -182,12 +200,13 @@ def _candidate_metrics(
     coverage: Mapping[str, float],
     evidence_scenario: str,
     transit_public: bool,
+    equity_public: bool,
     appraisal_public: bool,
 ) -> dict[str, dict[str, dict[str, Any]]]:
     lifecycle_cost = lifecycle_costs.get(candidate_id, capital_cost)
     sampled = evidence.get(candidate_id)
 
-    def evidence_fields(scenario: str) -> dict[str, Any]:
+    def evidence_fields(scenario: str, *, include_bcr: bool) -> dict[str, Any]:
         if sampled is None or scenario != evidence_scenario:
             return {
                 "bcrP5": None,
@@ -198,9 +217,15 @@ def _candidate_metrics(
                 "frontierProbability": None,
             }
         return {
-            "bcrP5": float(sampled["uncertainty_bcr_p05"]) if appraisal_public else None,
-            "bcrP50": float(sampled["uncertainty_bcr_p50"]) if appraisal_public else None,
-            "bcrP95": float(sampled["uncertainty_bcr_p95"]) if appraisal_public else None,
+            "bcrP5": (
+                float(sampled["uncertainty_bcr_p05"]) if appraisal_public and include_bcr else None
+            ),
+            "bcrP50": (
+                float(sampled["uncertainty_bcr_p50"]) if appraisal_public and include_bcr else None
+            ),
+            "bcrP95": (
+                float(sampled["uncertainty_bcr_p95"]) if appraisal_public and include_bcr else None
+            ),
             "meanRank": float(sampled["mean_rank"]),
             "topKProbability": float(sampled["top_k_probability"]),
             "frontierProbability": float(sampled["frontier_probability"]),
@@ -227,10 +252,11 @@ def _candidate_metrics(
                 "additionalCycleUsers": float(commute["additional_cycle_users"]),
                 "annualBikeKmDelta": float(commute["annual_cycle_km"]),
                 "odLowStressShareDelta": None,
-                **evidence_fields(scenario),
+                **evidence_fields(scenario, include_bcr=False),
                 "routeCoverage": coverage["commute"],
                 "warnings": _metric_warning(
-                    "CIW OD low-stress connectivity requires the pending full-network reroute.",
+                    "Full-network CIW OD low-stress connectivity is reserved for separate "
+                    "research integration.",
                     "Lifecycle cost falls back to capital cost where no appraisable demand "
                     "response exists."
                     if candidate_id not in lifecycle_costs
@@ -238,12 +264,48 @@ def _candidate_metrics(
                 ),
             }
 
-        by_purpose["equity"] = _unavailable_metric(
-            capital_cost=capital_cost,
-            lifecycle_cost=lifecycle_cost,
-            route_coverage=coverage["commute"],
-            warning="Equity scoring is withheld until NZDep redistribution terms are resolved.",
-        )
+        equity = counterfactuals.get((scenario, "equity", candidate_id))
+        if not equity_public:
+            by_purpose["equity"] = _unavailable_metric(
+                capital_cost=capital_cost,
+                lifecycle_cost=lifecycle_cost,
+                route_coverage=coverage["commute"],
+                warning=(
+                    "The equity subgroup lens is unavailable without the registered NZDep source."
+                ),
+            )
+        elif equity is None:
+            by_purpose["equity"] = _unavailable_metric(
+                capital_cost=capital_cost,
+                lifecycle_cost=lifecycle_cost,
+                route_coverage=coverage["commute"],
+                warning=(
+                    "No routed high-deprivation-origin commute market intersects this candidate."
+                ),
+            )
+        else:
+            by_purpose["equity"] = {
+                "available": True,
+                "capitalCostNzd": capital_cost,
+                "lifecycleCostNzd": lifecycle_cost,
+                "objectiveValue": float(equity["objective_value"]),
+                "objectiveUnit": "additional usual commuters from NZDep decile 8-10 origins",
+                "additionalCycleUsers": float(equity["additional_cycle_users"]),
+                "annualBikeKmDelta": float(equity["annual_cycle_km"]),
+                "odLowStressShareDelta": None,
+                "bcrP5": None,
+                "bcrP50": None,
+                "bcrP95": None,
+                "routeCoverage": coverage["commute"],
+                "meanRank": None,
+                "topKProbability": None,
+                "frontierProbability": None,
+                "warnings": [
+                    "Distributional subgroup lens; not a causal equity effect or welfare weight.",
+                    "Full-network CIW OD low-stress connectivity is reserved for separate "
+                    "research integration.",
+                ],
+            }
 
         for purpose in ("school", "everyday", "transit"):
             route_coverage = coverage[purpose]
@@ -320,7 +382,7 @@ def _candidate_metrics(
                     float(commute["annual_cycle_km"]) if commute is not None else None
                 ),
                 "odLowStressShareDelta": None,
-                **evidence_fields(scenario),
+                **evidence_fields(scenario, include_bcr=True),
                 "routeCoverage": coverage["commute"],
                 "warnings": [
                     "Indicative screening BCR; it is not a business-case BCR.",
@@ -336,6 +398,8 @@ def _portfolio_manifest(
     metric_lookup: Mapping[tuple[str, str, str], Mapping[str, Any]],
     *,
     transit_public: bool,
+    equity_public: bool,
+    appraisal_scenario: str,
 ) -> dict[str, dict[str, list[dict[str, Any]]]]:
     by_analysis: defaultdict[tuple[str, str], list[Mapping[str, Any]]] = defaultdict(list)
     for row in rows:
@@ -344,18 +408,33 @@ def _portfolio_manifest(
     for scenario in SCENARIO_IDS:
         by_purpose: dict[str, list[dict[str, Any]]] = {}
         for browser_purpose in PURPOSE_IDS:
-            if browser_purpose in {"equity", "appraisal"}:
+            if browser_purpose == "appraisal" and scenario != appraisal_scenario:
+                by_purpose[browser_purpose] = []
+                continue
+            if browser_purpose == "equity" and not equity_public:
                 by_purpose[browser_purpose] = []
                 continue
             if browser_purpose == "transit" and not transit_public:
                 by_purpose[browser_purpose] = []
                 continue
-            source_scenario = scenario if browser_purpose == "network" else "access_baseline"
+            source_scenario = (
+                scenario
+                if browser_purpose in {"network", "equity", "appraisal"}
+                else "access_baseline"
+            )
             source_preset = browser_purpose
             objective_unit = (
                 "additional usual commute cyclists"
                 if browser_purpose == "network"
-                else "person-equivalent impedance improvement"
+                else (
+                    "additional usual commuters from NZDep decile 8-10 origins"
+                    if browser_purpose == "equity"
+                    else (
+                        "additional usual commute cyclists (appraisal prescreen)"
+                        if browser_purpose == "appraisal"
+                        else "person-equivalent impedance improvement"
+                    )
+                )
             )
             steps: list[dict[str, Any]] = []
             for row in sorted(
@@ -366,7 +445,11 @@ def _portfolio_manifest(
                 metric = metric_lookup.get(
                     (
                         source_scenario,
-                        "commute" if browser_purpose == "network" else browser_purpose,
+                        (
+                            "commute"
+                            if browser_purpose in {"network", "appraisal"}
+                            else browser_purpose
+                        ),
                         candidate_id,
                     )
                 )
@@ -393,6 +476,7 @@ def _candidate_and_network_layers(
     metrics: Mapping[str, Mapping[str, dict[str, dict[str, dict[str, Any]]]]],
     project_crs: str,
     edge_cost_per_m: float,
+    programme_geometries: Sequence[LineString | MultiLineString] = (),
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     transformer = Transformer.from_crs(project_crs, "EPSG:4326", always_xy=True)
     edges_by_candidate: defaultdict[str, list[Mapping[str, Any]]] = defaultdict(list)
@@ -400,6 +484,7 @@ def _candidate_and_network_layers(
         edges_by_candidate[str(row["candidate_id"])].append(row)
     candidate_features: list[dict[str, Any]] = []
     network_features: list[dict[str, Any]] = []
+    programme_tree = STRtree(programme_geometries) if programme_geometries else None
     for row in sorted(candidate_rows, key=lambda item: str(item["candidate_id"])):
         candidate_id = str(row["candidate_id"])
         geometry = from_wkb(row["geometry_wkb"])
@@ -426,6 +511,16 @@ def _candidate_and_network_layers(
             str(value).strip() for value in row.get("primary_road_names", []) if str(value).strip()
         ]
         title = " / ".join(names[:2]) if names else f"Candidate {candidate_id}"
+        programme_status = "unprogrammed"
+        if programme_tree is not None and geometry.length > 0:
+            nearby = programme_tree.query(geometry.buffer(20.0))
+            if any(
+                geometry.intersection(programme_geometries[int(index)].buffer(20.0)).length
+                / geometry.length
+                >= 0.25
+                for index in nearby
+            ):
+                programme_status = "aligned"
         candidate_features.append(
             {
                 "type": "Feature",
@@ -433,10 +528,17 @@ def _candidate_and_network_layers(
                 "properties": {
                     "candidateId": candidate_id,
                     "name": title,
-                    "purposeOrigins": ["network", "school", "everyday", "transit", "appraisal"],
+                    "purposeOrigins": [
+                        "network",
+                        "equity",
+                        "school",
+                        "everyday",
+                        "transit",
+                        "appraisal",
+                    ],
                     "edgeIds": edge_ids,
                     "facilityType": "protected cycleway screening treatment",
-                    "programmeStatus": "unprogrammed",
+                    "programmeStatus": programme_status,
                     "rationale": (
                         f"Connected exact-edge high-stress gap; baseline maximum LTS "
                         f"{int(row['maximum_baseline_lts'])}."
@@ -497,6 +599,177 @@ def _candidate_and_network_layers(
             message="candidate exact-edge partition contains a duplicate edge identifier",
         )
     return _feature_collection(candidate_features), _feature_collection(network_features)
+
+
+def _permitted_source_path(context: StageContext, source_id: str) -> Path | None:
+    spec = next((source for source in context.config.sources if source.id == source_id), None)
+    record = context.sources.get(source_id)
+    if spec is None or spec.redistribution != "permitted" or record is None or not record.usable:
+        return None
+    return record.path
+
+
+def _programme_layer(
+    context: StageContext, *, project_crs: str
+) -> tuple[dict[str, Any], list[LineString | MultiLineString]]:
+    transformer = Transformer.from_crs("EPSG:4326", project_crs, always_xy=True)
+    features: list[dict[str, Any]] = []
+    project_geometries: list[LineString | MultiLineString] = []
+    source_definitions = (
+        ("auckland_transport_future_connect", "strategic"),
+        ("auckland_transport_rltp", "rltp"),
+    )
+    for source_id, source_type in source_definitions:
+        source_path = _permitted_source_path(context, source_id)
+        if source_path is None:
+            continue
+        payload = read_json(source_path)
+        raw_features = payload.get("features") if isinstance(payload, Mapping) else None
+        if not isinstance(raw_features, list):
+            raise ProductionBlocker(
+                stage="export-outputs",
+                code="invalid_programme_source",
+                message=f"{source_id} must be a GeoJSON FeatureCollection",
+            )
+        for index, raw_feature in enumerate(raw_features):
+            if not isinstance(raw_feature, Mapping):
+                continue
+            raw_geometry = raw_feature.get("geometry")
+            properties = raw_feature.get("properties")
+            if not isinstance(raw_geometry, Mapping) or not isinstance(properties, Mapping):
+                continue
+            geometry = shape(raw_geometry)
+            if not isinstance(geometry, LineString | MultiLineString) or geometry.is_empty:
+                continue
+            project_geometry = transform(transformer.transform, geometry)
+            project_geometries.append(project_geometry)
+            if source_type == "strategic":
+                name = str(properties.get("street_name") or "Future Connect cycle network")
+                status = "strategic"
+                description = "Future Connect strategic cycle-network alignment"
+                programme_id = f"future-connect-{properties.get('OBJECTID', index)}"
+            else:
+                name = str(properties.get("Title") or "RLTP active-modes project")
+                extent = str(properties.get("extent") or "planned").strip().lower()
+                status = "committed" if extent == "committed" else "planned"
+                description = str(properties.get("description") or "RLTP active-modes project")
+                programme_id = f"rltp-{properties.get('RLTP_ID', index)}"
+            features.append(
+                {
+                    "type": "Feature",
+                    "geometry": mapping(geometry),
+                    "properties": {
+                        "programmeId": programme_id,
+                        "name": name,
+                        "status": status,
+                        "description": description,
+                        "sourceId": source_id,
+                        "programmeVersion": (
+                            "Future Connect 2024-2034"
+                            if source_type == "strategic"
+                            else str(properties.get("RLTPVersion") or "RLTP 2024-2034")
+                        ),
+                    },
+                }
+            )
+    return _feature_collection(features), project_geometries
+
+
+def _counter_layer(
+    context: StageContext,
+    evidence_dir: Path,
+    evidence_manifest: Mapping[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    location_path = _permitted_source_path(context, "cycle_counter_locations")
+    observation_path = _permitted_source_path(context, "cycle_counter_observations")
+    if location_path is None or observation_path is None:
+        return _feature_collection([]), {
+            "periodLabel": "Counter source unavailable",
+            "counterCount": 0,
+            "matchedCount": 0,
+            "coverage": 0.0,
+            "purposeAlignment": "No calibration; counter comparison is a plausibility check only",
+            "status": "unavailable",
+        }
+    locations = read_json(location_path)
+    observations = read_json(observation_path)
+    if not isinstance(locations, list) or not isinstance(observations, Mapping):
+        raise ProductionBlocker(
+            stage="export-outputs",
+            code="invalid_counter_source",
+            message="counter locations and observations have invalid public adapter schemas",
+        )
+    evidence_rows = _table_rows(evidence_dir, "counter_validation.parquet")
+    evidence_by_id = {str(row["counter_id"]): row for row in evidence_rows}
+    daily = observations.get("dailyAverages")
+    metadata = observations.get("metadata")
+    if not isinstance(daily, Mapping) or not isinstance(metadata, Mapping):
+        raise ProductionBlocker(
+            stage="export-outputs",
+            code="invalid_counter_source",
+            message="counter observations must include daily averages and metadata",
+        )
+    features: list[dict[str, Any]] = []
+    matched = 0
+    for item in locations:
+        if not isinstance(item, Mapping):
+            continue
+        counter_id = str(item.get("counter_id", ""))
+        site_name = str(item.get("name", ""))
+        row = evidence_by_id.get(counter_id)
+        status = str(row.get("status")) if row is not None else "not_evaluated"
+        if status == "spatially_matched_incompatible_measure":
+            matched += 1
+        features.append(
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [float(item["lng"]), float(item["lat"])],
+                },
+                "properties": {
+                    "counterId": counter_id,
+                    "siteName": site_name,
+                    "observedDaily": float(daily[site_name]),
+                    "status": status,
+                    "matchDistanceM": (
+                        float(row["match_distance_m"])
+                        if row is not None and row.get("match_distance_m") is not None
+                        else None
+                    ),
+                    "coordinateBasis": "approximate project-maintained site point",
+                    "measure": "daily all-purpose cycle movements",
+                    "periodLabel": str(metadata.get("period_label", "July 2026")),
+                },
+            }
+        )
+    validation = evidence_manifest.get("validation")
+    validation_mapping = validation if isinstance(validation, Mapping) else {}
+    return _feature_collection(features), {
+        "periodLabel": str(metadata.get("period_label", "July 2026")),
+        "counterCount": len(features),
+        "matchedCount": matched,
+        "coverage": matched / len(features) if features else 0.0,
+        "purposeAlignment": (
+            "Spatial plausibility only: daily all-purpose movements are not usual-commute people"
+        ),
+        "status": str(validation_mapping.get("status", "plausibility_only")),
+    }
+
+
+def _safety_layer(context: StageContext) -> dict[str, Any]:
+    source_path = _permitted_source_path(context, "crash_safety_aggregate")
+    if source_path is None:
+        return _feature_collection([])
+    payload = read_json(source_path)
+    features = payload.get("features") if isinstance(payload, Mapping) else None
+    if not isinstance(features, list):
+        raise ProductionBlocker(
+            stage="export-outputs",
+            code="invalid_safety_source",
+            message="safety aggregate must be a GeoJSON FeatureCollection",
+        )
+    return _feature_collection([feature for feature in features if isinstance(feature, Mapping)])
 
 
 def _cell_layer(route_dir: Path, *, project_crs: str) -> dict[str, Any]:
@@ -597,6 +870,16 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
             message="route and evidence manifests must be JSON objects",
         )
     coverage = _coverage_by_purpose(route_manifest)
+    portfolio_manifest_path = _artifact_file(portfolio_dir, "manifest.json")
+    portfolio_manifest = (
+        read_json(portfolio_manifest_path) if portfolio_manifest_path.is_file() else {}
+    )
+    if not isinstance(portfolio_manifest, Mapping):
+        raise ProductionBlocker(
+            stage=context.stage.name,
+            code="invalid_export_dependency_manifest",
+            message="portfolio manifest must be a JSON object",
+        )
     candidate_rows = _table_rows(candidate_dir, "candidate_ledger.parquet")
     edge_rows = _table_rows(candidate_dir, "candidate_edge_ledger.parquet")
     counterfactual_rows = _table_rows(portfolio_dir, "candidate_counterfactuals.parquet")
@@ -614,11 +897,8 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
         if str(row["discount_case"]) == "principal_declining_rate"
     }
     evidence_scenario = str(evidence_manifest.get("scenario_id", "commute_8pct"))
-    source_by_id = {source.id: source for source in context.config.sources}
-    transit_public = (
-        source_by_id.get("major_transit_nodes") is not None
-        and source_by_id["major_transit_nodes"].redistribution == "permitted"
-    )
+    transit_public = _permitted_source_path(context, "major_transit_nodes") is not None
+    equity_public = _permitted_source_path(context, "nzdep2023_sa1") is not None
     metrics = {
         str(row["candidate_id"]): _candidate_metrics(
             str(row["candidate_id"]),
@@ -629,20 +909,33 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
             coverage=coverage,
             evidence_scenario=evidence_scenario,
             transit_public=transit_public,
-            appraisal_public=False,
+            equity_public=equity_public,
+            appraisal_public=True,
         )
         for row in candidate_rows
     }
     cost_configuration = context.config.parameters["candidates"]["screening_cost"]
+    programmes, programme_geometries = _programme_layer(
+        context, project_crs=context.config.project.crs
+    )
+    counters, validation = _counter_layer(context, evidence_dir, evidence_manifest)
+    safety = _safety_layer(context)
     candidates, network = _candidate_and_network_layers(
         candidate_rows,
         edge_rows,
         metrics=metrics,
         project_crs=context.config.project.crs,
         edge_cost_per_m=float(cost_configuration["base_nzd_per_m"]),
+        programme_geometries=programme_geometries,
     )
-    portfolios = _portfolio_manifest(portfolio_rows, counterfactuals, transit_public=transit_public)
-    activity = _activity_totals(route_manifest)
+    portfolios = _portfolio_manifest(
+        portfolio_rows,
+        counterfactuals,
+        transit_public=transit_public,
+        equity_public=equity_public,
+        appraisal_scenario=evidence_scenario,
+    )
+    activity = _activity_totals(route_manifest, portfolio_manifest)
     maximum_lts = int(context.config.parameters["candidates"]["connectivity_max_lts"])
     maximum_detour = float(context.config.parameters["candidates"]["maximum_detour_ratio"])
     candidate_count = len(candidate_rows)
@@ -651,9 +944,17 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
         by_purpose: dict[str, dict[str, Any]] = {}
         for purpose in PURPOSE_IDS:
             route_purpose = "commute" if purpose in _COMMUTE_PURPOSES | {"equity"} else purpose
-            warning = "CIW OD low-stress connectivity requires the pending full-network reroute."
+            warning = (
+                "Full-network CIW OD low-stress connectivity is reserved for separate "
+                "research integration."
+            )
             if purpose == "equity":
-                warning = "Equity output is unavailable pending redistribution-rights resolution."
+                warning = (
+                    "Distributional subgroup lens for NZDep2023 deciles 8-10; not a causal "
+                    "equity effect or welfare weight."
+                    if equity_public
+                    else "The equity subgroup lens is unavailable without the registered source."
+                )
             elif purpose == "transit" and not transit_public:
                 warning = "Transit output is withheld from the public build pending source rights."
             elif purpose == "appraisal" and scenario != evidence_scenario:
@@ -664,7 +965,7 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
                 "activityUnit": {
                     "network": "weighted usual commute cyclists",
                     "appraisal": "weighted usual commute cyclists",
-                    "equity": "unavailable",
+                    "equity": "weighted usual commuters from NZDep decile 8-10 origins",
                     "school": "modelled enrolment access units",
                     "everyday": "person-equivalent opportunity access units",
                     "transit": "person-equivalent major-node access units",
@@ -753,9 +1054,10 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
                 "id": "equity",
                 "label": "Equity",
                 "description": (
-                    "Reserved for a rights-cleared deprivation-weighted accessibility analysis."
+                    "Distributional lens for additional usual commute cyclists originating in "
+                    "NZDep2023 deciles 8-10."
                 ),
-                "objectiveLabel": "Equity-weighted accessibility",
+                "objectiveLabel": "Additional cyclists from high-deprivation origins",
             },
             {
                 "id": "school",
@@ -773,36 +1075,34 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
                 "id": "transit",
                 "label": "Transit",
                 "description": (
-                    "Independent major-transit-node access market, withheld where rights "
-                    "are unresolved."
+                    "Independent access market to rail, ferry, named interchange, and busiest "
+                    "bus nodes in the declared AT GTFS service day."
                 ),
                 "objectiveLabel": "Transit access impedance improvement",
             },
             {
                 "id": "appraisal",
                 "label": "Appraisal",
-                "description": "Indicative MBCM-aligned lifecycle health-benefit screen.",
+                "description": (
+                    "Research-only MBCM v1.7.5-aligned lifecycle health-benefit screen with "
+                    "provisional cost ranges."
+                ),
                 "objectiveLabel": "Indicative median BCR",
             },
         ],
         "summaries": summaries,
         "portfolios": portfolios,
-        "validation": {
-            "periodLabel": "Public counter layer withheld pending source-lineage resolution",
-            "counterCount": 0,
-            "matchedCount": 0,
-            "coverage": 0.0,
-            "purposeAlignment": (
-                "No public calibration; local counters are a plausibility check only"
-            ),
-        },
+        "validation": validation,
         "capabilities": {
-            "equity": "rights_blocked",
-            "appraisal": "withheld",
+            "equity": "available" if equity_public else "unavailable",
+            "appraisal": "research_only",
             "sketchEvaluation": "requires_pipeline_evaluation",
         },
         "limitations": [
-            "Full-network CIW OD low-stress connectivity recomputation is pending.",
+            (
+                "Full-network CIW OD low-stress connectivity is intentionally reserved for "
+                "separate research integration. No Auckland point estimate is reported."
+            ),
             (
                 "The browser network contains exact candidate edges, not the complete Auckland "
                 "cycling graph."
@@ -811,12 +1111,19 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
                 "Origin cells are 350 m visualisation squares around routed supports, not "
                 "statistical boundaries."
             ),
-            "The Appraisal cumulative portfolio is withheld pending joint portfolio appraisal.",
-            "Capital, maintenance, renewal, and uncertainty inputs require local evidence review.",
             (
-                "Counter, equity, programme, transit, and safety outputs are excluded where "
-                "rights or lineage are unresolved."
+                "Indicative BCRs are research-only candidate screens using provisional capital, "
+                "maintenance, renewal, and uncertainty inputs; they are not business-case BCRs."
             ),
+            (
+                "The Appraisal sequence uses commute activity improvement per cost; candidate "
+                "BCRs are not summed into a cumulative portfolio BCR."
+            ),
+            (
+                "Counter comparisons are spatial plausibility checks only; their daily all-purpose "
+                "measure is not calibrated against usual-commute people."
+            ),
+            "Safety cells show police-reported crash counts without cycling-exposure adjustment.",
         ],
         "layers": [
             {
@@ -851,39 +1158,70 @@ def build_production_web_payload(context: StageContext) -> dict[str, Any]:
             },
             {
                 "id": "programmes",
-                "label": "Planned and funded programmes (withheld)",
+                "label": "Future Connect and RLTP active-mode programmes",
                 "url": "./data/programmes.geojson",
                 "sha256": "0" * 64,
                 "defaultVisible": False,
                 "optional": True,
-                "licence": "No source included pending rights verification",
-                "sourceIds": [],
+                "licence": "Auckland Transport open data under CC BY 4.0",
+                "sourceIds": sorted(
+                    included & {"auckland_transport_future_connect", "auckland_transport_rltp"}
+                ),
             },
             {
                 "id": "counters",
-                "label": "Validation counters (withheld)",
+                "label": "July 2026 cycle-count plausibility sites",
                 "url": "./data/counters.geojson",
                 "sha256": "0" * 64,
                 "defaultVisible": False,
                 "optional": True,
-                "licence": "No source included pending lineage verification",
-                "sourceIds": [],
+                "licence": (
+                    "AT observations under CC BY 4.0; approximate site points maintained by CIW"
+                ),
+                "sourceIds": sorted(
+                    included & {"cycle_counter_locations", "cycle_counter_observations"}
+                ),
+            },
+            {
+                "id": "safety",
+                "label": "Cycle-involved crash context, 2016-2025",
+                "url": "./data/safety.geojson",
+                "sha256": "0" * 64,
+                "defaultVisible": False,
+                "optional": True,
+                "licence": (
+                    "Disclosure-safe derived aggregate from NZTA CAS open data; raw rows excluded"
+                ),
+                "sourceIds": sorted(included & {"crash_safety_aggregate"}),
             },
         ],
         "attribution": attributions,
         "methodologyUrl": "./documentation/methodology.md",
         "sourceDecisions": decisions,
     }
-    return {
+    payload = {
         "manifest": manifest,
         "layers": {
             "cells": _cell_layer(route_dir, project_crs=context.config.project.crs),
             "network": network,
             "candidates": candidates,
-            "programmes": _feature_collection([]),
-            "counters": _feature_collection([]),
+            "programmes": programmes,
+            "counters": counters,
+            "safety": safety,
         },
     }
+    if "build-topology" in context.dependencies:
+        add_web_context(
+            payload,
+            topology_path=_artifact_file(
+                context.dependencies["build-topology"]["topology"].path, "topology.json"
+            ),
+            candidate_edges=edge_rows,
+            route_dir=route_dir,
+            portfolio_dir=portfolio_dir,
+            parameters=context.config.parameters,
+        )
+    return payload
 
 
 def production_export_outputs_stage(context: StageContext) -> StageResult:

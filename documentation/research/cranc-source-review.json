@@ -1,0 +1,27 @@
+{
+  "reviewDate": "2026-09-17",
+  "method": "read_only_archive_inspection_no_server_executed",
+  "archives": [
+    {
+      "name": "cranc-graphhoper-main.zip",
+      "sha256": "0ee1f48f28c14d743a04a15256846fd115c7ce91657f489144fd98d0c30709e9",
+      "files": {
+        "cranc-graphhoper-main/core/src/main/java/com/graphhopper/routing/util/parsers/OSMLtsRatingParser.java": "189a358ce87b604fc9ba5e53919ec11fbee24f06266dd596be285378ffedf441",
+        "cranc-graphhoper-main/core/src/main/resources/com/graphhopper/custom_models/eac.json": "f098192088f747552a27212ad56e20e9943e70b480bdf72be042eef96d7c0d7f",
+        "cranc-graphhoper-main/core/src/main/resources/com/graphhopper/custom_models/ibc.json": "37b82d72a3a2425a7b724ac86635eaa38a127b021b61bcc3cf814f101dbaece0",
+        "cranc-graphhoper-main/core/src/main/resources/com/graphhopper/custom_models/saf.json": "4ebdb41102ba8845353710c96ba1acdc0c251938608f2d6f3710b26af5129a50",
+        "cranc-graphhoper-main/web-bundle/src/main/java/com/graphhopper/resources/IsochroneResource.java": "12e796868b941ef48185b164eb892be71d90434fb58b959a4d3f8464e581a29c",
+        "cranc-graphhoper-main/web-bundle/src/main/java/com/graphhopper/resources/PtIsochroneResource.java": "f1f62e69cc456827785479f921ec27b8944468156ef435eada24f462b5d2a338"
+      }
+    },
+    {
+      "name": "cranc-web-main.zip",
+      "sha256": "78268bc4a1fbbbd3a0a884624157d640fab719d932a10e3083f0cc9552f4b487",
+      "files": {
+        "cranc-web-main/src/isochrone/isochroneApi.ts": "b13cfec7178556436cac883108d77f40df56ad9001bb4c117fc0f56e54176396",
+        "cranc-web-main/src/navigation/navigationApi.ts": "f730e8573696da12e4788334835019b27ff82fd055263da9041369dcbe28813f",
+        "cranc-web-main/src/shared/config/profiles.ts": "57ad4bdb3eaf7a3e11ee8a37e8162be41cdffe8669106f5fe7ea7b3c0e3c8ee1"
+      }
+    }
+  ]
+}

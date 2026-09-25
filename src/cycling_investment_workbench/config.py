@@ -16,7 +16,7 @@ from .sources import SourceError, SourceSpec
 
 _PROJECT_ID = re.compile(r"^[a-z][a-z0-9_-]+$")
 _STAGE_NAME = re.compile(r"^[a-z][a-z0-9-]*$")
-_LAYER_IDS = ("cells", "network", "candidates", "programmes", "counters")
+_LAYER_IDS = ("cells", "network", "candidates", "programmes", "counters", "safety")
 
 
 class ConfigError(ValueError):

@@ -238,16 +238,16 @@ def test_production_export_preserves_edges_units_and_rights_gates(tmp_path: Path
     candidate = payload["layers"]["candidates"]["features"][0]
     network = payload["layers"]["network"]["features"]
     assert manifest["schemaVersion"] == "2.0.0"
-    assert manifest["capabilities"]["equity"] == "rights_blocked"
-    assert manifest["capabilities"]["appraisal"] == "withheld"
+    assert manifest["capabilities"]["equity"] == "unavailable"
+    assert manifest["capabilities"]["appraisal"] == "research_only"
     assert manifest["portfolios"]["baseline"]["appraisal"] == []
     assert "decisionSupport" not in manifest
     assert candidate["properties"]["edgeIds"] == ["edge-a", "edge-b"]
     appraisal = candidate["properties"]["metrics"]["commute_8pct"]["appraisal"]
-    assert appraisal["available"] is False
-    assert appraisal["objectiveUnit"] == "not available"
-    assert appraisal["bcrP50"] is None
-    assert "withheld" in appraisal["warnings"][0].lower()
+    assert appraisal["available"] is True
+    assert appraisal["objectiveUnit"] == "indicative BCR"
+    assert appraisal["bcrP50"] == 1.2
+    assert "screening" in appraisal["warnings"][0].lower()
     network_metric = candidate["properties"]["metrics"]["commute_8pct"]["network"]
     assert network_metric["bcrP5"] is None
     assert network_metric["bcrP50"] is None

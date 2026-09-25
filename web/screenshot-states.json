@@ -16,19 +16,19 @@
     {
       "basename": "candidate-evidence",
       "demoQuery": "?scenario=ebike&purpose=network&view=evidence&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates&candidate=main_street",
-      "releaseQuery": "?scenario=commute_8pct&purpose=network&view=evidence&budget=100&basemap=analysis&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-2923bae90b476f70",
+      "releaseQuery": "?scenario=commute_8pct&purpose=appraisal&view=evidence&budget=100&basemap=analysis&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-2923bae90b476f70",
       "viewport": { "width": 1800, "height": 1100 }
     },
     {
       "basename": "equity-purpose-portfolio",
       "demoQuery": "?scenario=go_dutch&purpose=equity&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates",
-      "releaseQuery": "?scenario=go_dutch&purpose=school&view=portfolio&budget=100&basemap=analysis&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-c8321995b5d9571b",
+      "releaseQuery": "?scenario=go_dutch&purpose=equity&view=portfolio&budget=100&basemap=analysis&layers=cells%2Cnetwork%2Ccandidates&candidate=candidate-c8321995b5d9571b",
       "viewport": { "width": 1800, "height": 1100 }
     },
     {
       "basename": "network-validation-overlays",
-      "demoQuery": "?scenario=baseline&purpose=network&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates%2Cprogrammes%2Ccounters",
-      "releaseQuery": "?scenario=baseline&purpose=network&view=portfolio&budget=100&basemap=analysis&layers=cells%2Cnetwork%2Ccandidates%2Cprogrammes%2Ccounters&candidate=candidate-2676bfa088d5dce7",
+      "demoQuery": "?scenario=baseline&purpose=network&view=portfolio&budget=2.8&offline=1&layers=cells%2Cnetwork%2Ccandidates%2Cprogrammes%2Ccounters%2Csafety",
+      "releaseQuery": "?scenario=baseline&purpose=network&view=portfolio&budget=100&basemap=analysis&layers=cells%2Cnetwork%2Ccandidates%2Cprogrammes%2Ccounters%2Csafety&candidate=candidate-2676bfa088d5dce7",
       "viewport": { "width": 1800, "height": 1100 }
     },
     {

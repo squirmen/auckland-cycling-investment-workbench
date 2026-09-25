@@ -119,12 +119,13 @@ These defaults implement an indicative lifecycle screening calculation. They
 do not establish formal MBCM compliance; each release must verify the manual,
 input definitions, price base, and worksheets applicable when analysis starts.
 
-The public-export capability is fail-closed. `reviewed` is the only state that
-may expose appraisal values. `research_only`, a missing legacy capability, or
-`withheld` causes the release packager to null every candidate BCR field, empty
-the Appraisal portfolio, disable the Appraisal lens, and record the unresolved
-input warning in the manifest and asset notice. The current Auckland research
-asset therefore exposes costs as screening fields but no BCR.
+The public-export capability is fail-closed. `reviewed` may expose values cleared
+for their declared use. `research_only` may expose indicative values and
+uncertainty intervals with the research-only warning and declared evidence
+scenario. A missing or `withheld` capability causes the release packager to
+null every candidate BCR field, empty the Appraisal portfolio, disable the lens,
+and record the unresolved-input warning. The Auckland research snapshot uses
+`research_only`; its candidate BCRs are not business-case or programme BCRs.
 
 | Key | Default | Unit / price basis | Required release treatment |
 | --- | ---: | --- | --- |
