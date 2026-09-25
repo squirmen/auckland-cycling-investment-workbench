@@ -9,6 +9,31 @@ from pathlib import Path
 from cycling_investment_workbench.provenance import sha256_file, write_json_atomic
 
 
+def public_solutions(solutions):
+    output = []
+    for solution in solutions:
+        row = {
+            key: solution[key]
+            for key in (
+                "selected",
+                "capital_cost",
+                "served_weight",
+                "served_journeys",
+                "method",
+                "optimal_within_columns",
+                "relative_gap",
+                "budget",
+                "shortConnectorCount",
+                "shortConnectorCostNzd",
+                "checkedRouteWitnesses",
+            )
+        }
+        if "projectOverlapWithReference" in solution:
+            row["projectOverlapWithReference"] = solution["projectOverlapWithReference"]
+        output.append(row)
+    return output
+
+
 def budgeted_summary(report):
     """Publish only aggregate comparison fields, never future per-journey additions."""
     if not report:
@@ -28,25 +53,75 @@ def budgeted_summary(report):
             "note",
         )
     }
-    output["solutions"] = [
-        {
-            key: solution[key]
-            for key in (
-                "selected",
-                "capital_cost",
-                "served_weight",
-                "served_journeys",
-                "method",
-                "optimal_within_columns",
-                "relative_gap",
-                "budget",
-                "shortConnectorCount",
-                "shortConnectorCostNzd",
-                "checkedRouteWitnesses",
-            )
+    output["solutions"] = public_solutions(report["solutions"])
+    if "preferredSolutions" in report:
+        output["preferredSolutions"] = public_solutions(report["preferredSolutions"])
+    for key in ("maxLabelsPerSearch", "retainedRouteColumns"):
+        if key in report:
+            output[key] = report[key]
+    if "searchLimitChecks" in report:
+        output["searchLimitChecks"] = [
+            {
+                **{
+                    key: check[key]
+                    for key in (
+                        "maxLabelsPerSearch",
+                        "retainedRouteColumns",
+                        "routeColumns",
+                        "journeysWithRouteColumns",
+                        "searchStopReasons",
+                        "searchComplete",
+                        "labelsExpanded",
+                        "elapsedS",
+                    )
+                },
+                "solutions": public_solutions(check["solutions"]),
+                **(
+                    {"preferredSolutions": public_solutions(check["preferredSolutions"])}
+                    if "preferredSolutions" in check
+                    else {}
+                ),
+            }
+            for check in report["searchLimitChecks"]
+        ]
+    sensitivity = report.get("fixedConnectorCostSensitivity")
+    if sensitivity:
+        output["fixedConnectorCostSensitivity"] = {
+            **{
+                key: sensitivity[key]
+                for key in (
+                    "status",
+                    "budget",
+                    "sameRouteColumns",
+                    "reroutedForEachCostCase",
+                    "referenceSelected",
+                    "referenceServedWeight",
+                    "referenceServedJourneys",
+                    "routeColumns",
+                    "note",
+                )
+            },
+            "cases": [
+                {
+                    **{
+                        key: case[key]
+                        for key in (
+                            "fixedAllowancePerConnectorNzd",
+                            "fixedProgrammeCostNzd",
+                            "fixedProgrammeAffordable",
+                            "affordableRouteColumns",
+                        )
+                    },
+                    "solutions": public_solutions(case["solutions"]),
+                    **(
+                        {"preferredSolutions": public_solutions(case["preferredSolutions"])}
+                        if "preferredSolutions" in case
+                        else {}
+                    ),
+                }
+                for case in sensitivity["cases"]
+            ],
         }
-        for solution in report["solutions"]
-    ]
     return output
 
 

@@ -76,6 +76,20 @@ def main() -> None:
         help="Also compare budgeted hypothetical connectors on the same sampled journeys; "
         "kept separate from the original portfolio and browser data",
     )
+    parser.add_argument(
+        "--connector-label-limits",
+        type=int,
+        nargs="+",
+        help="Increasing connector search caps, starting at --max-labels; original routes "
+        "remain at the original cap. Requires --budget-short-connectors.",
+    )
+    parser.add_argument(
+        "--connector-fixed-costs-nzd",
+        type=float,
+        nargs="+",
+        help="Hypothetical extra fixed allowances per short-chain project, not measured "
+        "crossing costs. Uses the final checked route pool; requires --budget-short-connectors.",
+    )
     args = parser.parse_args()
     if (
         not isfinite(args.radius_m)
@@ -86,6 +100,24 @@ def main() -> None:
         or args.max_labels < 1
     ):
         raise ValueError("pilot bounds must be positive")
+    if (
+        args.connector_label_limits or args.connector_fixed_costs_nzd
+    ) and not args.budget_short_connectors:
+        raise ValueError("connector sensitivities require --budget-short-connectors")
+    if args.connector_label_limits and (
+        args.connector_label_limits[0] != args.max_labels
+        or any(
+            a >= b
+            for a, b in zip(
+                args.connector_label_limits, args.connector_label_limits[1:], strict=False
+            )
+        )
+    ):
+        raise ValueError("connector label limits must increase from --max-labels")
+    if args.connector_fixed_costs_nzd and any(
+        not isfinite(value) or value < 0 for value in args.connector_fixed_costs_nzd
+    ):
+        raise ValueError("connector allowances must be finite and non-negative")
     root = args.run.resolve()
     if args.output.resolve().is_relative_to(root):
         raise ValueError("research output must be outside the immutable source run")
@@ -360,6 +392,9 @@ def main() -> None:
             budget=budget,
             standard=standard,
             max_labels=args.max_labels,
+            label_limits=args.connector_label_limits,
+            fixed_connector_costs=args.connector_fixed_costs_nzd or (),
+            progress=lambda message: print(message, flush=True),
         )
     transform = Transformer.from_crs("EPSG:2193", "EPSG:4326", always_xy=True)
     edge_lookup = {e["id"]: e for e in edges}
@@ -628,6 +663,8 @@ def main() -> None:
             "maxLabelsPerSearch": args.max_labels,
             "testShortConnectors": args.test_short_connectors,
             "budgetShortConnectors": args.budget_short_connectors,
+            "connectorLabelLimits": args.connector_label_limits,
+            "connectorFixedCostsNzd": args.connector_fixed_costs_nzd,
             "protectedCostSource": "candidate_ledger.capital_cost_base_nzd",
             "flatSpeedKph": 15,
             "uphillExponent": 3,

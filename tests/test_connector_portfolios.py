@@ -11,7 +11,10 @@ from cycling_investment_workbench.research.active_search import (
 from cycling_investment_workbench.research.connector_portfolios import (
     checked_route,
     compare_budgeted_connectors,
+    fixed_connector_cost_sensitivity,
+    preferred_solutions,
 )
+from cycling_investment_workbench.research.investment import InvestmentResult
 
 
 def graph():
@@ -135,3 +138,183 @@ def test_unpaired_journeys_and_overbudget_seed_routes_are_refused():
             standard=PlanningStandard(),
             max_labels=100,
         )
+
+
+def test_search_limits_keep_a_nested_checked_route_pool():
+    messages = []
+    result = compare_budgeted_connectors(
+        graph(),
+        {"x": ()},
+        {"x": ("a", "c")},
+        {"x": 10},
+        budget=5,
+        standard=PlanningStandard(),
+        max_labels=1,
+        label_limits=[1, 3, 100],
+        fixed_connector_costs=[0, 1],
+        progress=messages.append,
+    )
+    checks = result["searchLimitChecks"]
+    assert [c["maxLabelsPerSearch"] for c in checks] == [1, 3, 100]
+    assert [c["routeColumns"] for c in checks] == [0, 1, 1]
+    assert [c["retainedRouteColumns"] for c in checks] == [0, 0, 1]
+    assert checks[0]["searchStopReasons"] == {"label_limit": 1}
+    assert checks[-1]["searchComplete"]
+    assert result["solutions"] == checks[-1]["solutions"]
+    assert len(messages) == 6
+    cases = result["fixedConnectorCostSensitivity"]["cases"]
+    assert cases[0]["fixedProgrammeAffordable"]
+    assert not cases[1]["fixedProgrammeAffordable"]
+    assert cases[1]["solutions"][-1]["served_journeys"] == 0
+
+
+@pytest.mark.parametrize("limits", [[], [0], [2], [1, 1], [1, 0], [1, 2.5], [True]])
+def test_invalid_search_limit_sequences_are_refused(limits):
+    with pytest.raises(ValueError, match="label limits"):
+        compare_budgeted_connectors(
+            graph(),
+            {},
+            {},
+            {},
+            budget=5,
+            standard=PlanningStandard(),
+            max_labels=1,
+            label_limits=limits,
+        )
+
+
+@pytest.mark.parametrize("allowance", [-1, float("nan"), float("inf")])
+def test_invalid_allowances_are_refused_before_searching(allowance):
+    with pytest.raises(ValueError, match="allowances"):
+        compare_budgeted_connectors(
+            graph(),
+            {},
+            {},
+            {},
+            budget=5,
+            standard=PlanningStandard(),
+            max_labels=1,
+            fixed_connector_costs=[allowance],
+        )
+    with pytest.raises(ValueError, match="allowances"):
+        fixed_connector_cost_sensitivity(
+            {}, {}, {}, budget=5, fixed_costs=[allowance], reference_selected=frozenset()
+        )
+
+
+def test_fixed_allowance_is_charged_once_and_reselection_is_distinct_from_reference():
+    network = graph()
+    network = InvestmentGraph(
+        [*network.arcs.values(), Arc("ac", "ac", "a", "c", 40, 10, 4, "P")],
+        {**network.projects, "P": 6},
+    )
+    routes = {
+        name: network.search("a", destination, budget=6).routes
+        for name, destination in (("one", "c"), ("two", "d"))
+    }
+    result = fixed_connector_cost_sensitivity(
+        network.projects,
+        routes,
+        {"one": 10, "two": 20},
+        budget=6,
+        fixed_costs=[2, 0, 2],
+        reference_selected=frozenset({"diagnostic-short:1"}),
+    )
+    assert [c["fixedAllowancePerConnectorNzd"] for c in result["cases"]] == [0, 2]
+    assert result["sameRouteColumns"] and not result["reroutedForEachCostCase"]
+    assert result["referenceServedJourneys"] == 2
+    original, expensive = result["cases"]
+    assert original["solutions"][-1]["served_journeys"] == 2
+    assert expensive["fixedProgrammeCostNzd"] == 7  # Not 9: one shared connector, two journeys.
+    assert not expensive["fixedProgrammeAffordable"]
+    chosen = expensive["solutions"][-1]
+    assert chosen["selected"] == ["P"]
+    assert chosen["served_journeys"] == chosen["checkedRouteWitnesses"] == 1
+    assert chosen["projectOverlapWithReference"] == 0
+    assert chosen["shortConnectorCostNzd"] == 0
+    assert expensive["affordableRouteColumns"] == 1
+    assert network.projects["diagnostic-short:1"] == 5
+    assert routes["two"][0].capital_cost == 5
+
+
+def test_allowance_check_requires_a_known_reference_and_handles_empty_reference():
+    with pytest.raises(ValueError, match="unknown projects"):
+        fixed_connector_cost_sensitivity(
+            {}, {}, {}, budget=1, fixed_costs=[0], reference_selected=frozenset({"missing"})
+        )
+    result = fixed_connector_cost_sensitivity(
+        {}, {}, {}, budget=1, fixed_costs=[0], reference_selected=frozenset()
+    )
+    assert result["cases"][0]["solutions"][-1]["projectOverlapWithReference"] == 1
+
+
+def test_preferred_result_keeps_baseline_when_solver_has_less_access_or_higher_cost():
+    baseline = {
+        "budget": 20,
+        "served_weight": 10,
+        "capital_cost": 12,
+        "selected": ["cheap"],
+        "method": "package_greedy",
+        "optimal_within_columns": False,
+    }
+    worse_cost = {**baseline, "capital_cost": 18, "method": "route_packages_milp"}
+    worse_access = {**worse_cost, "capital_cost": 8, "served_weight": 9}
+    for worse in (worse_cost, worse_access):
+        rows = [worse, baseline]
+        preferred = preferred_solutions(rows)
+        assert preferred == [baseline]
+        assert preferred[0] is not baseline
+        assert rows[0] == worse  # Raw solver results remain available, not overwritten.
+        assert not preferred[0]["optimal_within_columns"]
+    better = {**worse_cost, "served_weight": 11}
+    assert preferred_solutions([baseline, better]) == [better]
+    assert preferred_solutions([]) == []
+
+
+def test_preferred_result_is_paired_by_budget_and_deterministic_on_ties():
+    a = {"budget": 10, "served_weight": 3, "capital_cost": 2, "selected": ["a"], "method": "a"}
+    b = {**a, "selected": ["b"]}
+    larger = {**a, "budget": 20, "served_weight": 4}
+    assert preferred_solutions([b, larger, a]) == [a, larger]
+    assert preferred_solutions([a, larger, b]) == [a, larger]
+
+
+def test_cost_reference_uses_checked_baseline_when_solver_stops_with_a_dearer_tie(monkeypatch):
+    from cycling_investment_workbench.research import connector_portfolios
+
+    network = graph()
+    network = InvestmentGraph(
+        [*network.arcs.values(), Arc("ac", "ac", "a", "c", 40, 10, 4, "P")],
+        {**network.projects, "P": 6},
+    )
+
+    def limited_solver(costs, routes, weights, *, budget):
+        chosen = frozenset({"P"}) if costs["P"] <= budget else frozenset()
+        return InvestmentResult(
+            chosen,
+            costs["P"] if chosen else 0,
+            10 if chosen else 0,
+            1 if chosen else 0,
+            "route_packages_milp",
+            False,
+            0.5,
+        )
+
+    monkeypatch.setattr(connector_portfolios, "choose_investments", limited_solver)
+    result = compare_budgeted_connectors(
+        network,
+        {"x": ()},
+        {"x": ("a", "c")},
+        {"x": 10},
+        budget=6,
+        standard=PlanningStandard(),
+        max_labels=100,
+        fixed_connector_costs=[0, 2],
+    )
+    assert result["solutions"][-1]["capital_cost"] == 6
+    assert result["preferredSolutions"][-1]["capital_cost"] == 5
+    sensitivity = result["fixedConnectorCostSensitivity"]
+    assert sensitivity["referenceSelected"] == ["diagnostic-short:1"]
+    assert sensitivity["cases"][0]["fixedProgrammeCostNzd"] == 5
+    assert sensitivity["cases"][1]["fixedProgrammeCostNzd"] == 7
+    assert not sensitivity["cases"][1]["fixedProgrammeAffordable"]

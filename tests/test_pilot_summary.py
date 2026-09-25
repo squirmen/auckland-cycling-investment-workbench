@@ -145,8 +145,74 @@ def test_budgeted_summary_does_not_copy_future_raw_journey_fields(tmp_path):
         "solutions": [],
         "privateJourneyCoordinates": [1, 2],
     }
+    solution = {
+        "selected": ["public-project"],
+        "capital_cost": 10,
+        "served_weight": 1,
+        "served_journeys": 1,
+        "method": "route_packages_milp",
+        "optimal_within_columns": True,
+        "relative_gap": 0,
+        "budget": 20,
+        "shortConnectorCount": 1,
+        "shortConnectorCostNzd": 10,
+        "checkedRouteWitnesses": 1,
+        "projectOverlapWithReference": 1,
+        "privateJourneyCoordinates": [1, 2],
+    }
+    check = {
+        "maxLabelsPerSearch": 100,
+        "retainedRouteColumns": 0,
+        "routeColumns": 1,
+        "journeysWithRouteColumns": 1,
+        "searchStopReasons": {"exhausted": 1},
+        "searchComplete": True,
+        "labelsExpanded": 1,
+        "elapsedS": 0.1,
+        "solutions": [solution],
+        "preferredSolutions": [solution],
+        "privateJourneyCoordinates": [1, 2],
+    }
+    item["budgetedConnectorComparison"].update(
+        {
+            "maxLabelsPerSearch": 100,
+            "retainedRouteColumns": 0,
+            "preferredSolutions": [solution],
+            "searchLimitChecks": [check],
+            "fixedConnectorCostSensitivity": {
+                "status": "test",
+                "budget": 20,
+                "sameRouteColumns": True,
+                "reroutedForEachCostCase": False,
+                "referenceSelected": ["public-project"],
+                "referenceServedWeight": 1,
+                "referenceServedJourneys": 1,
+                "routeColumns": 1,
+                "note": "test",
+                "privateJourneyCoordinates": [1, 2],
+                "cases": [
+                    {
+                        "fixedAllowancePerConnectorNzd": 0,
+                        "fixedProgrammeCostNzd": 10,
+                        "fixedProgrammeAffordable": True,
+                        "affordableRouteColumns": 1,
+                        "solutions": [solution],
+                        "preferredSolutions": [solution],
+                        "privateJourneyCoordinates": [1, 2],
+                    }
+                ],
+            },
+        }
+    )
     process, path = run_summary(tmp_path, item)
     assert process.returncode == 0, process.stderr
     comparison = json.loads(path.read_text())["areas"][0]["budgetedConnectorComparison"]
     assert comparison["routeColumns"] == 1
-    assert "privateJourneyCoordinates" not in comparison
+    assert "privateJourneyCoordinates" not in json.dumps(comparison)
+    assert comparison["searchLimitChecks"][0]["maxLabelsPerSearch"] == 100
+    case = comparison["fixedConnectorCostSensitivity"]["cases"][0]
+    assert case["fixedProgrammeAffordable"]
+    assert case["solutions"][0]["projectOverlapWithReference"] == 1
+    assert case["preferredSolutions"][0]["method"] == "route_packages_milp"
+    assert comparison["preferredSolutions"][0]["selected"] == ["public-project"]
+    assert comparison["searchLimitChecks"][0]["preferredSolutions"][0]["capital_cost"] == 10

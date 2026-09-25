@@ -72,6 +72,8 @@ Accessibility gains must remain separate from estimates of additional cycling.
 
 See the [exact code entry points and adapter checklist](documentation/research/cranc-integration.md#where-to-connect-cranc)
 and the [prioritised improvement review](documentation/audit/span-improvement-review-2026-09-24.md).
+The latest [search-limit and cost-sensitivity tests](documentation/audit/span-search-and-cost-sensitivity-2026-09-25.md)
+compare complete-route methods on paired samples without replacing public results.
 Collaborator source archives, source runs and deployment bundles are not committed.
 
 ## Model foundations
