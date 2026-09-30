@@ -142,8 +142,9 @@ without changing what the views show.
 - **Value chart.** The chart was drawn 620 units wide and shrunk to the panel,
   which left its labels about 6 pixels high. It is drawn at the panel's width,
   so the labels are about 10 pixels, and link counts have thousands separators.
-- **Link previews.** The page has a title, description and image for messaging
-  and social tools.
+- **Link previews and icons.** The page has a title, description and image for
+  messaging and social tools, a PNG icon for Safari's tab and one for an iOS
+  home screen.
 
 ## A table of the build order
 

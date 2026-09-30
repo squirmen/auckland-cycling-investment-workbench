@@ -157,8 +157,8 @@ there.
 The SPAN document root also holds other things: STAND under `parking/` and the
 certificate files under `.well-known/`. Do not replace the whole directory.
 Move SPAN's own entries (`index.html`, `research.html`, `.htaccess`, `CNAME`,
-the two marks, `span-preview.jpg`, `span-release.json`, `assets/`, `data/` and
-`documentation/`) into a rollback directory and move the staged ones in, with
+the two marks, the two PNG icons, `span-preview.jpg`, `span-release.json`,
+`assets/`, `data/` and `documentation/`) into a rollback directory and move the staged ones in, with
 the page last. Leave everything else where it is, and confirm afterwards that
 it has not changed. STAND relies on SPAN's root `.htaccess` for its types,
 compression and cache times, so keep those directives.

@@ -28,6 +28,8 @@ def fixture(tmp_path, monkeypatch):
         "span-mark.svg",
         "bpl-mark.svg",
         "span-preview.jpg",
+        "favicon-32.png",
+        "apple-touch-icon.png",
         "documentation/effective-network.md",
     ):
         (site / name).write_text("fixture")
@@ -87,6 +89,7 @@ def test_complete_site_contains_hidden_settings_and_sha256_record(tmp_path, monk
     [
         "wrong_product",
         "wrong_host",
+        "missing_icon",
         "stale",
         "private",
         "missing_descriptor",
@@ -101,6 +104,8 @@ def test_site_gate_rejects_wrong_or_unsafe_packages(tmp_path, monkeypatch, condi
         (site / "index.html").write_text("<title>Legacy PCT</title>")
     elif condition == "wrong_host":
         (site / "CNAME").write_text("ciw.tfwelch.com")
+    elif condition == "missing_icon":
+        (site / "apple-touch-icon.png").unlink()
     elif condition == "stale":
         with (site / "data/access-experiment.json").open("a") as stream:
             stream.write("\n")
