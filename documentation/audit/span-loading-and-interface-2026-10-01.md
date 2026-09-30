@@ -18,6 +18,10 @@ Measured from Auckland on 30 September against the 24 September deployment:
   total, so the limit is per visitor, not per file. The same computer received
   5.5 MB/s from a content-delivery test file.
 
+- Scripts were sent at full size with no cache lifetime. The host labels them
+  `text/javascript`, which the compression and cache rules did not list. That
+  was 0.31 MB for the page's own script and 1.47 MB for the background map's.
+
 So the number of bytes before the first view is what decides how long a visitor
 waits, and the server's own compression was not the bottleneck.
 
@@ -28,10 +32,11 @@ waits, and the server's own compression was not the bottleneck.
 | Manifest | 528 kB | 198 kB |
 | Candidate links | 14.0 MB (all 12,580) | 1.31 MB (1,846) |
 | Existing low-stress network | 2.46 MB | not waited for |
-| Page, scripts and styles | about 0.1 MB | about 0.1 MB |
-| Total | about 17 MB | about 1.6 MB |
+| Page, script and style | 0.34 MB | 0.10 MB |
+| Total | about 17.3 MB | about 1.6 MB |
 
-Three changes make up the difference.
+The background map's script, which loads alongside, falls from 1.47 MB to
+0.32 MB. Three changes make up the difference.
 
 **The page opens on the links it needs.** See the 26 September note. This is
 the first release to deploy it.
@@ -53,6 +58,14 @@ integrity check runs on the decoded bytes, so it is unchanged. The canonical
 | `existing.geojson` | 2.46 MB | 1.69 MB |
 | `network.geojson` | 10.30 MB | 7.45 MB |
 | `access-experiment.json` | 704 kB | 68 kB |
+| Page script | 311 kB, not compressed | 81 kB |
+| Background map scripts | 1.47 MB, not compressed | 0.32 MB |
+
+Scripts served from a brotli copy are typed `application/javascript`, so the
+one-year cache rule for hashed file names now applies to them. `text/javascript`
+is added to the list compressed on request, which also covers scripts elsewhere
+on the site. No cache rule is added for that type, because STAND's scripts keep
+their names between releases and set their own.
 
 **Context layers no longer hold up the page.** Only the links are waited for.
 The existing network and any other visible layer load afterwards and are drawn
