@@ -25,6 +25,13 @@
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="./span-mark.svg" type="image/svg+xml" />
     <title>SPAN · Spending Priorities for Active Networks</title>
+    <!-- The map's box is set here as well as in the stylesheet. Safari can run the script
+         before the stylesheet arrives, and a map made in an unsized box stays blank. -->
+    <style>
+      html, body { height: 100%; margin: 0; }
+      body { position: fixed; inset: 0; overflow: hidden; }
+      #app, .map-panel, #map { position: absolute; inset: 0; }
+    </style>
   </head>
   <body>
     <a class="skip-link" href="#controls-panel">Skip to controls</a>

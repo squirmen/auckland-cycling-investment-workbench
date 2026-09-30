@@ -111,6 +111,13 @@ export class SpanMap {
       attributionControl: true,
       zoomControl: false,
     });
+    // Leaflet pins an unpositioned container to position: relative, which would give the map
+    // no height here. The page's own styles decide its box.
+    element.style.removeProperty("position");
+    // Keep the map's idea of its size in step with its box, whatever resizes it.
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(() => this.map.invalidateSize({ animate: false, pan: false })).observe(element);
+    }
     this.map.attributionControl.setPrefix(false);
     this.map.attributionControl.addAttribution(OSM_ATTRIBUTION);
     L.control.zoom({ position: "bottomright" }).addTo(this.map);

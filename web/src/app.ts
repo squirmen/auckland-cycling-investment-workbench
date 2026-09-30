@@ -51,25 +51,48 @@ let journeyAssumptions = { ...DEFAULT_JOURNEY_ASSUMPTIONS };
 let demandDiagnostics: DemandDiagnostics | undefined;
 const offlineMode = new URLSearchParams(window.location.search).get("offline") === "1";
 
-const mapController = new SpanMap(requiredElement("map"), {
-  onCandidateSelected: (candidateId) => selectCandidate(candidateId, false),
-  onSketchChanged: (result, error) => onSketch(result, error),
-  onBasemapChanged: () => {
-    renderBasemapControls();
-    if (ready) syncQueryState();
-  },
-}, {
-  allowHostedBasemaps: !offlineMode,
-  initialBasemap: offlineMode ? "analysis" : basemapId(new URLSearchParams(window.location.search).get("basemap")) ?? "light",
-  padding: mapPadding,
-});
+let mapController: SpanMap;
 
 setPanelOpen(true);
 void initialise();
 
+function createMap(): SpanMap {
+  return new SpanMap(requiredElement("map"), {
+    onCandidateSelected: (candidateId) => selectCandidate(candidateId, false),
+    onSketchChanged: (result, error) => onSketch(result, error),
+    onBasemapChanged: () => {
+      renderBasemapControls();
+      if (ready) syncQueryState();
+    },
+  }, {
+    allowHostedBasemaps: !offlineMode,
+    initialBasemap: offlineMode ? "analysis" : basemapId(new URLSearchParams(window.location.search).get("basemap")) ?? "light",
+    padding: mapPadding,
+  });
+}
+
+/** Safari can run this script before the stylesheet is applied. The map and the panel are
+ * measured when the map is made, so wait until the panel has its styled position. */
+function whenStyled(): Promise<void> {
+  const panel = requiredElement("controls-panel");
+  const started = performance.now();
+  return new Promise((resolve) => {
+    const check = (): void => {
+      if (getComputedStyle(panel).position === "absolute" || performance.now() - started > 5000) resolve();
+      else window.setTimeout(check, 25);
+    };
+    check();
+  });
+}
+
 async function initialise(): Promise<void> {
   try {
-    manifest = await loadManifest();
+    // The data starts downloading while the styles are awaited.
+    const manifestLoad = loadManifest();
+    manifestLoad.catch(() => undefined);
+    await whenStyled();
+    mapController = createMap();
+    manifest = await manifestLoad;
     const params = new URLSearchParams(window.location.search);
     const full = params.get("view") === "pareto" || (params.get("layers") ?? "").split(",").includes("candidates");
     const detail = requiredElement("loading-detail");

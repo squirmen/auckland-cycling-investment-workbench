@@ -74,3 +74,16 @@ test("list rows keep their height inside a scrolling list", async ({ page }) => 
   await ready(page);
   await expect(page.locator("#pareto-list .compact-row").first()).toHaveCSS("flex-shrink", "0");
 });
+
+test("gives the map its box even when the stylesheet is missing", async ({ page }) => {
+  // Safari can run the script before the stylesheet arrives. The map's box comes from the page itself.
+  await page.route("**/assets/*.css", route => route.abort());
+  await page.goto("/?offline=1");
+  await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false", { timeout: 20000 });
+  const box = await page.evaluate(() => {
+    const map = document.getElementById("map")!;
+    return { height: map.clientHeight, width: map.clientWidth, viewport: [window.innerWidth, window.innerHeight], inlinePosition: map.style.position };
+  });
+  expect([box.width, box.height]).toEqual(box.viewport);
+  expect(box.inlinePosition).toBe("");
+});
