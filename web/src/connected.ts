@@ -6,6 +6,24 @@ import type { Manifest } from "./types";
 
 export const CONNECTED_QUERY_KEYS = ["areaBudget", "method", "journey", "preference", "route", "extent"] as const;
 
+type Journey = ResearchReport["journeys"][number];
+export type JourneyStatus = "package" | "needs" | "already" | "none";
+const JOURNEY_GROUPS: ReadonlyArray<[JourneyStatus, string]> = [
+  ["package", "Connected by this package"],
+  ["needs", "Needs upgrades outside this package"],
+  ["already", "Connected without upgrades"],
+  ["none", "No route within the limits"],
+];
+
+/** Where a sample journey stands under a package, and how many more upgrades its closest route needs. */
+export function journeyStatus(journey: Journey, funded: ReadonlySet<string>): { status: JourneyStatus; missing: number } {
+  const routes = journey.alternatives;
+  if (!routes.length) return { status: "none", missing: 0 };
+  if (routes.some(route => route.projectIds.length === 0)) return { status: "already", missing: 0 };
+  const missing = Math.min(...routes.map(route => route.projectIds.filter(id => !funded.has(id)).length));
+  return { status: missing === 0 ? "package" : "needs", missing };
+}
+
 /** Complete-route results share SPAN's map, basemaps and workspace. */
 export class ConnectedJourneys {
   private active = false;
@@ -114,9 +132,10 @@ export class ConnectedJourneys {
       return row;
     }));
     if (!fundedProjects.length) fundedList.append(create("p", { text: "This package funds no upgrades." }));
+    const selected = new Set(solution.selected);
+    this.listJourneys(report, selected);
     const j = report.journeys.find(j => j.name === this.journey.value);
     if (!j) { this.map.showConnectedRoute(report); return; }
-    const selected = new Set(solution.selected);
     const profileId = this.preference.value === "access" ? "balanced" : this.preference.value;
     const assigned = report.assignment.portfolios.find(p => p.key === solution.assignmentKey)?.profiles.find(p => p.profileId === profileId);
     const baseline = report.assignment.portfolios.find(p => p.selected.length === 0)?.profiles.find(p => p.profileId === profileId);
@@ -172,6 +191,27 @@ export class ConnectedJourneys {
     params.set("extent", this.mapExtent);
     for (const [key, control] of [["areaBudget", this.budget], ["method", this.method], ["journey", this.journey], ["preference", this.preference], ["route", this.alternative]] as const) params.set(key, control.value);
     window.history.replaceState(null, "", `${window.location.pathname}?${params}`);
+  }
+
+  /** Group the journey list by what the package does for each journey, keeping the current choice. */
+  private listJourneys(report: ResearchReport, funded: ReadonlySet<string>): void {
+    const current = this.journey.value;
+    const groups = new Map<JourneyStatus, HTMLOptionElement[]>(JOURNEY_GROUPS.map(([status]) => [status, []]));
+    for (const journey of report.journeys) {
+      const { status, missing } = journeyStatus(journey, funded);
+      const parts = [journey.name];
+      if (journey.alternatives.length) parts.push(`${(Math.min(...journey.alternatives.map(route => route.distanceM)) / 1000).toFixed(1)} km`);
+      if (status === "needs") parts.push(`${missing} more ${missing === 1 ? "upgrade" : "upgrades"}`);
+      groups.get(status)!.push(create("option", { value: journey.name, text: parts.join(" · ") }));
+    }
+    this.journey.replaceChildren(...JOURNEY_GROUPS.flatMap(([status, label]) => {
+      const options = groups.get(status)!;
+      if (!options.length) return [];
+      const group = create("optgroup", { label: `${label} (${options.length})` });
+      group.append(...options);
+      return [group];
+    }));
+    this.journey.value = current;
   }
 
   private inspectProject(projectId: string): void {

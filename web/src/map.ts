@@ -75,8 +75,11 @@ export class SpanMap {
   private othersLayer: L.GeoJSON | null = null;
   private demandLayer: L.GeoJSON | null = null;
   private existingLayer: L.GeoJSON | null = null;
+  private intersectionLayer: L.GeoJSON | null = null;
+  private viewBeforePrint: { centre: L.LatLng; zoom: number } | null = null;
   private highlightedAreas = new Set<string>();
   private highlightedAreaKey = "";
+  private contextBand = 0;
   private pins: Array<{ marker: L.Marker; latLng: L.LatLng }> = [];
   private state: AppState | null = null;
   private steps: PortfolioStep[] = [];
@@ -121,7 +124,22 @@ export class SpanMap {
     this.map.on("zoomend", () => {
       this.layoutPins();
       this.demandLayer?.setStyle({ fillOpacity: this.demandOpacity() });
+      const band = this.zoomBand();
+      if (band !== this.contextBand) {
+        this.contextBand = band;
+        this.existingLayer?.setStyle((feature) => this.existingStyle(feature?.properties));
+        this.intersectionLayer?.eachLayer((layer) => {
+          if (layer instanceof L.CircleMarker) layer.setRadius(this.intersectionRadius((layer.feature as { properties?: unknown } | undefined)?.properties));
+        });
+      }
     });
+    this.contextBand = this.zoomBand();
+  }
+
+  /** 0 for the whole region, 1 for a district, 2 for streets. */
+  private zoomBand(): number {
+    const zoom = this.map.getZoom();
+    return zoom >= 14 ? 2 : zoom >= 12 ? 1 : 0;
   }
 
   /** Demand squares overlap, so they fade as the map zooms in on the links. */
@@ -195,10 +213,11 @@ export class SpanMap {
     this.layers = layers;
     if (layers.network && !this.networkGraph) this.networkGraph = NetworkGraph.fromGeoJson(layers.network);
     if (candidates.length !== this.candidates.size) {
+      if (this.othersLayer) this.map.removeLayer(this.othersLayer);
       this.candidates = new Map(candidates.map((item) => [item.properties.candidateId, item]));
       this.othersLayer = null;
     }
-    this.drawn.clear();
+    // renderOnce redraws a context layer only when its data has been replaced.
     this.demandKey = "";
     this.render();
   }
@@ -275,6 +294,36 @@ export class SpanMap {
     else this.map.setView([report.centre[1], report.centre[0]], 13, { animate: false });
   }
 
+  /** Size the map for the printed page and show the whole subject of the current view. */
+  beginPrint(): void {
+    if (this.viewBeforePrint) return;
+    this.viewBeforePrint = { centre: this.map.getCenter(), zoom: this.map.getZoom() };
+    this.map.stop();
+    this.map.invalidateSize({ animate: false, pan: false });
+    const bounds = this.connectedMode ? this.connectedGroup.getBounds() : this.subjectBounds();
+    if (bounds.isValid()) this.map.fitBounds(bounds, { padding: [28, 28], maxZoom: 16, animate: false });
+  }
+
+  endPrint(): void {
+    if (!this.viewBeforePrint) return;
+    const { centre, zoom } = this.viewBeforePrint;
+    this.viewBeforePrint = null;
+    this.map.invalidateSize({ animate: false, pan: false });
+    this.map.setView(centre, zoom, { animate: false });
+  }
+
+  /** The selected link and its package if there is one, otherwise the build order. */
+  private subjectBounds(): L.LatLngBounds {
+    const bounds = L.latLngBounds([]);
+    const selected = this.state?.selectedCandidateId;
+    const ids = selected ? [selected, ...(this.state?.focusedGroupIds ?? [])] : this.steps.map((step) => step.candidateId);
+    for (const id of ids) {
+      const feature = this.candidates.get(id);
+      if (feature) bounds.extend(L.geoJSON(feature as never).getBounds());
+    }
+    return bounds;
+  }
+
   /** Show the whole build order, clear of the panels. */
   fitBuildOrder(): void {
     const bounds = L.latLngBounds([]);
@@ -288,13 +337,14 @@ export class SpanMap {
     if (bounds.isValid()) this.map.fitBounds(bounds, { ...this.paddingOptions(), maxZoom: 15 });
   }
 
-  focusCandidate(candidateId: string): void {
+  focusCandidate(candidateId: string, animate = true): void {
     const feature = this.candidates.get(candidateId);
     if (!feature) return;
     const bounds = L.geoJSON(feature as never).getBounds();
     const current = this.map.getBounds();
     if (current.contains(bounds) && this.map.getZoom() >= 13) return;
-    this.map.flyToBounds(bounds.pad(0.25), { ...this.paddingOptions(), maxZoom: 16, duration: 0.6 });
+    if (animate) this.map.flyToBounds(bounds.pad(0.25), { ...this.paddingOptions(), maxZoom: 16, duration: 0.6 });
+    else this.map.fitBounds(bounds.pad(0.25), { ...this.paddingOptions(), maxZoom: 16, animate: false });
   }
 
   focusCandidates(candidateIds: string[]): void {
@@ -514,10 +564,12 @@ export class SpanMap {
     const props = recordValue(properties);
     const selected = this.highlightedAreas.has(stringValue(props.componentId, ""));
     const separated = props.kind === "separated";
+    // Thinner and fainter when zoomed out, so the build order reads against 27,000 streets.
+    const band = this.contextBand;
     return {
       color: selected ? COLOURS.counter : separated ? COLOURS.existing : COLOURS.quiet,
-      weight: selected ? 2.5 : separated ? 2.6 : 1.4,
-      opacity: selected ? 0.95 : this.highlightedAreas.size ? 0.3 : separated ? 0.9 : 0.65,
+      weight: selected ? 2.5 : separated ? [1.5, 2.1, 2.6][band]! : [0.7, 1.1, 1.4][band]!,
+      opacity: selected ? 0.95 : this.highlightedAreas.size ? 0.3 : separated ? [0.75, 0.85, 0.9][band]! : [0.35, 0.5, 0.65][band]!,
     };
   }
 
@@ -587,14 +639,20 @@ export class SpanMap {
     });
   }
 
+  /** Smaller when zoomed out, so 1,289 sites do not cover the region. */
+  private intersectionRadius(properties: unknown): number {
+    const matched = recordValue(properties).matchStatus === "matched";
+    return matched ? [2.6, 3.8, 5][this.contextBand]! : [2, 2.8, 3.5][this.contextBand]!;
+  }
+
   private drawIntersections(): L.Layer {
-    return L.geoJSON(this.layers.intersections as never, {
+    this.intersectionLayer = L.geoJSON(this.layers.intersections as never, {
       pane: "points",
       pointToLayer: (feature, latlng) => {
         const p = recordValue(feature.properties);
         const matched = p.matchStatus === "matched";
         const marker = L.circleMarker(latlng, {
-          pane: "points", radius: matched ? 5 : 3.5, weight: 1.2, color: "#ffffff",
+          pane: "points", radius: this.intersectionRadius(p), weight: 1.2, color: "#ffffff",
           fillColor: matched ? (p.controlled ? "#7c3aed" : "#b45309") : "#64748b",
           fillOpacity: 0.9,
         });
@@ -623,6 +681,7 @@ export class SpanMap {
         return marker;
       },
     });
+    return this.intersectionLayer;
   }
 
   private drawCounters(): L.Layer {

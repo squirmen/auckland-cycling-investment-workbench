@@ -1,9 +1,56 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { candidateFeatures, loadLayer, sha256Hex } from "./data";
+import { candidateFeatures, fetchVerifiedJson, loadLayer, setRetryDelayMs, sha256Hex } from "./data";
 import { candidateFeatureSchema, layerSchema, manifestSchema, purposeIds, scenarioIds, type CandidateFeature, type Manifest } from "./types";
 
-afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
+afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); setRetryDelayMs(1500); });
+
+it("tries again after a dropped connection or a busy server, then checks the bytes", async () => {
+  setRetryDelayMs(0);
+  const body = JSON.stringify({ ok: true });
+  const sha256 = await sha256Hex(new TextEncoder().encode(body).buffer);
+  const dropped = new Response(new ReadableStream({ start(controller) { controller.error(new Error("reset")); } }));
+  const fetchMock = vi.fn()
+    .mockRejectedValueOnce(new TypeError("Failed to fetch"))
+    .mockResolvedValueOnce(dropped)
+    .mockResolvedValueOnce(new Response(body));
+  vi.stubGlobal("fetch", fetchMock);
+  await expect(fetchVerifiedJson("./data/file.json", sha256)).resolves.toEqual({ ok: true });
+  expect(fetchMock).toHaveBeenCalledTimes(3);
+
+  fetchMock.mockReset().mockResolvedValue(new Response("busy", { status: 503 }));
+  await expect(fetchVerifiedJson("./data/file.json", sha256)).rejects.toThrow("HTTP 503");
+  expect(fetchMock).toHaveBeenCalledTimes(3);
+});
+
+it("does not repeat a request that cannot succeed", async () => {
+  setRetryDelayMs(0);
+  const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(new Response("missing", { status: 404 })));
+  vi.stubGlobal("fetch", fetchMock);
+  await expect(fetchVerifiedJson("./data/file.json")).rejects.toThrow("HTTP 404");
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+
+  fetchMock.mockClear().mockImplementation(() => Promise.resolve(new Response("{}")));
+  await expect(fetchVerifiedJson("./data/file.json", "a".repeat(64))).rejects.toThrow("Integrity check failed");
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+
+it("reports how much of a file of known size has arrived", async () => {
+  const body = JSON.stringify({ rows: "x".repeat(4000) });
+  const bytes = new TextEncoder().encode(body);
+  const stream = new ReadableStream<Uint8Array>({
+    start(controller) {
+      controller.enqueue(bytes.slice(0, 1000));
+      controller.enqueue(bytes.slice(1000));
+      controller.close();
+    },
+  });
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(stream)));
+  const shares: number[] = [];
+  const sha256 = await sha256Hex(bytes.buffer);
+  await expect(fetchVerifiedJson("./data/file.json", sha256, (share) => shares.push(share), bytes.byteLength)).resolves.toEqual(JSON.parse(body));
+  expect(shares).toEqual([1000 / bytes.byteLength, 1]);
+});
 
 it("validates candidate records once when loading, then reuses the validated collection", async () => {
   const feature = { type: "Feature", geometry: { type: "LineString", coordinates: [[0, 0], [1, 1]] }, properties: {} };

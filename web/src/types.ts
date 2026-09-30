@@ -70,6 +70,8 @@ export const compactCandidatesDescriptorSchema = z.object({
   sha256: z.string().regex(/^[a-f0-9]{64}$/),
   sourceSha256: z.string().regex(/^[a-f0-9]{64}$/),
   featureCount: z.number().int().nonnegative(),
+  /** Size of the file, so a slow download can show how far it has got. */
+  bytes: z.number().int().positive().optional(),
 });
 
 export const summaryMetricSchema = z.object({

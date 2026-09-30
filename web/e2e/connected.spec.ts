@@ -100,6 +100,17 @@ test("uses one SPAN map for complete journeys and keeps the build-order settings
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
+test("groups sample journeys by what the package does for them", async ({ page }) => {
+  await page.goto("/?offline=1&view=connected");
+  await expect(page.locator("#connected-controls")).toBeVisible();
+  await expect(page.locator("#connected-journey optgroup")).toHaveAttribute("label", "Connected by this package (1)");
+  await expect(page.locator("#connected-journey option")).toHaveText("Synthetic journey · 0.1 km");
+  await page.locator("#connected-budget").selectOption("0");
+  await expect(page.locator("#connected-journey optgroup")).toHaveAttribute("label", "Needs upgrades outside this package (1)");
+  await expect(page.locator("#connected-journey option")).toHaveText("Synthetic journey · 0.1 km · 1 more upgrade");
+  await expect(page.locator("#connected-journey")).toHaveValue("Synthetic journey");
+});
+
 test("redirects old journey links into SPAN", async ({ page }) => {
   await page.goto("/research.html");
   await expect(page).toHaveURL(/view=connected/);

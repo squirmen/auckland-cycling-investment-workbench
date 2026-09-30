@@ -6,10 +6,20 @@ import path from "node:path";
 
 import { chromium, expect } from "@playwright/test";
 
+// By default this checks the local build in web/dist. Set SPAN_CHECK_BASE_URL to check a
+// deployed copy instead, for example a staging folder or https://span.tfwelch.com/.
 const site = path.resolve(import.meta.dirname, "../dist");
-const output = path.resolve(import.meta.dirname, "../../build/effective-network/browser");
-const manifest = JSON.parse(await readFile(path.join(site, "data/manifest.json"), "utf8"));
-const report = JSON.parse(await readFile(path.join(site, "data/access-experiment.json"), "utf8"));
+const remote = process.env.SPAN_CHECK_BASE_URL;
+const output = path.resolve(process.env.SPAN_CHECK_OUTPUT ?? path.join(import.meta.dirname, "../../build/effective-network/browser"));
+const userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36";
+async function source(name) {
+  if (!remote) return JSON.parse(await readFile(path.join(site, name), "utf8"));
+  const response = await fetch(new URL(name, remote), { headers: { "User-Agent": userAgent } });
+  assert.ok(response.ok, `${name}: HTTP ${response.status}`);
+  return response.json();
+}
+const manifest = await source("data/manifest.json");
+const report = await source("data/access-experiment.json");
 assert.equal(manifest.dataStatus, "research_snapshot");
 assert.equal(manifest.runId, report.runId);
 assert.equal(manifest.effectiveNetwork.topologySha256, report.sourceHashes.topology);
@@ -32,17 +42,17 @@ const server = createServer(async (request, response) => {
     response.writeHead(404); response.end("Not found");
   }
 });
-await new Promise((resolve, reject) => {
+if (!remote) await new Promise((resolve, reject) => {
   server.once("error", reject);
   server.listen(0, "127.0.0.1", resolve);
 });
-const base = `http://127.0.0.1:${server.address().port}/span-preview/`;
+const base = remote ?? `http://127.0.0.1:${server.address().port}/span-preview/`;
 let browser;
 const checks = [];
 try {
   browser = await chromium.launch({ headless: true });
   for (const [name, viewport] of [["desktop", { width: 1440, height: 1000 }], ["mobile", { width: 390, height: 844 }]]) {
-    const context = await browser.newContext({ viewport, deviceScaleFactor: 1, acceptDownloads: true });
+    const context = await browser.newContext({ viewport, deviceScaleFactor: 1, acceptDownloads: true, ...(remote ? { userAgent } : {}) });
     const page = await context.newPage();
     const errors = [];
     const requests = [];
@@ -50,7 +60,7 @@ try {
     page.on("pageerror", error => errors.push(error.message));
     page.on("response", response => { if (response.status() >= 400) errors.push(`${response.status()} ${response.url()}`); });
     await page.goto(`${base}?offline=1&layers=existing,intersections`, { waitUntil: "load" });
-    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false", { timeout: 90000 });
+    await expect(page.locator("#app")).toHaveAttribute("aria-busy", "false", { timeout: remote ? 180000 : 90000 });
     await expect(page.locator("#controls-panel h1")).toHaveText("SPAN");
     await expect(page.locator("#data-status")).toHaveText("Preliminary estimates");
     await expect(page.locator("#run-summary")).toContainText(manifest.runId);
@@ -76,7 +86,8 @@ try {
       await expect(page.locator("#map-legend-items")).toContainText("Matched signal-controlled site");
       await page.screenshot({ path: path.join(output, "desktop-layers.png") });
       await page.locator("#layers-disclosure > summary").click();
-      const markerPoints = await page.evaluate(() => {
+      // The intersection layer arrives after the first view, so wait until it is drawn.
+      const findMarkers = () => page.evaluate(() => {
         const points = [];
         for (const canvas of document.querySelectorAll(".leaflet-points-pane canvas")) {
           const rect = canvas.getBoundingClientRect();
@@ -93,7 +104,8 @@ try {
         }
         return points.slice(0, 30);
       });
-      assert.ok(markerPoints.length, "a matched signal marker must be drawn");
+      await expect.poll(async () => (await findMarkers()).length, { timeout: 60000, message: "a matched signal marker must be drawn" }).toBeGreaterThan(0);
+      const markerPoints = await findMarkers();
       let matchedPopup = false;
       for (const point of markerPoints) {
         await page.mouse.click(point.x, point.y);
@@ -161,7 +173,7 @@ try {
     assert.equal(comparison.runId, manifest.runId);
     if (manifest.initialCandidates) {
       await page.getByRole("tab", { name: "Value for money" }).click();
-      await expect(page.locator("#pareto-chart svg")).toBeVisible({ timeout: 90000 });
+      await expect(page.locator("#pareto-chart svg")).toBeVisible({ timeout: remote ? 300000 : 90000 });
       assert.equal(requests.filter(url => url.endsWith("/data/candidates.compact.json")).length, 1);
       assert.equal(requests.filter(url => url.endsWith("/data/candidates.initial.json")).length, 1);
       assert.ok(!requests.some(url => url.endsWith("/data/candidates.geojson")));
@@ -178,5 +190,5 @@ try {
   process.stdout.write(JSON.stringify({ runId: manifest.runId, checks, screenshots: output }, null, 2) + "\n");
 } finally {
   await browser?.close();
-  await new Promise(resolve => server.close(resolve));
+  if (!remote) await new Promise(resolve => server.close(resolve));
 }

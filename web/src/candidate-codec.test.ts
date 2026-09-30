@@ -88,8 +88,11 @@ it("loads the verified compact payload without fetching canonical data or valida
   const { directory, manifest } = buildFixture();
   const built = JSON.parse(manifestWithCompactCandidates(directory, JSON.stringify(manifest))) as Manifest;
   const bytes = readFileSync(join(directory, "candidates.compact.json"), "utf8");
+  expect(built.compactCandidates!.bytes).toBe(Buffer.byteLength(bytes));
   const fetchMock = vi.fn().mockResolvedValue(new Response(bytes)); vi.stubGlobal("fetch", fetchMock);
-  const layer = await loadLayer(built, "candidates");
+  const shares: number[] = [];
+  const layer = await loadLayer(built, "candidates", share => shares.push(share));
+  expect(shares.at(-1)).toBe(1);
   const candidates = candidateFeatures({ candidates: layer });
   expect(candidates).toEqual([feature()]);
   expect(candidateFeatures({ candidates: layer })).toBe(candidates);
@@ -128,7 +131,7 @@ it("initial candidates retain every portfolio and full-universe frontier, not do
   expect(initial.map(f => f.properties.candidateId)).toEqual(["A", "C"]);
   for (const s of scenarioIds) for (const p of purposeIds) expect(paretoFront(initial, s, p)).toEqual(paretoFront([a, b, c], s, p));
   expect(initial).toEqual([a, c]);
-  expect(built.initialCandidates).toMatchObject({ featureCount: 2, sourceSha256: built.compactCandidates!.sourceSha256 });
+  expect(built.initialCandidates).toMatchObject({ featureCount: 2, sourceSha256: built.compactCandidates!.sourceSha256, bytes: Buffer.byteLength(bytes) });
   const fetchMock = vi.fn().mockResolvedValue(new Response(bytes)); vi.stubGlobal("fetch", fetchMock);
   expect(candidateFeatures({ candidates: await loadInitialCandidates(built) })).toEqual([a, c]);
   expect(fetchMock).toHaveBeenCalledTimes(1);

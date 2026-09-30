@@ -1,8 +1,8 @@
 import "./style.css";
 import { ConnectedJourneys, CONNECTED_QUERY_KEYS } from "./connected";
 
-import { GOALS, SCENARIOS, dataStatusName, money, snapshotDate, withNewName } from "./copy";
-import { candidateFeatures, loadDefaultLayers, loadLayer, loadManifest } from "./data";
+import { GOALS, SCENARIOS, amount, dataStatusName, money, percent, snapshotDate, withNewName } from "./copy";
+import { candidateFeatures, loadInitialCandidates, loadLayer, loadManifest } from "./data";
 import { create, requiredElement } from "./dom";
 import { loadDemandDiagnostics, type DemandDiagnostics } from "./diagnostics";
 import { DEFAULT_JOURNEY_ASSUMPTIONS, journeyAssumptionsFromQuery } from "./journeys";
@@ -44,6 +44,7 @@ let state: AppState;
 let ready = false;
 let allCandidatesLoaded = false;
 let fullCandidateLoad: Promise<void> | undefined;
+const layerLoads = new Map<string, Promise<void>>();
 let viewRequest = 0;
 let connected: ConnectedJourneys;
 let journeyAssumptions = { ...DEFAULT_JOURNEY_ASSUMPTIONS };
@@ -71,7 +72,10 @@ async function initialise(): Promise<void> {
     manifest = await loadManifest();
     const params = new URLSearchParams(window.location.search);
     const full = params.get("view") === "pareto" || (params.get("layers") ?? "").split(",").includes("candidates");
-    layers = await loadDefaultLayers(manifest, full);
+    const detail = requiredElement("loading-detail");
+    const progress = (share: number): void => { detail.textContent = `Loading the links… ${percent(share)}`; };
+    // Only the links hold up the first view. Context layers follow once it is drawn.
+    layers = { candidates: await (full ? loadLayer(manifest, "candidates", progress) : loadInitialCandidates(manifest, progress)) };
     allCandidatesLoaded = full || !manifest.initialCandidates;
     setCandidates();
     state = initialState(manifest);
@@ -83,6 +87,8 @@ async function initialise(): Promise<void> {
     mapController.setData(layers, candidates);
     mapController.setSketchNodes(desiredSketchNodeIds);
     renderAll();
+    // A shared link to one upgrade opens on that upgrade, not on the whole region.
+    if (state.selectedCandidateId && state.activeTab !== "connected") mapController.focusCandidate(state.selectedCandidateId, false);
     loadingPanel.hidden = true;
     app.setAttribute("aria-busy", "false");
     void loadDemandDiagnostics(manifest).then((diagnostics) => {
@@ -95,10 +101,13 @@ async function initialise(): Promise<void> {
     statusMessage.textContent = message;
     statusMessage.classList.add("error");
     loadingPanel.classList.add("error");
+    const retry = create("button", { type: "button", className: "secondary", text: "Try again" });
+    retry.addEventListener("click", () => window.location.reload());
     loadingPanel.replaceChildren(
       create("strong", { text: "The data could not be loaded" }),
       create("span", { text: message }),
-      create("span", { text: "Check that the data folder is present, then reload the page." }),
+      create("span", { text: "Check your connection, then try again." }),
+      retry,
     );
   }
 }
@@ -185,7 +194,12 @@ function bindEvents(): void {
   requiredElement("download-button").addEventListener("click", downloadBuildOrder);
   requiredElement("share-button").addEventListener("click", () => void copyViewLink());
   requiredElement("reset-button").addEventListener("click", () => void resetView());
-  requiredElement("print-button").addEventListener("click", () => window.print());
+  requiredElement("print-button").addEventListener("click", () => void printView());
+  window.addEventListener("beforeprint", preparePrint);
+  window.addEventListener("afterprint", () => {
+    document.body.classList.remove("printing");
+    mapController.endPrint();
+  });
   requiredElement("programme-zoom").addEventListener("click", () => mapController.fitBuildOrder());
   requiredElement("link-close").addEventListener("click", closeCard);
   document.addEventListener("keydown", (event) => {
@@ -245,25 +259,17 @@ async function handleLayerToggle(event: Event): Promise<void> {
   const layerId = input.dataset.layerId;
   if (input.checked) {
     state.visibleLayerIds.add(layerId);
-    if (layerId === "candidates") {
-      try { await ensureAllCandidates(); }
-      catch (error) {
-        state.visibleLayerIds.delete(layerId);
-        input.checked = false;
-        setStatus(error instanceof Error ? error.message : "The candidates could not be loaded.", true);
-      }
-    }
-    if (!layers[layerId as keyof LoadedLayers]) {
-      setStatus(layerId === "network" ? "Loading the street network. This is a large file." : "Loading…");
-      try {
-        layers[layerId as keyof LoadedLayers] = await loadLayer(manifest, layerId);
-        mapController.setData(layers, candidates);
+    try {
+      if (layerId === "candidates") await ensureAllCandidates();
+      else if (!layers[layerId as keyof LoadedLayers]) {
+        setStatus(layerId === "network" ? "Loading the street network. This is a large file." : "Loading…", false, true);
+        await loadContextLayer(layerId);
         setStatus("");
-      } catch (error) {
-        state.visibleLayerIds.delete(layerId);
-        input.checked = false;
-        setStatus(error instanceof Error ? error.message : "That layer could not be loaded.", true);
       }
+    } catch (error) {
+      state.visibleLayerIds.delete(layerId);
+      input.checked = false;
+      setStatus(error instanceof Error ? error.message : "That layer could not be loaded.", true);
     }
   } else {
     state.visibleLayerIds.delete(layerId);
@@ -274,8 +280,11 @@ async function handleLayerToggle(event: Event): Promise<void> {
 async function ensureAllCandidates(): Promise<void> {
   if (allCandidatesLoaded) return;
   if (!fullCandidateLoad) {
-    setStatus("Loading all candidate links…");
-    fullCandidateLoad = loadLayer(manifest, "candidates").then(collection => {
+    const count = manifest.compactCandidates?.featureCount;
+    const label = count ? `Loading all ${amount(count)} links…` : "Loading all candidate links…";
+    // The message stays until the file is in; it is the largest download in SPAN.
+    setStatus(label, false, true);
+    fullCandidateLoad = loadLayer(manifest, "candidates", (share) => setStatus(`${label} ${percent(share)}`, false, true)).then(collection => {
       layers.candidates = collection;
       allCandidatesLoaded = true;
       setCandidates();
@@ -286,11 +295,23 @@ async function ensureAllCandidates(): Promise<void> {
   await fullCandidateLoad;
 }
 
+/** One request for each context layer, shared by everything that asks for it. */
+function loadContextLayer(layerId: string): Promise<void> {
+  let pending = layerLoads.get(layerId);
+  if (!pending) {
+    pending = loadLayer(manifest, layerId).then((collection) => {
+      layers[layerId as keyof LoadedLayers] = collection;
+      mapController.setData(layers, candidates);
+    }).finally(() => layerLoads.delete(layerId));
+    layerLoads.set(layerId, pending);
+  }
+  return pending;
+}
+
 async function ensureNetwork(): Promise<void> {
   if (layers.network) return;
-  setStatus("Loading the street network. This is a large file.");
-  layers.network = await loadLayer(manifest, "network");
-  mapController.setData(layers, candidates);
+  setStatus("Loading the street network. This is a large file.", false, true);
+  await loadContextLayer("network");
   setStatus("");
 }
 
@@ -315,6 +336,15 @@ function context(steps = selectedSteps()): ViewContext {
       state.focusedGroupIds = new Set(ids);
       renderAll();
       window.requestAnimationFrame(() => mapController.focusCandidates(ids));
+    },
+    allLinksLoaded: allCandidatesLoaded,
+    loadAllLinks: async () => {
+      try { await ensureAllCandidates(); }
+      catch (error) {
+        setStatus(error instanceof Error ? error.message : "The links could not be loaded.", true);
+        return;
+      }
+      renderAll();
     },
     packageEvaluation: (ids) => {
       const key = packageKey(ids);
@@ -422,9 +452,12 @@ function renderTabs(): void {
     document.body.dataset.card = "closed";
     requiredElement("lede").textContent = "Which upgrades are needed to make a whole journey work?";
     const key = requiredElement("map-legend-items");
-    key.replaceChildren(...[["#ea580c", "Funded upgrade"], ["#b42318", "Unfunded gap (red dashes)"], ["#1f7a4d", "Existing cycleway / path"], ["#9aa5ab", "Other usable street"]].map(([colour, label], index) => {
+    key.replaceChildren(...[["#ea580c", "Funded upgrade"], ["#b42318", "Unfunded gap"], ["#1f7a4d", "Existing cycleway / path"], ["#9aa5ab", "Other usable street"]].map(([colour, label], index) => {
       const row = create("p", { className: "connected-key", "data-route-only": String(index > 0) });
-      const swatch = create("i"); swatch.style.backgroundColor = colour!;
+      const swatch = create("i");
+      // The gap is drawn dashed on the map, so its key is dashed too.
+      if (index === 1) swatch.style.background = `repeating-linear-gradient(90deg, ${colour!} 0 6px, transparent 6px 10px)`;
+      else swatch.style.backgroundColor = colour!;
       row.append(swatch, document.createTextNode(label!)); return row;
     }), create("p", { id: "connected-map-caption", className: "help", text: "A → B: whole journey. Dashed orange: rest of the upgrade." }));
   }
@@ -436,17 +469,24 @@ function renderTabs(): void {
 
 async function activateTab(tab: AppState["activeTab"], focus = false): Promise<void> {
   const request = ++viewRequest;
-  if (tab === "pareto") {
+  if (tab === "pareto" && !allCandidatesLoaded) {
+    const button = requiredElement("control-pareto");
+    button.setAttribute("aria-busy", "true");
     try { await ensureAllCandidates(); }
     catch (error) {
       setStatus(error instanceof Error ? error.message : "The comparison could not be loaded.", true);
       return;
+    } finally {
+      button.removeAttribute("aria-busy");
     }
   }
   if (request !== viewRequest) return;
+  const changed = state.activeTab !== tab;
   state.activeTab = tab;
   if (tab === "connected") state.sketching = false;
   renderAll();
+  // Each view starts at its top, not wherever the last one was scrolled to.
+  if (changed) requiredElement("controls-panel").scrollTop = 0;
   if (focus) document.querySelector<HTMLButtonElement>(`button.tab[data-tab="${tab}"]`)?.focus();
 }
 
@@ -500,6 +540,19 @@ function onSketch(result: SketchResult | null, error?: string): void {
   if (!ready) return;
   requiredElement<HTMLButtonElement>("download-button").disabled = selectedSteps().length === 0 && result === null;
   syncQueryState();
+}
+
+/** The printed page has its own map box; fit the map to it before the browser takes the page. */
+function preparePrint(): void {
+  document.body.classList.add("printing");
+  mapController.beginPrint();
+}
+
+async function printView(): Promise<void> {
+  preparePrint();
+  // Give the map a moment to draw at its printed size.
+  await new Promise((resolve) => window.setTimeout(resolve, 400));
+  window.print();
 }
 
 async function copyViewLink(): Promise<void> {
@@ -626,9 +679,15 @@ async function applyQueryState(render = true): Promise<void> {
   desiredSketchNodeIds = (params.get("sketch") ?? "").split(",").map((value) => value.trim()).filter(Boolean).slice(0, 20);
   const candidate = params.get("candidate");
   if (state.activeTab === "pareto" || state.visibleLayerIds.has("candidates") || (candidate && !byId.has(candidate))) {
-    await ensureAllCandidates();
+    try { await ensureAllCandidates(); }
+    catch (error) {
+      // The build order still works without the full set.
+      if (state.activeTab === "pareto") state.activeTab = "portfolio";
+      state.visibleLayerIds.delete("candidates");
+      setStatus(error instanceof Error ? error.message : "The links could not be loaded.", true);
+    }
   }
-  await ensureVisibleLayersLoaded();
+  loadVisibleLayers();
   if (desiredSketchNodeIds.length >= 2) {
     try {
       await ensureNetwork();
@@ -646,18 +705,19 @@ async function applyQueryState(render = true): Promise<void> {
   }
 }
 
-async function ensureVisibleLayersLoaded(): Promise<void> {
+/** Context layers are drawn as they arrive, so a slow one never holds up the build order. */
+function loadVisibleLayers(): void {
   for (const layer of manifest.layers) {
-    if (!state.visibleLayerIds.has(layer.id) || layers[layer.id as keyof LoadedLayers]) continue;
-    try {
-      layers[layer.id as keyof LoadedLayers] = await loadLayer(manifest, layer.id);
-    } catch (error) {
-      if (!layer.optional) throw error;
+    if (layer.id === "candidates" || !state.visibleLayerIds.has(layer.id) || layers[layer.id as keyof LoadedLayers]) continue;
+    loadContextLayer(layer.id).catch((error: unknown) => {
       state.visibleLayerIds.delete(layer.id);
       setStatus(error instanceof Error ? error.message : "A map layer could not be loaded.", true);
-    }
+      if (ready) {
+        syncControlsFromState();
+        renderAll();
+      }
+    });
   }
-  setCandidates();
 }
 
 function syncControlsFromState(): void {
@@ -707,7 +767,8 @@ function mapPadding(): MapPadding {
   const card = requiredElement("link-card");
   if (window.matchMedia("(max-width: 760px)").matches) {
     const sheet = card.hidden ? panel : card.getBoundingClientRect();
-    return { topLeft: [24, 72], bottomRight: [24, Math.max(24, Math.round(window.innerHeight - sheet.top) + 16)] };
+    // Clear of the map key above, and of the credits line that sits on top of the sheet.
+    return { topLeft: [24, 100], bottomRight: [24, Math.max(24, Math.round(window.innerHeight - sheet.top) + 40)] };
   }
   const cardWidth = card.hidden ? 0 : card.getBoundingClientRect().width;
   return { topLeft: [Math.round(panel.right) + 24, 72], bottomRight: [cardWidth ? Math.round(cardWidth) + 48 : 72, 48] };
@@ -742,11 +803,13 @@ function bindAboutDialog(): void {
   });
 }
 
-function setStatus(message: string, error = false): void {
+/** A message clears itself after four seconds unless it is an error or reports a wait. */
+function setStatus(message: string, error = false, persist = false): void {
   if (statusTimer !== undefined) window.clearTimeout(statusTimer);
+  statusTimer = undefined;
   statusMessage.textContent = message;
   statusMessage.classList.toggle("error", error);
-  if (message && !error) statusTimer = window.setTimeout(() => (statusMessage.textContent = ""), 4000);
+  if (message && !error && !persist) statusTimer = window.setTimeout(() => (statusMessage.textContent = ""), 4000);
 }
 
 function basemapId(value: string | null): BasemapId | null {

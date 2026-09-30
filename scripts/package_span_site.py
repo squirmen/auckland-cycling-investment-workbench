@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Package the built SPAN site, refusing stale or mismatched research data.
 
-This creates a local archive only. It never uploads files or changes a server.
+Large scripts, styles and data files also get a brotli copy (name.br) in the archive, which
+the site's .htaccess serves to browsers that accept it. This creates a local archive only. It
+never uploads files or changes a server.
 """
 
 from __future__ import annotations
@@ -10,14 +12,32 @@ import argparse
 import json
 import shutil
 import stat
+import sys
 import tempfile
 from datetime import UTC, datetime
+from hashlib import sha256
 from pathlib import Path
-from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
+from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile, ZipInfo
+
+import pyarrow as pa
 
 from cycling_investment_workbench.config import load_config
 from cycling_investment_workbench.exports import verify_web_export
 from cycling_investment_workbench.provenance import sha256_file, write_json_atomic
+
+# File types the site's .htaccess serves from a brotli copy, and the size below which a copy
+# is not worth a second file.
+BROTLI_SUFFIXES = {".css", ".js", ".json", ".geojson"}
+BROTLI_MINIMUM_BYTES = 1024
+
+
+def brotli_copy(data: bytes) -> bytes:
+    """Return brotli bytes for data, after checking that they decode to exactly data."""
+    packed = pa.Codec("brotli", compression_level=11).compress(data, asbytes=True)
+    decoded = pa.Codec("brotli").decompress(packed, decompressed_size=len(data), asbytes=True)
+    if decoded != data:
+        raise ValueError("a brotli copy does not decode to its source file")
+    return packed
 
 
 def main() -> None:
@@ -25,6 +45,11 @@ def main() -> None:
     parser.add_argument("--site", type=Path, default=Path("web/dist"))
     parser.add_argument(
         "--output", type=Path, default=Path("release-assets/span-effective-network-beta.zip")
+    )
+    parser.add_argument(
+        "--no-brotli",
+        action="store_true",
+        help="Leave the brotli copies out; the server then compresses every request itself.",
     )
     args = parser.parse_args()
     site = args.site.resolve()
@@ -37,6 +62,7 @@ def main() -> None:
         ".htaccess",
         "span-mark.svg",
         "bpl-mark.svg",
+        "span-preview.jpg",
         "CNAME",
         "data/manifest.json",
         "data/intersections.geojson",
@@ -66,6 +92,7 @@ def main() -> None:
             or compact.get("sourceSha256") != source["sha256"]
             or not compact_path.is_file()
             or compact.get("sha256") != sha256_file(compact_path)
+            or compact.get("bytes") not in (None, compact_path.stat().st_size)
         ):
             raise ValueError("compact candidate descriptor is stale or mismatched")
         packed = json.loads(compact_path.read_text())
@@ -84,6 +111,7 @@ def main() -> None:
             or initial.get("sourceSha256") != source["sha256"]
             or not initial_path.is_file()
             or initial.get("sha256") != sha256_file(initial_path)
+            or initial.get("bytes") not in (None, initial_path.stat().st_size)
         ):
             raise ValueError("initial candidate descriptor is stale or mismatched")
         packed = json.loads(initial_path.read_text())
@@ -134,6 +162,7 @@ def main() -> None:
         ".htaccess",
         "span-mark.svg",
         "bpl-mark.svg",
+        "span-preview.jpg",
         "CNAME",
         "assets",
         "data",
@@ -145,6 +174,21 @@ def main() -> None:
             raise ValueError(f"unexpected public release file: {relative}")
         if path.suffix in {".parquet", ".env", ".py", ".zip"}:
             raise ValueError(f"source/private artifact in site: {relative}")
+        # A copy left in the site could be older than the file it stands in for.
+        if path.suffix == ".br":
+            raise ValueError(f"brotli copy already in the built site: {relative}")
+    # The browser reads the compact candidates when they exist, never the canonical file,
+    # so that file gets no copy.
+    unread = {"data/candidates.geojson"} if compact is not None else set()
+    copies: dict[str, bytes] = {}
+    source_bytes = 0
+    for path in [] if args.no_brotli else files:
+        name = path.relative_to(site).as_posix()
+        size = path.stat().st_size
+        if path.suffix in BROTLI_SUFFIXES and size >= BROTLI_MINIMUM_BYTES and name not in unread:
+            print(f"brotli {name}", file=sys.stderr)
+            copies[f"{name}.br"] = brotli_copy(path.read_bytes())
+            source_bytes += size
     release = {
         "product": "SPAN — Spending Priorities for Active Networks",
         "status": "research_beta_not_deployed",
@@ -153,18 +197,34 @@ def main() -> None:
         "intendedHost": "span.tfwelch.com",
         "effectiveNetwork": evidence,
         "researchGraph": research["graph"],
-        "files": {p.relative_to(site).as_posix(): sha256_file(p) for p in files},
+        "brotliCopies": {
+            "files": len(copies),
+            "sourceBytes": source_bytes,
+            "bytes": sum(len(data) for data in copies.values()),
+        },
+        "files": {
+            **{p.relative_to(site).as_posix(): sha256_file(p) for p in files},
+            **{name: sha256(data).hexdigest() for name, data in copies.items()},
+        },
     }
     output.parent.mkdir(parents=True, exist_ok=True)
+
+    def entry(name: str, compress_type: int) -> ZipInfo:
+        info = ZipInfo(name)
+        info.create_system = 3
+        info.external_attr = (stat.S_IFREG | 0o644) << 16
+        info.compress_type = compress_type
+        return info
+
     with tempfile.NamedTemporaryFile(dir=output.parent, suffix=".zip") as temp:
         with ZipFile(temp.name, "w", compression=ZIP_DEFLATED, compresslevel=6) as archive:
             for path in files:
                 archive.write(path, path.relative_to(site).as_posix())
-            info = ZipInfo("span-release.json")
-            info.create_system = 3
-            info.external_attr = (stat.S_IFREG | 0o644) << 16
-            info.compress_type = ZIP_DEFLATED
-            archive.writestr(info, json.dumps(release, indent=2) + "\n")
+            for name, data in copies.items():
+                archive.writestr(entry(name, ZIP_STORED), data)
+            archive.writestr(
+                entry("span-release.json", ZIP_DEFLATED), json.dumps(release, indent=2) + "\n"
+            )
         with ZipFile(temp.name) as archive:
             if archive.testzip() is not None:
                 raise ValueError("archive integrity test failed")

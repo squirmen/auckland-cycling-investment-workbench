@@ -45,6 +45,9 @@ export interface ViewContext {
   zoom: (candidateId: string) => void;
   focusGroup: (candidateIds: string[]) => void;
   packageEvaluation: (candidateIds: string[]) => RouteUse | undefined;
+  /** False while only the build-order and best-value links are in memory. */
+  allLinksLoaded: boolean;
+  loadAllLinks: () => Promise<void>;
 }
 
 const ACCESS_NOUN: Partial<Record<PurposeId, string>> = {
@@ -54,6 +57,9 @@ const ACCESS_NOUN: Partial<Record<PurposeId, string>> = {
 };
 const PARETO_POINT_LIMIT = 1_500;
 const FRONTIER_ROWS = 40;
+const NEIGHBOUR_ROWS = 8;
+/** The link whose list of touching candidates is open, kept across redraws of the card. */
+let neighboursOpenFor: string | null = null;
 
 /** The figure a goal ranks on: riders, access gain, or for Benefit–cost the ratio. */
 export function goalValue(metric: CandidateMetric, purpose: PurposeId): number {
@@ -574,15 +580,26 @@ function connectionDetails(candidate: CandidateFeature, ctx: ViewContext): HTMLE
     parts.push(packageCard);
   }
   parts.push(connectionNotes);
-  const neighbours = context.touchingCandidateIds.flatMap((id) => ctx.byId.get(id) ?? []).slice(0, 8);
-  if (neighbours.length) {
-    const details = create("details", { className: "method-note" });
-    details.append(create("summary", { text: `Other candidates touching this corridor (${String(context.touchingCandidateIds.length)})` }));
-    for (const neighbour of neighbours) {
+  const touching = context.touchingCandidateIds;
+  if (touching.length) {
+    const id = candidate.properties.candidateId;
+    const neighbours = touching.flatMap((other) => ctx.byId.get(other) ?? []);
+    // Most neighbours are outside the links SPAN opens with; fetch the rest when asked.
+    const waiting = neighbours.length < Math.min(touching.length, NEIGHBOUR_ROWS) && !ctx.allLinksLoaded;
+    const details = create("details", { className: "method-note", id: "candidate-neighbours" });
+    details.open = neighboursOpenFor === id;
+    details.append(create("summary", { text: `Other candidates touching this corridor (${String(touching.length)})` }));
+    for (const neighbour of waiting ? [] : neighbours.slice(0, NEIGHBOUR_ROWS)) {
       const button = create("button", { type: "button", className: "compact-row", text: linkName(neighbour.properties.name) });
       button.addEventListener("click", () => ctx.select(neighbour.properties.candidateId));
       details.append(button);
     }
+    if (waiting) details.append(create("p", { className: "help", text: "Loading the other links…" }));
+    if (waiting && details.open) void ctx.loadAllLinks();
+    details.addEventListener("toggle", () => {
+      neighboursOpenFor = details.open ? id : neighboursOpenFor === id ? null : neighboursOpenFor;
+      if (details.open && waiting) void ctx.loadAllLinks();
+    });
     parts.push(details);
   }
   return parts;
@@ -647,7 +664,7 @@ export function renderLayerControls(root: HTMLElement, manifest: Manifest, visib
   }));
   if (manifest.effectiveNetwork) {
     const context = manifest.effectiveNetwork;
-    requiredElement("intersection-source-note").textContent = `${amount(context.matchedSites)} of ${amount(context.inventorySites)} AT sites matched to the street network; ${amount(context.reviewSites)} need review. Connected journeys uses assumed waits, not measured signal timings.`;
+    requiredElement("intersection-source-note").textContent = `Intersections: ${amount(context.matchedSites)} of ${amount(context.inventorySites)} Auckland Transport sites are matched to the street network; ${amount(context.reviewSites)} need review. Connected journeys uses assumed waits at the matched sites, not measured signal timings.`;
   }
 }
 

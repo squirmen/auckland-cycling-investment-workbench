@@ -12,6 +12,17 @@
       content="SPAN ranks possible new cycling links in Auckland and shows which to build first for a chosen goal and budget."
     />
     <meta name="theme-color" content="#0c0c48" />
+    <link rel="canonical" href="https://span.tfwelch.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Better Places Lab" />
+    <meta property="og:title" content="SPAN · Spending Priorities for Active Networks" />
+    <meta property="og:description" content="Ranks possible new cycling links in Auckland and shows which to build first for a chosen goal and budget." />
+    <meta property="og:url" content="https://span.tfwelch.com/" />
+    <meta property="og:image" content="https://span.tfwelch.com/span-preview.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SPAN showing a numbered build order of cycling upgrades on a map of Auckland." />
+    <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="./span-mark.svg" type="image/svg+xml" />
     <title>SPAN · Spending Priorities for Active Networks</title>
   </head>
@@ -52,7 +63,7 @@
         </header>
 
         <div id="panel-body" class="panel-body">
-          <p id="lede" class="lede">Ranks possible new cycling links in Auckland and shows which to build first for a goal and a budget.</p>
+          <p id="lede" class="lede">Compare cycling upgrades: what to build, what they connect and what they could change.</p>
           <div class="tabs" role="tablist" aria-label="Views">
             <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Build order</button>
             <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Value for money</button>
@@ -218,7 +229,7 @@
       <div id="loading-panel" class="loading-panel" role="status">
         <span class="loading-mark" aria-hidden="true"></span>
         <strong>Loading Auckland</strong>
-        <span>Checking the data files…</span>
+        <span id="loading-detail">Checking the data files…</span>
       </div>
       <div id="status-message" class="status-message" role="status"></div>
       <p id="view-announcement" class="visually-hidden" aria-live="polite"></p>
@@ -241,14 +252,14 @@
         </section>
         <section>
           <h3>Reading the map</h3>
-          <p id="intersection-source-note"></p>
-          <p>Cycle counters: July 2026. Cycle crashes: 2016–2025. These layers provide context; they do not establish the effect of a proposed upgrade.</p>
           <ul>
             <li>Green numbered lines are the build order: the links that fit in the budget, numbered in the order to build them.</li>
             <li>Orange is the link you have selected. Click a line or a list row to see its details.</li>
             <li>Blue squares show where the trips behind the chosen goal start. Darker means more.</li>
             <li>Layers adds existing low-stress streets and paths where available, other candidates, Auckland Transport's plans, cycle counters and crashes. Selecting a link shows its connection points; network groups join proposals through shared junctions or existing low-stress areas.</li>
           </ul>
+          <p>Cycle counters: July 2026. Cycle crashes: 2016–2025. These layers provide context; they do not establish the effect of a proposed upgrade.</p>
+          <p id="intersection-source-note"></p>
         </section>
         <section>
           <h3>Goals</h3>

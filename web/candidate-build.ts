@@ -41,7 +41,7 @@ export function manifestWithCompactCandidates(directory: string, manifestJson: s
   manifest.compactCandidates = {
     format: COMPACT_CANDIDATE_FORMAT, url: "./data/candidates.compact.json",
     sha256: createHash("sha256").update(compact).digest("hex"), sourceSha256: source.sha256,
-    featureCount: collection.features.length,
+    featureCount: collection.features.length, bytes: Buffer.byteLength(compact),
   };
   if (manifest.portfolios) {
     const candidates = decodeCompactCandidates(packed);
@@ -51,7 +51,7 @@ export function manifestWithCompactCandidates(directory: string, manifestJson: s
     manifest.initialCandidates = {
       format: COMPACT_CANDIDATE_FORMAT, scope: "portfolios_and_frontiers_v1",
       url: "./data/candidates.initial.json", sha256: createHash("sha256").update(initial).digest("hex"),
-      sourceSha256: source.sha256, featureCount: ids.size,
+      sourceSha256: source.sha256, featureCount: ids.size, bytes: Buffer.byteLength(initial),
     };
   }
   return JSON.stringify(manifest, null, 2) + "\n";
