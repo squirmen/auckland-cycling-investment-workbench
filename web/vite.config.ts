@@ -1,4 +1,4 @@
-import { chmodSync, copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { chmodSync, copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vite";
@@ -12,6 +12,9 @@ const documents = {
   "methodology.md": methodologySource,
   "effective-network.md": fileURLToPath(new URL("../documentation/research/span-effective-network.md", import.meta.url)),
 };
+// STAND's `make publish` writes the site's /parking/ folder here: index.html, and STAND itself in uoa/.
+const parkingSite = fileURLToPath(new URL("../parking/build/site", import.meta.url));
+const standPage = fileURLToPath(new URL("../parking/build/site/uoa/index.html", import.meta.url));
 
 export default defineConfig({
   base: "./",
@@ -64,6 +67,21 @@ export default defineConfig({
         if (existsSync("dist/data")) {
           for (const name of readdirSync("dist/data")) chmodSync(`dist/data/${name}`, 0o644);
         }
+      },
+    },
+    {
+      // STAND, the University of Auckland bike parking map, is served at /parking/uoa/.
+      // SPAN builds without it when STAND has not been built.
+      name: "bundle-parking",
+      apply: "build",
+      closeBundle() {
+        if (!existsSync(standPage)) {
+          this.info("no STAND build in ../parking/build/site, so dist has no parking folder");
+          return;
+        }
+        // cpSync copies dotfiles too, so uoa/.htaccess travels with the map.
+        cpSync(parkingSite, "dist/parking", { recursive: true });
+        this.info("copied ../parking/build/site to dist/parking");
       },
     },
   ],

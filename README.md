@@ -76,6 +76,23 @@ The latest [search-limit and cost-sensitivity tests](documentation/audit/span-se
 compare complete-route methods on paired samples without replacing public results.
 Collaborator source archives, source runs and deployment bundles are not committed.
 
+## Bike parking
+
+STAND (Secure Two-wheeler Access Network Design) is the University of Auckland
+Locky Dock tool. It suggests sites for secure public bike docks on the City,
+Grafton and Newmarket campuses, using SPAN's traffic-stress network. It keeps its
+own name and mark. The code is in [`parking/uoa`](parking/uoa/README.md) and the
+map is at [span.tfwelch.com/parking/uoa/](https://span.tfwelch.com/parking/uoa/).
+
+A general bike parking tool for SPAN is planned. It will be STAND's parent at
+`/parking/`. Until then, `/parking/` sends visitors to STAND.
+
+In `parking/uoa`, `make publish` writes the site's `/parking/` folder to
+`parking/build/site`. SPAN's web build copies that folder into `web/dist/parking`
+when it exists, and builds SPAN alone when it does not.
+`scripts/package_span_site.py` checks the folder before it packages the site.
+See [`parking/README.md`](parking/README.md).
+
 ## Model foundations
 
 The analysis starts with census journey-to-work data and a cycling network built

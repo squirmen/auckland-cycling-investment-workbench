@@ -98,6 +98,24 @@ release decision, not a general legal opinion.
   enterprise licence for commercial use or an approved grant for qualifying
   non-commercial use; neither is recorded for this project.
 
+## STAND bike parking data
+
+STAND, in `parking/uoa`, lists its sources and licences in
+[`parking/uoa/README.md`](parking/uoa/README.md): Overture Maps data under ODbL
+1.0, crediting OpenStreetMap contributors and Esri Community Maps contributors,
+with Overture places under CDLA-Permissive 2.0; LINZ aerial imagery, LiDAR and
+(through Overture) addresses under CC BY 4.0; and Auckland Transport cycle counts and facilities under CC BY
+4.0. SPAN's rights register does not cover these files. When a SPAN site package
+includes `parking/`, its release record lists STAND under `components`.
+
+- STAND's hosted basemaps are its own Plain map, drawn from Overture data, and
+  its own LINZ aerial mosaic, both served with the map. An optional Streets
+  view uses OpenStreetMap's standard tiles from tile.openstreetmap.org under
+  OpenStreetMap's tile usage policy: it shows “© OpenStreetMap contributors”,
+  requests tiles only while Streets is shown, and does not prefetch or bundle
+  them, so they are not part of the release data. STAND uses no CARTO or Esri
+  tiles, in line with the CARTO decision above.
+
 ## Release gate
 
 - [ ] Every bundled file appears in the build manifest with licence evidence.
