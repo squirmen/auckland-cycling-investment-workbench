@@ -25,10 +25,12 @@ from cycling_investment_workbench.config import load_config
 from cycling_investment_workbench.exports import verify_web_export
 from cycling_investment_workbench.provenance import sha256_file, write_json_atomic
 
-# File types the site's .htaccess serves from a brotli copy, and the size below which a copy
-# is not worth a second file.
+# File types the site's .htaccess serves from a brotli copy, the size below which a copy is
+# not worth a second file, and the only folders that get copies. Another tool sharing the site
+# sets its own headers by file name, and a copy served in a file's place would miss them.
 BROTLI_SUFFIXES = {".css", ".js", ".json", ".geojson"}
 BROTLI_MINIMUM_BYTES = 1024
+BROTLI_FOLDERS = {"assets", "data"}
 
 
 def brotli_copy(data: bytes) -> bytes:
@@ -185,7 +187,12 @@ def main() -> None:
     for path in [] if args.no_brotli else files:
         name = path.relative_to(site).as_posix()
         size = path.stat().st_size
-        if path.suffix in BROTLI_SUFFIXES and size >= BROTLI_MINIMUM_BYTES and name not in unread:
+        if (
+            path.suffix in BROTLI_SUFFIXES
+            and size >= BROTLI_MINIMUM_BYTES
+            and path.relative_to(site).parts[0] in BROTLI_FOLDERS
+            and name not in unread
+        ):
             print(f"brotli {name}", file=sys.stderr)
             copies[f"{name}.br"] = brotli_copy(path.read_bytes())
             source_bytes += size

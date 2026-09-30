@@ -221,6 +221,8 @@ def test_large_text_files_get_checked_brotli_copies(tmp_path, monkeypatch, compa
     (site / "assets/pin.png").write_bytes(bytes(range(256)) * 16)
     (site / "data/candidates.geojson").write_text(large_text("canonical"))
     (site / "data/small.json").write_text("{}")
+    # Only SPAN's scripts, styles and data get copies, not other folders in the site.
+    (site / "documentation/notes.json").write_text(large_text("notes"))
     manifest_path = site / "data/manifest.json"
     manifest = json.loads(manifest_path.read_text())
     manifest["padding"] = large_text("manifest")
