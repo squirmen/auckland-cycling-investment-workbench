@@ -170,7 +170,7 @@ class InvestmentGraph:
         if bound_cache_size < 1:
             raise ValueError("bound cache size must be positive")
         self.bound_cache_size = bound_cache_size
-        self._bounds: OrderedDict[tuple[str, str], dict[str, float]] = OrderedDict()
+        self._bounds: OrderedDict[tuple[str, str, int | None], dict[str, float]] = OrderedDict()
         self._cost_is_time = all(a.cost_s == a.time_s for a in self.arcs.values())
         self._costs = {0: 0.0}
 
@@ -188,17 +188,24 @@ class InvestmentGraph:
             self._costs[mask] = sum(self.projects[key] for key in self.ids(mask))
         return self._costs[mask]
 
-    def lower_bound(self, destination: str, term: str) -> dict[str, float]:
-        """Optimistic reverse Dijkstra: all legal arcs, ignoring stress/turn delays.
+    def lower_bound(
+        self, destination: str, term: str, maximum_stress: int | None = None
+    ) -> dict[str, float]:
+        """Optimistic reverse Dijkstra, optionally excluding untreatable arcs.
 
-        Ignoring turn bans only weakens this bound. It cannot falsely declare
-        a prohibited movement feasible; those are checked during forward search.
+        With a stress threshold, assume every available project can be funded.
+        Every feasible route is contained in this relaxed graph. Ignoring turn
+        bans, crossing stress, delays and capital costs only weakens the bound;
+        those remain checked by the forward search. The unfiltered graph still
+        defines the legal-shortest-distance reference for the detour standard.
         """
         if term not in {"distance_m", "time_s", "cost_s"}:
             raise ValueError("unknown lower-bound resource")
+        if maximum_stress is not None and maximum_stress not in range(1, 5):
+            raise ValueError("bound stress threshold must be in 1..4")
         if term == "cost_s" and self._cost_is_time:
             term = "time_s"
-        key = (destination, term)
+        key = (destination, term, maximum_stress)
         if key not in self._bounds:
             values = {destination: 0.0}
             queue = [(0.0, destination)]
@@ -207,6 +214,12 @@ class InvestmentGraph:
                 if cost != values[node]:
                     continue
                 for arc in self.incoming[node]:
+                    if (
+                        maximum_stress is not None
+                        and arc.stress > maximum_stress
+                        and (arc.project_id is None or arc.treated_stress > maximum_stress)
+                    ):
+                        continue
                     value = cost + getattr(arc, term)
                     if value < values.get(arc.u, inf):
                         values[arc.u] = value
@@ -228,6 +241,7 @@ class InvestmentGraph:
         allow_new_projects: bool = True,
         max_labels: int = 50_000,
         use_bounds: bool = True,
+        stress_aware_bounds: bool = False,
         first_only: bool = False,
     ) -> SearchResult:
         """Return nondominated feasible routes, with an explicit truncation flag.
@@ -247,9 +261,12 @@ class InvestmentGraph:
         initial = self.mask(selected)
         if self.cost(initial) > budget + EPS:
             raise ValueError("selected projects exceed budget")
-        distance_bound = self.lower_bound(destination, "distance_m")
-        time_bound = self.lower_bound(destination, "time_s") if use_bounds else {}
-        cost_bound = self.lower_bound(destination, "cost_s") if use_bounds else {}
+        threshold = standard.maximum_stress if stress_aware_bounds else None
+        distance_bound = (
+            self.lower_bound(destination, "distance_m", threshold) if use_bounds else {}
+        )
+        time_bound = self.lower_bound(destination, "time_s", threshold) if use_bounds else {}
+        cost_bound = self.lower_bound(destination, "cost_s", threshold) if use_bounds else {}
         shortest = self.shortest_legal_distance(origin, destination)
         labels = [_Label(origin, None, initial, 0.0, 0.0, 0.0, None, None)]
         frontiers: defaultdict[tuple[str, str | None], list[int]] = defaultdict(list)
@@ -269,6 +286,15 @@ class InvestmentGraph:
         if shortest is None:
             return SearchResult((), True, "disconnected", 1, 0, 0, 0, perf_counter() - start, None)
         maximum_distance = shortest * standard.maximum_detour
+        if (
+            use_bounds
+            and stress_aware_bounds
+            and (
+                distance_bound.get(origin, inf) > maximum_distance + EPS
+                or time_bound.get(origin, inf) > standard.maximum_time_s + EPS
+            )
+        ):
+            return SearchResult((), True, "exhausted", 1, 0, 1, 0, perf_counter() - start, shortest)
         while queue:
             _, _, index = heappop(queue)
             label = labels[index]

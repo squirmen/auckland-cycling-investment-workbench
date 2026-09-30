@@ -73,6 +73,34 @@ def main() -> None:
             packed.get("features", [])
         ) != compact.get("featureCount"):
             raise ValueError("compact candidate format or count mismatch")
+    initial = manifest.get("initialCandidates")
+    if initial is not None:
+        initial_path = site / "data/candidates.initial.json"
+        source = next(layer for layer in manifest["layers"] if layer["id"] == "candidates")
+        if (
+            initial.get("scope") != "portfolios_and_frontiers_v1"
+            or initial.get("format") != "span-candidates-v1"
+            or initial.get("url") != "./data/candidates.initial.json"
+            or initial.get("sourceSha256") != source["sha256"]
+            or not initial_path.is_file()
+            or initial.get("sha256") != sha256_file(initial_path)
+        ):
+            raise ValueError("initial candidate descriptor is stale or mismatched")
+        packed = json.loads(initial_path.read_text())
+        ids = {f["properties"]["candidateId"] for f in packed.get("features", [])}
+        required_ids = {
+            step["candidateId"]
+            for purposes in manifest["portfolios"].values()
+            for steps in purposes.values()
+            for step in steps
+        }
+        if (
+            packed.get("format") != initial["format"]
+            or len(packed.get("features", [])) != initial.get("featureCount")
+            or len(ids) != initial.get("featureCount")
+            or not required_ids <= ids
+        ):
+            raise ValueError("initial candidate count or portfolio coverage mismatch")
     research = json.loads((site / "data/access-experiment.json").read_text())
     comparison = json.loads((site / "data/delay-comparison.json").read_text())
     evidence = manifest["effectiveNetwork"]

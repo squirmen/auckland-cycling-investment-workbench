@@ -207,6 +207,7 @@ def compare_budgeted_connectors(
     max_labels: int,
     label_limits: Sequence[int] | None = None,
     fixed_connector_costs: Sequence[float] = (),
+    stress_aware_bounds: bool = False,
     progress: Callable[[str], None] | None = None,
 ) -> dict:
     """Search nested route unions with paired inputs and explicit truncation.
@@ -238,7 +239,13 @@ def compare_budgeted_connectors(
         retained = sum(len(rows) for rows in routes.values())
         searches = []
         for name, pair in endpoints.items():
-            search = graph.search(*pair, budget=budget, standard=standard, max_labels=limit)
+            search = graph.search(
+                *pair,
+                budget=budget,
+                standard=standard,
+                max_labels=limit,
+                stress_aware_bounds=stress_aware_bounds,
+            )
             searches.append(search)
             combined = {}
             for route in (*routes[name], *search.routes):
@@ -287,6 +294,7 @@ def compare_budgeted_connectors(
         **final,
         "status": "budgeted_short_connector_experiment_not_buildability_validation",
         "sameJourneysAndWeights": True,
+        "boundStrategy": "treatable_streets" if stress_aware_bounds else "all_legal_streets",
         "originalRouteColumnsRetained": sum(len(r) for r in original_routes.values()),
         "searchLimitChecks": checks,
         "fixedConnectorCostSensitivity": sensitivity,

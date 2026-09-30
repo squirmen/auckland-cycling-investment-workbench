@@ -6,6 +6,9 @@ planning material, equations, references, and visual record.
 Current SPAN additions:
 
 - [Priorities and acceptance criteria](roadmap.md)
+- [Staged candidate loading and tighter search bounds](audit/span-staged-loading-and-stress-bounds-2026-09-26.md)
+- [Crossing costs: evidence needed](research/crossing-cost-evidence.md)
+- [Search limits and short-link cost sensitivity](audit/span-search-and-cost-sensitivity-2026-09-25.md)
 - [Budgeted short connectors and smaller candidate loading](audit/span-budgeted-connectors-and-loading-2026-09-25.md)
 - [Short-link exclusions and connector diagnostics](audit/span-candidate-coverage-2026-09-25.md)
 - [Fresh routing, four-area checks and reliability fixes](audit/span-follow-up-progress-2026-09-24.md)

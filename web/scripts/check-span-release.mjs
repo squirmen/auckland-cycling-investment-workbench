@@ -55,7 +55,11 @@ try {
     await expect(page.locator("#data-status")).toHaveText("Preliminary estimates");
     await expect(page.locator("#run-summary")).toContainText(manifest.runId);
     await expect(page.locator("#status-message")).not.toHaveClass(/error/);
-    if (manifest.compactCandidates) {
+    if (manifest.initialCandidates) {
+      assert.ok(requests.some(url => url.endsWith("/data/candidates.initial.json")), "initial candidates must be used");
+      assert.ok(!requests.some(url => url.endsWith("/data/candidates.compact.json")), "full candidates must wait for a comparison task");
+      assert.ok(!requests.some(url => url.endsWith("/data/candidates.geojson")), "canonical candidates must not be downloaded");
+    } else if (manifest.compactCandidates) {
       assert.ok(requests.some(url => url.endsWith("/data/candidates.compact.json")), "compact candidates must be used");
       assert.ok(!requests.some(url => url.endsWith("/data/candidates.geojson")), "canonical candidate download must not be duplicated");
     }
@@ -155,10 +159,19 @@ try {
     assert.ok(comparisonResponse.ok());
     const comparison = await comparisonResponse.json();
     assert.equal(comparison.runId, manifest.runId);
+    if (manifest.initialCandidates) {
+      await page.getByRole("tab", { name: "Value for money" }).click();
+      await expect(page.locator("#pareto-chart svg")).toBeVisible({ timeout: 90000 });
+      assert.equal(requests.filter(url => url.endsWith("/data/candidates.compact.json")).length, 1);
+      assert.equal(requests.filter(url => url.endsWith("/data/candidates.initial.json")).length, 1);
+      assert.ok(!requests.some(url => url.endsWith("/data/candidates.geojson")));
+      await page.screenshot({ path: path.join(output, `${name}-full-comparison.png`) });
+    }
     assert.deepEqual(errors, [], `${name}: runtime or HTTP errors`);
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), `${name}: horizontal overflow`);
     checks.push({ viewport: name, branding: true, intersections: true, researchDelay: true,
-      export: true, relativeAssets: true, compactCandidates: Boolean(manifest.compactCandidates), errors });
+      export: true, relativeAssets: true, compactCandidates: Boolean(manifest.compactCandidates),
+      stagedCandidates: Boolean(manifest.initialCandidates), errors });
     await context.close();
   }
   await writeFile(path.join(output, "checks.json"), JSON.stringify({ runId: manifest.runId, checks }, null, 2));

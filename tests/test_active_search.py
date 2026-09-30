@@ -100,6 +100,98 @@ def test_lower_bounds_prune_dead_ends_without_changing_the_frontier():
     assert not limited.complete and limited.stop_reason == "label_limit"
 
 
+def test_stress_bounds_prune_untreatable_shortcuts_without_relaxing_the_detour_reference():
+    arcs = [arc("direct", "s", "t", 10)]
+    for i in range(30):
+        arcs += [arc(f"out{i}", "s", str(i), 1), arc(f"gap{i}", str(i), "t", 10, stress=4)]
+    graph = InvestmentGraph(arcs, {})
+    plain = graph.search("s", "t", budget=0)
+    bounded = graph.search("s", "t", budget=0, stress_aware_bounds=True)
+    assert plain.routes == bounded.routes
+    assert bounded.labels_expanded < plain.labels_expanded
+    assert bounded.shortest_legal_distance_m == plain.shortest_legal_distance_m == 10
+    # The safe route is too indirect compared with the legal but stressful shortcut.
+    graph = InvestmentGraph([arc("unsafe", "s", "t", 1, stress=4), arc("safe", "s", "t", 10)], {})
+    bounded = graph.search("s", "t", budget=0, stress_aware_bounds=True)
+    assert bounded.complete and not bounded.routes
+    assert bounded.shortest_legal_distance_m == 1
+
+
+def test_stress_bounds_cache_thresholds_and_preserve_treatment_and_crossing_requirements():
+    graph = InvestmentGraph(
+        [arc("sa", "s", "a", stress=4, project="P"), arc("at", "a", "t", stress=3)],
+        {"P": 2, "crossing": 1},
+        {("sa", "at"): Turn(4, 5, "crossing")},
+        bound_cache_size=2,
+    )
+    assert "s" not in graph.lower_bound("t", "distance_m", 2)
+    assert graph.lower_bound("t", "distance_m", 3)["s"] == 2
+    assert graph.lower_bound("t", "distance_m")["s"] == 2
+    assert len(graph._bounds) == 2
+    with pytest.raises(ValueError, match="stress threshold"):
+        graph.lower_bound("t", "distance_m", 0)
+    standard = PlanningStandard(3, 1.5, 20)
+    for selected in (frozenset(), frozenset({"P"}), frozenset({"P", "crossing"})):
+        plain = graph.search(
+            "s", "t", budget=3, standard=standard, selected=selected, allow_new_projects=False
+        )
+        bounded = graph.search(
+            "s",
+            "t",
+            budget=3,
+            standard=standard,
+            selected=selected,
+            allow_new_projects=False,
+            stress_aware_bounds=True,
+        )
+        assert bounded.routes == plain.routes
+    assert bounded.routes[0].time_s == 7
+
+
+@pytest.mark.parametrize("seed", range(20))
+def test_stress_bounds_preserve_complete_frontiers_with_turns_and_preference_costs(seed):
+    rng = Random(seed)
+    arcs = [
+        Arc(
+            f"{i}-{j}",
+            f"{i}-{j}",
+            str(i),
+            str(j),
+            rng.randint(1, 5),
+            rng.randint(1, 7),
+            rng.choice([1, 3, 4]),
+            rng.choice([None, "A", "B"]),
+            preference_cost_s=rng.randint(1, 9),
+        )
+        for i, j in combinations(range(7), 2)
+        if j == i + 1 or rng.random() < 0.4
+    ]
+    turns = {
+        (a.id, b.id): Turn(
+            stress=rng.choice([1, 4]),
+            delay_s=rng.randint(0, 3),
+            project_id=rng.choice([None, "A"]),
+            prohibited=rng.random() < 0.1,
+        )
+        for a in arcs
+        for b in arcs
+        if a.v == b.u
+    }
+    graph = InvestmentGraph(arcs, {"A": 2, "B": 3}, turns)
+    standard = PlanningStandard(2, 2, 25)
+    plain = graph.search("0", "6", budget=5, standard=standard, use_bounds=False)
+    bounded = graph.search("0", "6", budget=5, standard=standard, stress_aware_bounds=True)
+    assert bounded.complete and plain.complete
+    assert bounded.shortest_legal_distance_m == plain.shortest_legal_distance_m
+
+    def resources(result):
+        return {
+            (r.project_ids, r.distance_m, r.time_s, r.generalized_cost_s) for r in result.routes
+        }
+
+    assert resources(bounded) == resources(plain)
+
+
 @pytest.mark.parametrize("seed", range(12))
 def test_matches_exhaustive_simple_path_feasibility_for_every_small_portfolio(seed):
     rng = Random(seed)

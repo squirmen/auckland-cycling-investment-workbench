@@ -154,3 +154,47 @@ def test_compact_candidate_package_integrity(tmp_path, monkeypatch, fault):
     else:
         package.main()
         assert output.exists()
+
+
+@pytest.mark.parametrize(
+    "fault", [None, "source", "bytes", "count", "url", "scope", "coverage", "duplicate"]
+)
+def test_initial_candidate_package_integrity(tmp_path, monkeypatch, fault):
+    site, output = fixture(tmp_path, monkeypatch)
+    path = site / "data/candidates.initial.json"
+    features = [{"properties": {"candidateId": "A"}}]
+    if fault == "duplicate":
+        features *= 2
+    path.write_text(
+        json.dumps({"format": "span-candidates-v1", "metrics": [], "features": features})
+    )
+    manifest_path = site / "data/manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    manifest["layers"] = [{"id": "candidates", "sha256": "source"}]
+    manifest["portfolios"] = {
+        "baseline": {"network": [{"candidateId": "missing" if fault == "coverage" else "A"}]}
+    }
+    manifest["initialCandidates"] = {
+        "format": "span-candidates-v1",
+        "scope": "portfolios_and_frontiers_v1",
+        "url": "./data/candidates.initial.json",
+        "sourceSha256": "source",
+        "sha256": sha256_file(path),
+        "featureCount": len(features),
+    }
+    if fault == "source":
+        manifest["initialCandidates"]["sourceSha256"] = "wrong"
+    elif fault == "bytes":
+        path.write_text("changed")
+    elif fault == "count":
+        manifest["initialCandidates"]["featureCount"] = 10
+    elif fault in {"url", "scope"}:
+        manifest["initialCandidates"][fault] = "wrong"
+    manifest_path.write_text(json.dumps(manifest))
+    if fault:
+        with pytest.raises(ValueError, match="initial candidate"):
+            package.main()
+        assert not output.exists()
+    else:
+        package.main()
+        assert output.exists()

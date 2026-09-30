@@ -42,6 +42,9 @@ let budgetTimer: number | undefined;
 const paretoCache = new Map<string, Set<string>>();
 let state: AppState;
 let ready = false;
+let allCandidatesLoaded = false;
+let fullCandidateLoad: Promise<void> | undefined;
+let viewRequest = 0;
 let connected: ConnectedJourneys;
 let journeyAssumptions = { ...DEFAULT_JOURNEY_ASSUMPTIONS };
 let demandDiagnostics: DemandDiagnostics | undefined;
@@ -66,7 +69,10 @@ void initialise();
 async function initialise(): Promise<void> {
   try {
     manifest = await loadManifest();
-    layers = await loadDefaultLayers(manifest);
+    const params = new URLSearchParams(window.location.search);
+    const full = params.get("view") === "pareto" || (params.get("layers") ?? "").split(",").includes("candidates");
+    layers = await loadDefaultLayers(manifest, full);
+    allCandidatesLoaded = full || !manifest.initialCandidates;
     setCandidates();
     state = initialState(manifest);
     connected = new ConnectedJourneys(mapController, manifest);
@@ -197,7 +203,7 @@ function bindEvents(): void {
   bindAboutDialog();
   panelToggle.addEventListener("click", () => setPanelOpen(document.body.dataset.panel === "collapsed"));
   document.querySelectorAll<HTMLButtonElement>("button.tab").forEach((button) => {
-    button.addEventListener("click", () => activateTab(button.dataset.tab as AppState["activeTab"]));
+    button.addEventListener("click", () => void activateTab(button.dataset.tab as AppState["activeTab"]));
     button.addEventListener("keydown", handleTabKeydown);
   });
   window.addEventListener("popstate", () => void applyQueryState());
@@ -239,6 +245,14 @@ async function handleLayerToggle(event: Event): Promise<void> {
   const layerId = input.dataset.layerId;
   if (input.checked) {
     state.visibleLayerIds.add(layerId);
+    if (layerId === "candidates") {
+      try { await ensureAllCandidates(); }
+      catch (error) {
+        state.visibleLayerIds.delete(layerId);
+        input.checked = false;
+        setStatus(error instanceof Error ? error.message : "The candidates could not be loaded.", true);
+      }
+    }
     if (!layers[layerId as keyof LoadedLayers]) {
       setStatus(layerId === "network" ? "Loading the street network. This is a large file." : "Loading…");
       try {
@@ -255,6 +269,21 @@ async function handleLayerToggle(event: Event): Promise<void> {
     state.visibleLayerIds.delete(layerId);
   }
   renderAll();
+}
+
+async function ensureAllCandidates(): Promise<void> {
+  if (allCandidatesLoaded) return;
+  if (!fullCandidateLoad) {
+    setStatus("Loading all candidate links…");
+    fullCandidateLoad = loadLayer(manifest, "candidates").then(collection => {
+      layers.candidates = collection;
+      allCandidatesLoaded = true;
+      setCandidates();
+      mapController.setData(layers, candidates);
+      setStatus("");
+    }).finally(() => { fullCandidateLoad = undefined; });
+  }
+  await fullCandidateLoad;
 }
 
 async function ensureNetwork(): Promise<void> {
@@ -405,7 +434,16 @@ function renderTabs(): void {
   connected.setActive(journeyView);
 }
 
-function activateTab(tab: AppState["activeTab"], focus = false): void {
+async function activateTab(tab: AppState["activeTab"], focus = false): Promise<void> {
+  const request = ++viewRequest;
+  if (tab === "pareto") {
+    try { await ensureAllCandidates(); }
+    catch (error) {
+      setStatus(error instanceof Error ? error.message : "The comparison could not be loaded.", true);
+      return;
+    }
+  }
+  if (request !== viewRequest) return;
   state.activeTab = tab;
   if (tab === "connected") state.sketching = false;
   renderAll();
@@ -422,7 +460,7 @@ function handleTabKeydown(event: KeyboardEvent): void {
   else if (event.key === "End") next = tabs.length - 1;
   else return;
   event.preventDefault();
-  activateTab(tabs[next]!, true);
+  void activateTab(tabs[next]!, true);
 }
 
 async function toggleSketch(): Promise<void> {
@@ -559,6 +597,7 @@ function downloadBuildOrder(): void {
 }
 
 async function applyQueryState(render = true): Promise<void> {
+  ++viewRequest;
   const params = new URLSearchParams(window.location.search);
   journeyAssumptions = journeyAssumptionsFromQuery(params);
   requiredElement<HTMLSelectElement>("journey-period").value = journeyAssumptions.period;
@@ -585,6 +624,10 @@ async function applyQueryState(render = true): Promise<void> {
     state.visibleLayerIds = new Set((params.get("layers") ?? "").split(",").map((value) => value.trim()).filter((value) => valid.has(value)));
   }
   desiredSketchNodeIds = (params.get("sketch") ?? "").split(",").map((value) => value.trim()).filter(Boolean).slice(0, 20);
+  const candidate = params.get("candidate");
+  if (state.activeTab === "pareto" || state.visibleLayerIds.has("candidates") || (candidate && !byId.has(candidate))) {
+    await ensureAllCandidates();
+  }
   await ensureVisibleLayersLoaded();
   if (desiredSketchNodeIds.length >= 2) {
     try {
@@ -594,7 +637,6 @@ async function applyQueryState(render = true): Promise<void> {
       setStatus(error instanceof Error ? error.message : "The street network could not be loaded.", true);
     }
   }
-  const candidate = params.get("candidate");
   if (candidate && byId.has(candidate)) state.selectedCandidateId = candidate;
   syncControlsFromState();
   if (render) {

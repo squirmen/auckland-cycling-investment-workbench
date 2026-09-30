@@ -56,7 +56,7 @@ def budgeted_summary(report):
     output["solutions"] = public_solutions(report["solutions"])
     if "preferredSolutions" in report:
         output["preferredSolutions"] = public_solutions(report["preferredSolutions"])
-    for key in ("maxLabelsPerSearch", "retainedRouteColumns"):
+    for key in ("maxLabelsPerSearch", "retainedRouteColumns", "boundStrategy"):
         if key in report:
             output[key] = report[key]
     if "searchLimitChecks" in report:

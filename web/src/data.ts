@@ -55,20 +55,36 @@ export async function loadLayer(manifest: Manifest, layerId: string): Promise<Ge
   return collection;
 }
 
-export async function loadDefaultLayers(manifest: Manifest): Promise<LoadedLayers> {
+export async function loadDefaultLayers(manifest: Manifest, fullCandidates = false): Promise<LoadedLayers> {
   const layers: LoadedLayers = {};
   await Promise.all(
     manifest.layers
       .filter((layer) => layer.defaultVisible || layer.id === "candidates")
       .map(async (layer) => {
         try {
-          layers[layer.id] = await loadLayer(manifest, layer.id);
+          layers[layer.id] = layer.id === "candidates" && !fullCandidates ? await loadInitialCandidates(manifest) : await loadLayer(manifest, layer.id);
         } catch (error) {
           if (!layer.optional) throw error;
         }
       }),
   );
   return layers;
+}
+
+export async function loadInitialCandidates(manifest: Manifest): Promise<GenericFeatureCollection> {
+  const descriptor = manifest.initialCandidates;
+  if (!descriptor) return loadLayer(manifest, "candidates");
+  const source = manifest.layers.find(layer => layer.id === "candidates");
+  if (descriptor.sourceSha256 !== source?.sha256) throw new Error("Initial candidates do not match the source layer");
+  const features = decodeCompactCandidates(await fetchVerifiedJson(descriptor.url, descriptor.sha256));
+  const ids = new Set(features.map(feature => feature.properties.candidateId));
+  if (features.length !== descriptor.featureCount || ids.size !== features.length) throw new Error("Initial candidate count mismatch");
+  for (const purposes of Object.values(manifest.portfolios)) for (const steps of Object.values(purposes)) {
+    if (steps.some(step => !ids.has(step.candidateId))) throw new Error("Initial candidates omit a build-order link");
+  }
+  const collection: GenericFeatureCollection = { type: "FeatureCollection", features };
+  validatedCandidates.set(collection, features);
+  return collection;
 }
 
 export function candidateFeatures(layers: LoadedLayers): CandidateFeature[] {

@@ -84,6 +84,12 @@ def main() -> None:
         "remain at the original cap. Requires --budget-short-connectors.",
     )
     parser.add_argument(
+        "--connector-stress-bounds",
+        action="store_true",
+        help="Use optimistic treatable-street bounds only in connector searches; "
+        "keeps the original legal detour reference. Requires --budget-short-connectors.",
+    )
+    parser.add_argument(
         "--connector-fixed-costs-nzd",
         type=float,
         nargs="+",
@@ -101,7 +107,9 @@ def main() -> None:
     ):
         raise ValueError("pilot bounds must be positive")
     if (
-        args.connector_label_limits or args.connector_fixed_costs_nzd
+        args.connector_label_limits
+        or args.connector_fixed_costs_nzd
+        or args.connector_stress_bounds
     ) and not args.budget_short_connectors:
         raise ValueError("connector sensitivities require --budget-short-connectors")
     if args.connector_label_limits and (
@@ -394,6 +402,7 @@ def main() -> None:
             max_labels=args.max_labels,
             label_limits=args.connector_label_limits,
             fixed_connector_costs=args.connector_fixed_costs_nzd or (),
+            stress_aware_bounds=args.connector_stress_bounds,
             progress=lambda message: print(message, flush=True),
         )
     transform = Transformer.from_crs("EPSG:2193", "EPSG:4326", always_xy=True)
@@ -665,6 +674,7 @@ def main() -> None:
             "budgetShortConnectors": args.budget_short_connectors,
             "connectorLabelLimits": args.connector_label_limits,
             "connectorFixedCostsNzd": args.connector_fixed_costs_nzd,
+            "connectorStressBounds": args.connector_stress_bounds,
             "protectedCostSource": "candidate_ledger.capital_cost_base_nzd",
             "flatSpeedKph": 15,
             "uphillExponent": 3,

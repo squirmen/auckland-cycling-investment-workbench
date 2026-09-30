@@ -310,6 +310,7 @@ export const manifestSchema = z.object({
   methodologyUrl: localMethodologyUrlSchema,
   journeyReport: journeyReportDescriptorSchema.optional(),
   compactCandidates: compactCandidatesDescriptorSchema.optional(),
+  initialCandidates: compactCandidatesDescriptorSchema.extend({ scope: z.literal("portfolios_and_frontiers_v1") }).optional(),
   effectiveNetwork: z.object({
     version: z.string(), method: z.literal("unambiguous_at_grade_source_junctions"),
     status: z.literal("screening_sensitivity"), runId: z.string(),
