@@ -5,7 +5,9 @@
 Model values, rankings and data files are unchanged; every data file keeps its
 SHA-256. Commit `701fc6e` was deployed to [span.tfwelch.com](https://span.tfwelch.com)
 on 1 October 2026 at 00:26 NZDT. Commit `2a97084` replaced it at 01:01 to fix a
-blank map in Safari that the first deployment exposed; see below.
+blank map in Safari that the first deployment exposed; see below. Commit
+`92e2f12` followed at 01:32 with the table export, the print and chart fixes
+and the icons, and is the release now live.
 
 ## Result
 
@@ -226,7 +228,10 @@ WebKit before promotion is now part of the handoff notes.
 - The second archive (`2a97084`, SHA-256
   `7dc53063c63daa853b19899e3d49e24b9ac47cfbcd74fba167f0b35561045f80`) went through
   the same steps, with the WebKit check added on the staging copy and on the
-  live site. It is the release now live.
+  live site.
+- The third archive (`92e2f12`, 52 files, SHA-256
+  `beb425e2422bf43df0d0cb1c55f8a2ef4c6ef98c586246df9534f2cd6c63f67c`) went
+  through the same steps, WebKit included, and is the release now live.
 
 ## Reproduce
 
