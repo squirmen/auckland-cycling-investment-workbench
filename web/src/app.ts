@@ -1,13 +1,13 @@
 import "./style.css";
 import { ConnectedJourneys, CONNECTED_QUERY_KEYS } from "./connected";
 
-import { GOALS, SCENARIOS, amount, dataStatusName, money, percent, snapshotDate, withNewName } from "./copy";
+import { GOALS, SCENARIOS, amount, dataStatusName, linkName, money, percent, snapshotDate, withNewName } from "./copy";
 import { candidateFeatures, loadInitialCandidates, loadLayer, loadManifest } from "./data";
 import { create, requiredElement } from "./dom";
 import { loadDemandDiagnostics, type DemandDiagnostics } from "./diagnostics";
 import { DEFAULT_JOURNEY_ASSUMPTIONS, journeyAssumptionsFromQuery } from "./journeys";
 import { BASEMAP_IDS, SpanMap, type BasemapId, type MapPadding } from "./map";
-import { connectedGroups, metricFor, packageKey, paretoFront, portfolioAtBudget, portfolioGeoJson, type SketchResult } from "./model";
+import { buildOrderCsv, connectedGroups, metricFor, packageKey, paretoFront, portfolioAtBudget, portfolioGeoJson, type SketchResult } from "./model";
 import { purposeIds, type AppState, type CandidateFeature, type LoadedLayers, type Manifest, type PortfolioStep, type PurposeId, type ScenarioId } from "./types";
 import {
   renderBuildList,
@@ -215,6 +215,7 @@ function bindEvents(): void {
   requiredElement("sketch-toggle").addEventListener("click", () => void toggleSketch());
   requiredElement("sketch-clear").addEventListener("click", () => mapController.clearSketch());
   requiredElement("download-button").addEventListener("click", downloadBuildOrder);
+  requiredElement("download-table-button").addEventListener("click", downloadTable);
   requiredElement("share-button").addEventListener("click", () => void copyViewLink());
   requiredElement("reset-button").addEventListener("click", () => void resetView());
   requiredElement("print-button").addEventListener("click", () => void printView());
@@ -410,6 +411,7 @@ function renderAll(): void {
   renderSketchControls();
   renderFooter(steps);
   requiredElement<HTMLButtonElement>("download-button").disabled = steps.length === 0 && currentSketch === null;
+  requiredElement<HTMLButtonElement>("download-table-button").disabled = steps.length === 0;
   syncQueryState();
   requiredElement("view-announcement").textContent =
     `${goal.chip}, ${SCENARIOS[state.scenario].label}, ${money(state.budgetNzd)} budget: ` +
@@ -487,6 +489,8 @@ function renderTabs(): void {
   const download = requiredElement<HTMLButtonElement>("download-button");
   download.textContent = journeyView ? "Download package and route (GeoJSON)" : "Download build order (GeoJSON)";
   if (journeyView) download.disabled = !connected.canExport;
+  // The table is the build order; Connected journeys has its own package export.
+  requiredElement("download-table-button").hidden = journeyView;
   connected.setActive(journeyView);
 }
 
@@ -660,9 +664,25 @@ function downloadBuildOrder(): void {
       generated_at_utc: new Date().toISOString(),
     },
   };
+  saveFile(new Blob([JSON.stringify(exported, null, 2)], { type: "application/geo+json" }), "geojson");
+}
+
+/** The links within the budget as rows for a spreadsheet, in build order. */
+function downloadTable(): void {
+  const rows = selectedSteps().flatMap((step) => {
+    const candidate = byId.get(step.candidateId);
+    return candidate ? [{ name: linkName(candidate.properties.name), step, candidate, metric: metricFor(candidate, state.scenario, state.purpose) }] : [];
+  });
+  const csv = buildOrderCsv(rows, {
+    scenario: state.scenario, purpose: state.purpose, budgetNzd: state.budgetNzd, runId: manifest.runId, dataStatus: manifest.dataStatus,
+  });
+  saveFile(new Blob([csv], { type: "text/csv;charset=utf-8" }), "csv");
+}
+
+function saveFile(blob: Blob, extension: string): void {
   const link = document.createElement("a");
-  link.href = URL.createObjectURL(new Blob([JSON.stringify(exported, null, 2)], { type: "application/geo+json" }));
-  link.download = `span-${state.scenario}-${state.purpose}-${queryNumber(state.budgetNzd / 1_000_000)}m.geojson`;
+  link.href = URL.createObjectURL(blob);
+  link.download = `span-${state.scenario}-${state.purpose}-${queryNumber(state.budgetNzd / 1_000_000)}m.${extension}`;
   link.hidden = true;
   document.body.append(link);
   link.click();

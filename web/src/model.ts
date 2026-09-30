@@ -409,6 +409,52 @@ function parseDirection(value: unknown, legacyOneway: unknown): GraphEdge["direc
   return "both";
 }
 
+export interface BuildOrderRow {
+  /** The name shown in the interface, not the source identifier. */
+  name: string;
+  step: PortfolioStep;
+  candidate: CandidateFeature;
+  metric: CandidateMetric;
+}
+
+export interface BuildOrderTableContext {
+  scenario: ScenarioId;
+  purpose: PurposeId;
+  budgetNzd: number;
+  runId: string;
+  dataStatus: string;
+}
+
+/** Street names come from open map data. A spreadsheet would run a cell that starts like a formula. */
+function csvCell(value: string | number | null | undefined): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "number") return Number.isFinite(value) ? String(value) : "";
+  const text = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+const round = (value: number | null, places: number): number | null =>
+  value === null ? null : Number(value.toFixed(places));
+
+/** The build order as a table for a spreadsheet: one row per link, in order, with the run it came from. */
+export function buildOrderCsv(rows: BuildOrderRow[], context: BuildOrderTableContext): string {
+  const header = [
+    "build_order", "name", "candidate_id", "length_km", "build_cost_nzd", "whole_life_cost_nzd",
+    "standalone_value", "standalone_unit", "added_in_build_order", "cumulative_in_build_order", "build_order_unit",
+    "cumulative_cost_nzd", "at_plan_status", "network_role", "scenario", "goal", "budget_nzd", "run_id", "data_status",
+  ];
+  const lines = rows.map(({ name, step, candidate, metric }) => [
+    step.step, name, candidate.properties.candidateId, round(candidateLengthKm(candidate), 3),
+    round(metric.capitalCostNzd, 0), round(metric.lifecycleCostNzd, 0),
+    round(metric.available ? metric.objectiveValue : null, 4), metric.objectiveUnit,
+    round(step.marginalObjective, 4), round(step.cumulativeObjective, 4), step.objectiveUnit,
+    round(step.cumulativeCostNzd, 0), candidate.properties.programmeStatus, candidate.properties.networkContext?.role ?? "",
+    context.scenario, context.purpose, context.budgetNzd, context.runId, context.dataStatus,
+  ].map(csvCell).join(","));
+  // The byte-order mark makes Excel read the file as UTF-8, so macrons in place names survive.
+  return `\uFEFF${[header.join(","), ...lines].join("\r\n")}\r\n`;
+}
+
 export function portfolioGeoJson(candidates: CandidateFeature[], selectedIds: Set<string>): GenericFeatureCollection {
   const features: GenericFeature[] = candidates
     .filter((candidate) => selectedIds.has(candidate.properties.candidateId))

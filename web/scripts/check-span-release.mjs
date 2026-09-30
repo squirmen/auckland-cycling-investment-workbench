@@ -127,7 +127,18 @@ try {
       await page.waitForTimeout(700);
       await page.screenshot({ path: path.join(output, "desktop-link-details.png") });
     }
-    if (name === "desktop") await page.locator("#link-close").click();
+    if (name === "desktop") {
+      await page.locator("#link-close").click();
+      await page.locator("#candidate-search").fill("");
+      // The table export holds one row for each link within the default budget, in order.
+      const tableDownload = page.waitForEvent("download");
+      await page.locator("#download-table-button").click();
+      const table = (await readFile(await (await tableDownload).path(), "utf8")).slice(1).trimEnd().split("\r\n");
+      const inBudget = manifest.portfolios[manifest.defaultScenario][manifest.defaultPurpose].filter(step => step.cumulativeCostNzd <= manifest.defaultBudgetNzd);
+      assert.ok(table[0].startsWith("build_order,name,candidate_id,"), "table header");
+      assert.equal(table.length - 1, inBudget.length, "one table row for each link in the budget");
+      assert.ok(table.at(-1).endsWith(`,${manifest.runId},${manifest.dataStatus}`), "table rows carry the run");
+    }
     await page.getByRole("tab", { name: "Connected journeys" }).click();
     await expect(page.locator("#connected-controls")).toBeVisible({ timeout: 30000 });
     await expect(page.locator("#connected-provenance")).toContainText(`${report.intersectionContext.sitesInCrop} matched intersections`);

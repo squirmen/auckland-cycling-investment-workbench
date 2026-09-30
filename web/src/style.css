@@ -448,7 +448,8 @@ button.quiet-button { min-height: 0; padding: 4px 0; border: 0; background: none
 .layers { position: relative; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; box-shadow: var(--shadow-soft); }
 .layers summary { min-height: 36px; padding: 8px 12px; color: var(--ink-soft); font-size: 12.5px; font-weight: 600; list-style: none; cursor: pointer; }
 .layers summary::-webkit-details-marker { display: none; }
-.layers-body { display: flex; flex-direction: column; gap: 8px; width: 240px; max-width: calc(100vw - 32px); max-height: 55dvh; overflow-y: auto; padding: 0 12px 12px; white-space: normal; }
+/* Heights in dvh follow a phone's moving toolbars. The vh line before each is for browsers without dvh. */
+.layers-body { display: flex; flex-direction: column; gap: 8px; width: 240px; max-width: calc(100vw - 32px); max-height: 55vh; max-height: 55dvh; overflow-y: auto; padding: 0 12px 12px; white-space: normal; }
 .check-list { display: flex; flex-direction: column; gap: 7px; }
 .check-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; }
 .check-row input { width: 16px; height: 16px; flex: 0 0 auto; margin: 2px 0 0; accent-color: var(--navy); }
@@ -541,11 +542,11 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
 
 /* ------------------------------------------------------------------ about */
 
-.about { width: min(640px, 94vw); max-height: 88dvh; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: var(--shadow); color: var(--ink); }
+.about { width: min(640px, 94vw); max-height: 88vh; max-height: 88dvh; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: var(--shadow); color: var(--ink); }
 .about::backdrop { background: rgba(12, 12, 72, 0.45); }
 .about-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 24px 14px; border-bottom: 1px solid var(--line); }
 .about-head h2 { margin: 2px 0 0; color: var(--navy); font-size: 22px; line-height: 1.2; }
-.about-body { max-height: calc(88dvh - 80px); padding: 4px 24px 22px; overflow-y: auto; }
+.about-body { max-height: calc(88vh - 80px); max-height: calc(88dvh - 80px); padding: 4px 24px 22px; overflow-y: auto; }
 .about-body section { padding-top: 14px; }
 .about-body section + section { margin-top: 14px; border-top: 1px solid var(--line); }
 .about-body h3 { margin: 0 0 6px; font-size: 14px; }
@@ -575,6 +576,7 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
     bottom: max(8px, env(safe-area-inset-bottom));
     left: 8px;
     width: auto;
+    max-height: 62vh;
     max-height: 62dvh;
     border-radius: 16px;
   }
@@ -598,7 +600,7 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
   .map-legend:not([open]) #map-legend-items { display: none !important; }
   .loading-panel { left: 50%; }
   .status-message { top: 56px; bottom: auto; left: 50%; }
-  .leaflet-bottom.leaflet-right { bottom: calc(62dvh + 16px); }
+  .leaflet-bottom.leaflet-right { bottom: calc(62vh + 16px); bottom: calc(62dvh + 16px); }
   /* One line of credits above the sheet, so they do not cover the map. */
   .leaflet-control-attribution { max-width: calc(100vw - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   body[data-card="open"] .leaflet-bottom.leaflet-right { right: 0; }
@@ -629,6 +631,10 @@ body.printing .map-panel { inset: 0 auto auto 0; width: 186mm; height: 105mm; }
   .panel, .place { position: static; width: auto; max-height: none; overflow: visible; border: 0; box-shadow: none; }
   .brand, .tabs, .panel-foot { position: static; }
   .place-body, .compact-list { max-height: none; overflow: visible; }
+  /* Chrome prints a shadow as a grey block behind the pins. */
+  *, *::before, *::after { box-shadow: none !important; }
+  .hero, .outcome-grid, .rank-list li, .facts, .connected-outcomes, .connected-project { break-inside: avoid; }
+  .eyebrow, .field-label, .section-title-row, h2, h3 { break-after: avoid; }
 }
 .journey-controls { margin: 0 0 16px; }
 .journey-controls label { display: block; font-size: 12px; font-weight: 600; }

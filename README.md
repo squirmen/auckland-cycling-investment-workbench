@@ -32,7 +32,7 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
 - See which upgrades a complete journey needs, for a local sample of journeys
   grouped by what a budget does for them.
 - Sketch a corridor on the routable graph and export the current selection as
-  GeoJSON.
+  GeoJSON, or the build order as a table (CSV) for a spreadsheet.
 - Switch between a clean analysis view and light or street basemaps without
   changing the model results.
 - Use the map on a desktop, tablet or phone, with keyboard-accessible controls.

@@ -128,7 +128,9 @@ without changing what the views show.
 - **Print.** The map key was printed on top of the controls and the map showed
   an arbitrary crop. Print now has its own layout: the map in a fixed box,
   fitted to the build order or the selected upgrade, then the key, the panel
-  and the link card.
+  and the link card. Shadows are dropped in print, because Chrome prints them
+  as grey blocks behind the pins, and a figure stays on the page with its
+  heading.
 - **Phones.** The full name fits in the header, the map credits take one line,
   and routes are fitted clear of the key and the credits. Text no longer shows
   through a gap between the header and the tabs.
@@ -139,6 +141,19 @@ without changing what the views show.
   key. The full name fits on a tablet.
 - **Link previews.** The page has a title, description and image for messaging
   and social tools.
+
+## A table of the build order
+
+The build order could be saved only as GeoJSON. **Download build order as a
+table (CSV)** saves the links within the budget, one row each and in order:
+name, length, build and whole-life cost, the link's value on its own, what it
+adds in the build order and the running totals, its AT plan status and network
+role, and the scenario, goal, budget, run and data status the rows came from.
+
+Costs are whole dollars, lengths are to the metre and values to four decimal
+places. The file opens in Excel with macrons intact. A street name that a
+spreadsheet would read as a formula is written as plain text; the names come
+from open map data. The roadmap lists concise exports under priority 5.
 
 ## A blank map in Safari, exposed by the faster script
 
@@ -176,12 +191,13 @@ WebKit before promotion is now part of the handoff notes.
   tests cover brotli copies (present, decoding to their source, recorded,
   optional, refused when already in the site), recorded file sizes and archive
   dates.
-- Web: typecheck, lint and 64 unit tests pass. New tests cover retries, what is
-  not retried, download progress and journey status.
-- Browser suite on the synthetic fixture: 63 pass, 9 platform-specific skips.
-  New cases cover a slow and a failed context layer, a dropped connection,
-  Try again, the print layout, the grouped journey list and a missing
-  stylesheet.
+- Web: typecheck, lint and 65 unit tests pass. New tests cover retries, what is
+  not retried, download progress, journey status and the table export.
+- Browser suite on the synthetic fixture: 68 pass in Chrome at desktop and
+  phone sizes, 10 platform-specific skips. New cases cover a slow and a failed
+  context layer, a dropped connection, Try again, the print layout, the
+  grouped journey list, the table download and a missing or late stylesheet.
+  CI also runs the stylesheet cases in WebKit.
 - Release archive served by Apache 2.4 with the bundled `.htaccess`: brotli
   copies are sent with the right type and cache times; a client that accepts
   only gzip, or nothing, gets the original; a file without a copy is

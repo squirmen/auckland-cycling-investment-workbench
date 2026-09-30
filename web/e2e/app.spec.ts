@@ -150,6 +150,28 @@ test("exports exactly the declared build order with its active metrics", async (
   expect(exported.span_export.budget_nzd).toBe(2_000_000);
 });
 
+test("downloads the build order as a table with its run and settings", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "desktop download coverage");
+  await page.goto("/?offline=1&scenario=go_dutch&purpose=school&budget=2.8");
+  await waitForSpan(page);
+  const downloadPromise = page.waitForEvent("download");
+  await page.locator("#download-table-button").click();
+  const download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe("span-go_dutch-school-2.8m.csv");
+  const text = await readFile(await download.path(), "utf8");
+  expect(text.charCodeAt(0)).toBe(0xfeff);
+  const lines = text.slice(1).trimEnd().split("\r\n");
+  expect(lines[0]).toMatch(/^build_order,name,candidate_id,length_km,build_cost_nzd,/);
+  expect(lines).toHaveLength(3);
+  expect(lines[1]!.split(",").slice(0, 2)).toEqual(["1", await page.locator("#candidate-list .rank-name").first().innerText()]);
+  expect(lines[1]).toMatch(/,go_dutch,school,2800000,run-[a-f0-9]{16},synthetic_demo$/);
+
+  await page.locator("#budget-slider").fill("0");
+  await expect(page.locator("#download-table-button")).toBeDisabled();
+  await page.getByRole("tab", { name: "Connected journeys" }).click();
+  await expect(page.locator("#download-table-button")).toBeHidden();
+});
+
 test("restores and exports a graph-snapped exact-edge corridor", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "desktop sketch coverage");
   await page.goto("/?offline=1&sketch=A%2CF&budget=2.8");
