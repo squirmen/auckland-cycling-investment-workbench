@@ -2,14 +2,17 @@
 """Package the built SPAN site, refusing stale or mismatched research data.
 
 Large scripts, styles and data files also get a brotli copy (name.br) in the archive, which
-the site's .htaccess serves to browsers that accept it. This creates a local archive only. It
-never uploads files or changes a server.
+the site's .htaccess serves to browsers that accept it. When the site has a parking folder
+(STAND, the University of Auckland bike parking map), that folder is checked and packaged
+too. This creates a local archive only. It never uploads files or changes a server.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import posixpath
+import re
 import shutil
 import stat
 import sys
@@ -17,6 +20,7 @@ import tempfile
 from datetime import UTC, datetime
 from hashlib import sha256
 from pathlib import Path
+from urllib.parse import urlsplit
 from zipfile import ZIP_DEFLATED, ZIP_STORED, ZipFile, ZipInfo
 
 import pyarrow as pa
@@ -40,6 +44,58 @@ def brotli_copy(data: bytes) -> bytes:
     if decoded != data:
         raise ValueError("a brotli copy does not decode to its source file")
     return packed
+
+
+STAND_URL = "https://span.tfwelch.com/parking/uoa/"
+
+
+def on_stand_host(url: str) -> bool:
+    """Is url a page of STAND as deployed, under https://span.tfwelch.com/parking/uoa/?"""
+    parts = urlsplit(url)
+    on_host = (parts.scheme, parts.netloc) == ("https", "span.tfwelch.com")
+    return on_host and (posixpath.normpath(parts.path) + "/").startswith("/parking/uoa/")
+
+
+def check_parking(site: Path) -> dict[str, str | None] | None:
+    """Check the site's parking folder and describe STAND for the release record.
+
+    Returns None when the site has no parking folder, so SPAN alone packages as before.
+    """
+    parking = site / "parking"
+    if not parking.exists() and not parking.is_symlink():
+        return None
+    if parking.is_symlink() or not parking.is_dir():
+        raise ValueError("parking must be a folder in the built site")
+    required = [
+        "index.html",
+        "uoa/index.html",
+        "uoa/.htaccess",
+        "uoa/oembed.json",
+        "uoa/data/results.json",
+    ]
+    missing = [f"parking/{name}" for name in required if not (parking / name).is_file()]
+    if missing:
+        raise ValueError("build STAND's complete parking site first; missing " + ", ".join(missing))
+    title = re.search(r"<title>([^<]*)</title>", (parking / "uoa/index.html").read_text(), re.I)
+    if not title or not title.group(1).strip().startswith("STAND"):
+        raise ValueError("parking/uoa/index.html is not the STAND map")
+    oembed = json.loads((parking / "uoa/oembed.json").read_text())
+    if not isinstance(oembed, dict):
+        raise ValueError("parking/uoa/oembed.json is not an oEmbed response")
+    # The embed's own addresses must be STAND's; provider_url names the lab, not the embed.
+    urls = re.findall(r"""\b(?:src|href)\s*=\s*["']([^"']*)["']""", str(oembed.get("html", "")))
+    urls += [oembed[key] for key in ("url", "thumbnail_url") if key in oembed]
+    if not urls or not all(isinstance(url, str) and on_stand_host(url) for url in urls):
+        raise ValueError(f"parking/uoa/oembed.json must embed pages under {STAND_URL}")
+    results = json.loads((parking / "uoa/data/results.json").read_text())
+    if not isinstance(results, dict):
+        raise ValueError("parking/uoa/data/results.json is not STAND's results")
+    built = results.get("built")
+    return {
+        "product": "STAND",
+        "url": STAND_URL,
+        "dataBuilt": built if isinstance(built, str) else None,
+    }
 
 
 def main() -> None:
@@ -158,6 +214,7 @@ def main() -> None:
         raise ValueError("the sensitivity comparison is stale")
     if comparison["scope"]["sourceHashes"] != research["sourceHashes"]:
         raise ValueError("the comparison uses different journeys or weights")
+    stand = check_parking(site)
     # Include only built, public site files. Never package source runs or raw OD ledgers.
     files = sorted(p for p in site.rglob("*") if p.is_file())
     allowed_roots = {
@@ -173,16 +230,23 @@ def main() -> None:
         "assets",
         "data",
         "documentation",
+        "parking",
     }
     for path in files:
         relative = path.relative_to(site)
         if path.is_symlink() or relative.parts[0] not in allowed_roots:
             raise ValueError(f"unexpected public release file: {relative}")
-        if path.suffix in {".parquet", ".env", ".py", ".zip"}:
+        if path.suffix in {".parquet", ".env", ".py", ".zip"} or path.name.startswith(".env"):
             raise ValueError(f"source/private artifact in site: {relative}")
         # A copy left in the site could be older than the file it stands in for.
         if path.suffix == ".br":
             raise ValueError(f"brotli copy already in the built site: {relative}")
+        # STAND's only hidden file is its Apache settings; a .DS_Store or .git folder would leak.
+        if relative.parts[0] == "parking" and (
+            any(part.startswith(".") for part in relative.parts[:-1])
+            or (relative.name.startswith(".") and relative.name != ".htaccess")
+        ):
+            raise ValueError(f"hidden file in the parking site: {relative}")
     # The browser reads the compact candidates when they exist, never the canonical file,
     # so that file gets no copy.
     unread = {"data/candidates.geojson"} if compact is not None else set()
@@ -213,6 +277,7 @@ def main() -> None:
             "sourceBytes": source_bytes,
             "bytes": sum(len(data) for data in copies.values()),
         },
+        **({"components": {"parking/uoa": stand}} if stand else {}),
         "files": {
             **{p.relative_to(site).as_posix(): sha256_file(p) for p in files},
             **{name: sha256(data).hexdigest() for name, data in copies.items()},

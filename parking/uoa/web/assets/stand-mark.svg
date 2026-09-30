@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="STAND">
+  <title>STAND</title>
+  <!--
+    The Better Places Lab frame (two opposing corner brackets, as in the TEAM
+    and SPAN marks) around a map pin holding a bike stand: a stand, placed.
+    Grid 64; brackets drawn as in the TEAM mark so the pin holds at favicon size.
+  -->
+  <g fill="none" stroke="#0c0c48" stroke-width="8" stroke-linejoin="miter">
+    <path d="M29 9H55V35"/>
+    <path d="M35 55H9V29"/>
+  </g>
+  <path d="M32 48C32 48 19.5 35.6 19.5 29a12.5 12.5 0 0 1 25 0C44.5 35.6 32 48 32 48Z" fill="#a01d5f"/>
+  <path d="M27.2 35V28.5a4.8 4.8 0 0 1 9.6 0V35" fill="none" stroke="#fff" stroke-width="3.4"/>
+</svg>

@@ -1,0 +1,26 @@
+# Ruff settings for STAND's Python (pipeline/). SPAN's CI runs `ruff check .` and `ruff format --check .`
+# from the repository root, and Ruff uses the settings file nearest to each file. This one extends SPAN's
+# pyproject.toml, so STAND is checked with SPAN's rules, line length and Python version, apart from the
+# exceptions listed here.
+extend = "../../pyproject.toml"
+
+# The pipeline scripts import each other from pipeline/ (paths, build_docs, site_model, access_rules).
+# Naming the folder here sorts those imports as first-party.
+src = ["pipeline"]
+
+[lint]
+ignore = [
+  # Line too long. The formatter keeps code within 100 columns. The longer lines left are prose and
+  # literal text (docstrings, comments, SQL queries, the page template in build_docs.py, messages),
+  # which read better unbroken.
+  "E501",
+  # Ambiguous Unicode character in a string. The public pages use typographic punctuation on purpose
+  # (’, – and › in the page template in build_docs.py).
+  "RUF001",
+]
+
+[lint.per-file-ignores]
+# Function definition does not bind loop variable. site_model.py defines its helpers for each campus
+# (min_over_entries, street_of, solve) inside the campus loop and calls them only in that same pass, so
+# every call sees the current campus's values.
+"pipeline/site_model.py" = ["B023"]

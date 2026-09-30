@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="SPAN">
+  <title>SPAN</title>
+  <!--
+    The Better Places Lab frame (two opposing corner brackets) around one link
+    of an active network: two nodes and the span between them. Grid 64, as in
+    the TEAM mark.
+  -->
+  <g fill="none" stroke="#0c0c48" stroke-width="8" stroke-linejoin="miter">
+    <path d="M29 9H55V35"/>
+    <path d="M35 55H9V29"/>
+  </g>
+  <path d="M23 40L41 24" stroke="#2b6b50" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="23" cy="40" r="5.5" fill="#2b6b50"/>
+  <circle cx="41" cy="24" r="5.5" fill="#2b6b50"/>
+</svg>

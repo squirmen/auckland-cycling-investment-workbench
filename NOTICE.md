@@ -89,6 +89,21 @@ of Education, Auckland Transport, and LINZ components retain their own CC BY
 and deliberately omitted full-network low-stress result are recorded in
 `documentation/audit/public-layer-rights.csv`.
 
+STAND, the University of Auckland bike parking map in `parking/uoa`, carries its
+own credits: Overture Maps data under ODbL 1.0 (© OpenStreetMap contributors and
+Esri Community Maps contributors), with Overture places under CDLA-Permissive
+2.0; Toitū Te Whenua LINZ aerial imagery, LiDAR and (through Overture) addresses
+under CC BY 4.0; and Auckland Transport cycle counts and facilities under CC BY
+4.0. Its hosted basemaps are its own: Plain, drawn from Overture data, and
+Aerial, a LINZ mosaic. An optional Streets view shows OpenStreetMap's standard
+tiles with the credit “© OpenStreetMap contributors”, and asks for them only
+while that view is shown. STAND uses no CARTO or Esri tiles. The map ships Noto
+Sans glyphs under the SIL Open Font License 1.1 (licence in
+`parking/uoa/web/assets/font/OFL.txt`) and loads MapLibre GL JS 4.7.1 under the
+BSD-3-Clause licence and the Inter typeface under the SIL Open Font License 1.1;
+its offline one-file map embeds both. Its sources are listed in
+[`parking/uoa/README.md`](parking/uoa/README.md).
+
 ## Frontend map components
 
 The optional hosted basemap view uses MapLibre GL JS 6.6.0 under the

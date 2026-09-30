@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-NZ">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>STAND · University of Auckland bike parking · SPAN</title>
+<meta name="description" content="Where secure public bike docks should stand on the University of Auckland's City, Grafton and Newmarket campuses. A Better Places Lab siting model, part of SPAN, the lab's open tool for deciding where to invest in cycling.">
+<link rel="canonical" href="https://span.tfwelch.com/parking/uoa/">
+<meta name="theme-color" content="#0c0c48">
+<link rel="icon" href="assets/stand-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" integrity="sha384-MinO0mNliZ3vwppuPOUnGa+iq619pfMhLVUXfC4LHwSCvF9H+6P/KO4Q7qBOYV5V" crossorigin="anonymous">
+<link rel="stylesheet" href="ld.css">
+</head>
+<body data-panel="open">
+<a class="skip-link" href="#panel">Skip to controls</a>
+<div id="map" role="application" aria-label="Map of the University of Auckland campuses"></div>
+
+<section class="panel" id="panel" aria-label="STAND controls" tabindex="-1">
+  <header class="brand">
+    <nav class="crumbs" aria-label="Part of SPAN"><a class="crumb" href="https://span.tfwelch.com/" target="_top"><img src="assets/span-mark.svg" width="13" height="13" alt="">SPAN</a><span class="crumb-sep" aria-hidden="true">›</span><a class="crumb" href="https://span.tfwelch.com/parking/" target="_top">Bike parking</a></nav>
+    <img class="brand-mark" src="assets/stand-mark.svg" alt="">
+    <div class="brand-text">
+      <h1><abbr title="Secure Two-wheeler Access Network Design">STAND</abbr></h1>
+      <p class="tagline">Where secure bike parking should stand</p>
+      <p class="mini" id="mini"></p>
+    </div>
+    <button class="text-button" id="aboutBtn" type="button">About</button>
+    <button class="icon-button panel-toggle" id="panelToggle" type="button" aria-label="Collapse panel" title="Collapse panel" aria-expanded="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </header>
+
+  <div class="panel-body">
+    <div class="field" id="campus-field">
+      <div class="field-head"><span class="field-label">Campus</span><span class="field-value" id="campusValue"></span></div>
+      <div class="chips" role="radiogroup" aria-label="Campus" data-group="campus">
+        <button class="chip" role="radio" data-value="city" aria-checked="true" type="button">City</button>
+        <button class="chip" role="radio" data-value="grafton" aria-checked="false" type="button">Grafton</button>
+        <button class="chip" role="radio" data-value="newmarket" aria-checked="false" type="button">Newmarket</button>
+        <button class="chip" role="radio" data-value="all" aria-checked="false" type="button">All three</button>
+      </div>
+    </div>
+
+    <div class="hero" id="hero">
+      <div class="hero-figure" id="heroFigure">–</div>
+      <p class="hero-text" id="heroText"></p>
+      <p class="hero-sub" id="heroSub"></p>
+    </div>
+
+    <div class="field">
+      <div class="field-head"><span class="field-label">Docks on this campus</span><span class="field-value" id="kValue"></span></div>
+      <input type="range" id="kRange" min="1" max="8" step="1" value="6" aria-label="Number of docks">
+      <div class="ticks" id="kTicks"></div>
+      <p class="note" id="kNote"></p>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="sites" type="button">Sites</button>
+      <button role="tab" aria-selected="false" data-tab="weights" type="button">What matters</button>
+      <button role="tab" aria-selected="false" data-tab="evidence" type="button">Evidence</button>
+    </div>
+
+    <div class="view" id="view-sites" role="tabpanel">
+      <ol class="rank-list" id="siteList"></ol>
+      <p class="note" id="siteNote"></p>
+      <div class="field">
+        <div class="field-head"><span class="field-label">Map shows</span></div>
+        <div class="segmented segmented-full" id="viewSeg" role="group" aria-label="Map view">
+          <button type="button" data-view="suit" aria-pressed="true">Suitability</button>
+          <button type="button" data-view="flow" aria-pressed="false">Approach flows</button>
+          <button type="button" data-view="lts" aria-pressed="false">Traffic stress</button>
+          <button type="button" data-view="none" aria-pressed="false">Sites only</button>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="view" id="view-weights" role="tabpanel" hidden>
+      <p class="note">Each candidate site is scored 0–1 on eight indicators. Buildings within a short walk, riders passing and part of eyes on the street are scaled within each campus; the rest use fixed formulas. Move a slider to change what counts; the map, ranking and the greedy dock selection update live. The published recommendation uses the defaults and an exact optimiser.</p>
+      <div class="weights" id="weights"></div>
+      <div class="area-actions"><button class="text-button" id="resetWeights" type="button">Reset to defaults</button><span class="note" id="weightsNote"></span></div>
+    </div>
+
+    <div class="view" id="view-evidence" role="tabpanel" hidden>
+      <div class="place-section">
+        <h3>What the Glen Eden pilot taught us</h3>
+        <div class="kv"><span class="kv-key">Dock sessions logged, Aug 2023 to Jun 2024</span><span class="kv-value">330</span></div>
+        <div class="kv"><span class="kv-key">Utilisation of the 5 docks</span><span class="kv-value">40 %</span></div>
+        <div class="kv"><span class="kv-key">Sessions longer than five minutes: median</span><span class="kv-value">9.6 hours</span></div>
+        <div class="kv"><span class="kv-key">Of those, starting in the 07:00 hour</span><span class="kv-value">112 of 221</span></div>
+        <div class="kv"><span class="kv-key">Bikes at the station before the dock</span><span class="kv-value">0.5 / day</span></div>
+        <p class="note">Commuter, weekday, all-day parking; docks filled on peak days; solar alone was not enough for a busy site. Sources: Welch (2024) final report and 2025 addendum to Waka Kotahi NZTA; session figures from the pilot's dock log.</p>
+      </div>
+      <div class="place-section">
+        <h3>Design thresholds used</h3>
+        <div class="kv"><span class="kv-key">NZTA: public cycle parking from entrance</span><span class="kv-value">≤ 25 m</span></div>
+        <div class="kv"><span class="kv-key">TfL / APBP: visible from entrance</span><span class="kv-value">≤ 15 m</span></div>
+        <div class="kv"><span class="kv-key">Austroads: ride-up distance</span><span class="kv-value">≤ 30 m</span></div>
+        <div class="kv"><span class="kv-key">NZTA: supply over peak demand</span><span class="kv-value">+10–25 %</span></div>
+        <div class="kv"><span class="kv-key">Bikeep 5-bike station footprint</span><span class="kv-value">4.8 × 2.2 m</span></div>
+        <div class="kv"><span class="kv-key">10-dock charging station draw</span><span class="kv-value">1.5 kW</span></div>
+        <p class="note">The model credits a dock fully for buildings within a 50 m walk and not at all beyond 250 m, because a shared campus dock serves several buildings and secure long-stay users tolerate a longer walk (CROW).</p>
+      </div>
+      <div class="place-section">
+        <h3>What the University already has</h3>
+        <p class="note">Ten card-access bike stores on the City campus, including the bike shed beside Hiwa; the OGGB store alone holds 84 bikes with 12 charging bays. Grafton has a shed under Building 505, and Newmarket has secure racks at Buildings 901, 906 and 907. Public docks such as Locky Docks add something different: visitor and short-stay parking on the public face of the campus, free charging, and a tap-in, no-card option. None exist on a UoA campus today. The nearest are outside Les Mills, across Khyber Pass Road from the Newmarket campus, and at AUT and the Central City Library, near the City campus.</p>
+      </div>
+      <div class="place-section">
+        <h3>How people get to campus</h3>
+        <div class="kv"><span class="kv-key">UoA students cycling (AT survey, 2018)</span><span class="kv-value">1 %</span></div>
+        <div class="kv"><span class="kv-key">Students on bus / train / walking</span><span class="kv-value">59 / 15 / 18 %</span></div>
+        <div class="kv"><span class="kv-key">Auckland cycle counts, May 2026 vs 2025 (the 74 counters with both)</span><span class="kv-value">+15 %</span></div>
+        <div class="kv"><span class="kv-key">Quay St / K Rd / Grafton Bridge, May 2026</span><span class="kv-value">44.5k / 24.5k / 24.4k</span></div>
+        <p class="note">Cycling to the University is small today and growing. Secure parking is one of the levers the University controls directly.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="panel-foot">
+    <a class="lab-link" href="https://www.betterplaces.auckland.ac.nz/" target="_blank" rel="noopener"><img src="assets/bpl-mark.svg" width="16" height="16" alt="">Better Places Lab</a>
+    <button class="text-button share-button" id="shareBtn" type="button">Copy link</button>
+    <span class="foot-note" id="footNote">Overture 2026-09-23 · LINZ LiDAR 2024 · AT counts to July 2026 · v0.1.0</span>
+  </footer>
+</section>
+
+<aside class="place" id="place" hidden aria-label="Site details" tabindex="-1">
+  <div class="place-head">
+    <div>
+      <p class="eyebrow" id="placeEyebrow">Recommended site</p>
+      <h2 id="placeTitle"></h2>
+      <p class="place-sub" id="placeSub"></p>
+    </div>
+    <button class="icon-button" id="placeClose" type="button" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="place-body" id="placeBody"></div>
+</aside>
+
+<div class="map-tools">
+  <div class="segmented" id="basemapSeg" role="group" aria-label="Basemap" hidden></div>
+  <details class="layers" id="layers">
+    <summary>Layers</summary>
+    <div class="layer-list" id="layerList"></div>
+  </details>
+</div>
+
+<div class="tooltip" id="tooltip" hidden></div>
+<div class="loading" id="loading" role="status">Loading the campuses…</div>
+
+<dialog class="about" id="about">
+  <form method="dialog" class="about-close-form"><button class="icon-button" type="submit" aria-label="Close">
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></form>
+  <h2>STAND: Secure Two-wheeler Access Network Design</h2>
+  <p>STAND is part of <a href="https://span.tfwelch.com/" target="_top">SPAN</a> (Spending Priorities for Active Networks), the Better Places Lab's open tool for deciding where to invest in cycling. It is SPAN's first bike parking tool, built on SPAN's traffic-stress network: each street's Level of Traffic Stress comes from SPAN, and riders are routed with its costs for stress and gradient. A general bike parking tool for SPAN is planned.</p>
+  <p>STAND answers one question for the University of Auckland's City, Grafton and Newmarket campuses: <strong>where should secure, free-to-use bike docks stand?</strong> It ranks every walkable spot on each campus, then chooses a set of docks that serves the most cycling arrivals, in visible, lit, flat places on the paths riders already use.</p>
+
+  <h3>How it works</h3>
+  <ul>
+    <li><strong>Arrivals.</strong> Each University building draws cyclists in proportion to its floor area and use (teaching and libraries weigh more than research labs; halls of residence are origins, not destinations). Campus totals are scaled to typical-weekday cyclist arrivals (City 900, Grafton 140, Newmarket 90), derived from headcounts and assumed cycling shares informed by Auckland Transport's 2018 tertiary survey, and stated as assumptions.</li>
+    <li><strong>Approach flows.</strong> Riders come from homes within 400 m of the campus study areas (residential floor area) and, mostly, from further out through ten corridor portals, eight weighted by AT counters and two by judgement. The eight are Quay St, Nelson St, K Rd, Upper Queen St, Symonds St, Carlton Gore Rd, Grafton Gully and Great South Rd; Broadway and Parnell Rd have no counter. Each rider takes the least-stress route: the Overture/OpenStreetMap network with a Level of Traffic Stress class per link and gradients from LINZ 1 m LiDAR. Riders keep to one-way rules; the walk from a dock to a building does not have to. Flows are accumulated on every path, so the model knows which side of a building riders arrive from.</li>
+    <li><strong>Candidates and scores.</strong> Every walkable network node, path midpoint, existing rack and car-park inside the campus is a candidate. Each gets eight indicators: buildings within a short walk, riders passing, a calm approach, eyes on the street (footpath density, active frontage, open sightlines from the LiDAR surface model), lighting, room and power, flat ground, and open racks mapped nearby. Each is scored 0–1. Buildings within a short walk, riders passing and the footpath and frontage parts of eyes on the street are scaled within each campus; the rest use fixed formulas. The scores are then weighted (defaults 30/20/10/15/8/7/5/5).</li>
+    <li><strong>Choosing the set.</strong> A mixed-integer programme picks k docks that maximise covered arrivals (each building credited once, to its best dock, full credit within 50 m walk falling to nothing at 250 m) plus a suitability bonus, at least 110 m apart. k is swept from 1 to 8 so the gains from each extra dock are visible; the docks are numbered so that each adds the most new coverage given the ones before it.</li>
+  </ul>
+
+  <h3>Data</h3>
+  <table class="about-table">
+    <tr><th>Buildings</th><td>Overture Maps release 2026-09-23.1: of the 5,690 footprints in and within 400 m of the campus study areas, 5,339 come from OpenStreetMap and 351 from Esri Community Maps (ODbL)</td></tr>
+    <tr><th>Paths, roads, bike parking, lamps, stops</th><td>Overture Maps release 2026-09-23.1: OpenStreetMap, with a few TomTom road links (ODbL)</td></tr>
+    <tr><th>Shops, cafés and bus stations</th><td>Overture Maps places: Meta, Microsoft, Foursquare and others (CDLA-Permissive 2.0 and their providers' terms)</td></tr>
+    <tr><th>Ground elevation, slope, sightlines</th><td>LINZ Auckland 1 m LiDAR DEM and DSM 2024 (CC BY 4.0)</td></tr>
+    <tr><th>Basemaps</th><td>Plain, drawn by STAND from Overture Maps data (ODbL); Aerial, from the LINZ Auckland 0.075 m urban aerials 2024–25 (CC BY 4.0); and, online, Streets: OpenStreetMap's standard tiles (©&nbsp;OpenStreetMap contributors)</td></tr>
+    <tr><th>Cycle counts and facilities</th><td>Auckland Transport daily cycle counts, 86 sites to July 2026 (the lab's Cycleway dashboard), and AT's cycle facility network (CC BY 4.0); SPAN's way-level Level of Traffic Stress table</td></tr>
+    <tr><th>Pilot evidence</th><td>Welch (2024, 2025) Suburban Micromobility Hub Network Pilot, Glen Eden, for Waka Kotahi NZTA; the pilot's dock log</td></tr>
+    <tr><th>Existing University facilities</th><td>University of Auckland bike-store and sustainable-commuting pages; OpenStreetMap</td></tr>
+    <tr><th>Existing Locky Docks</th><td>Locky Dock's station map, September 2026 (17 stations); positions from OpenStreetMap and Overture addresses and places. The Takapuna dock lies north of STAND's own basemap, so it shows on a blank background unless Streets is on.</td></tr>
+    <tr><th>Thresholds</th><td>NZTA Cycle Parking Planning and Design; TfL London Cycling Design Standards ch. 8; Austroads AP-R528-16; APBP Essentials of Bike Parking</td></tr>
+  </table>
+
+  <h3>Read it with care</h3>
+  <ul>
+    <li>Arrival totals scale the flows; site rankings barely move with them, but dock counts do. Treat dock numbers as indicative and grow them with observed utilisation, as at Glen Eden.</li>
+    <li>OpenStreetMap lamp and rack coverage is incomplete; lighting and open racks nearby are soft signals to confirm on site.</li>
+    <li>Traffic stress on roads and cycleways comes from SPAN's way-level classification where it covers the way (it carries Auckland Transport's facility data) and from a class-and-speed rule elsewhere; footways and paths count as low stress. Each link says which.</li>
+    <li>Findings from other secure bike parking pilots should be checked against these results.</li>
+    <li>Every recommended spot needs a field check: exact kerb or plaza position, the 4.8 × 2.2 m footprint, a power connection, CCTV and lighting, and who owns the ground.</li>
+  </ul>
+
+  <h3>Credits</h3>
+  <p>Built by the Better Places Lab, Te Pare School of Architecture, Planning and Design, Waipapa Taumata Rau | University of Auckland, September 2026. Interface follows the lab's TEAM, SPAN and ALTO tools.</p>
+  <p>Cite as: Welch, T. F. (2026). STAND: Secure Two-wheeler Access Network Design, University of Auckland campuses. Version 0.1.0. Better Places Lab, University of Auckland. https://span.tfwelch.com/parking/uoa/</p>
+  <p class="about-links"><a href="docs/methodology.html">Method and data sources</a> · <a href="docs/recommendations.html">Recommended sites</a> · <a href="https://www.betterplaces.auckland.ac.nz/" target="_blank" rel="noopener">Better Places Lab</a> · Data under their providers' terms.</p>
+</dialog>
+
+<script src="js/embed-shim.js"></script>
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js" integrity="sha384-SYKAG6cglRMN0RVvhNeBY0r3FYKNOJtznwA0v7B5Vp9tr31xAHsZC0DqkQ/pZDmj" crossorigin="anonymous"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

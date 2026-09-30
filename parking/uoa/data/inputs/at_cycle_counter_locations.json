@@ -1,0 +1,733 @@
+[
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-001",
+    "lat": -36.749,
+    "lng": 174.69363,
+    "name": "Albany Highway Cyclist",
+    "registry_name": "Albany Highway"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-002",
+    "lat": -36.89264,
+    "lng": 174.67104,
+    "name": "Archibald Park Cyclist",
+    "registry_name": "Archibald Park"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-003",
+    "lat": -36.849384,
+    "lng": 174.77441,
+    "name": "Beach Rd",
+    "registry_name": "Beach Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-004",
+    "lat": -36.86433,
+    "lng": 174.77254,
+    "name": "Carlton Gore Rd",
+    "registry_name": "Carlton Gore Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-005",
+    "lat": -36.952324,
+    "lng": 174.791646,
+    "name": "Coronation Rd Cyclist",
+    "registry_name": "Coronation Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-006",
+    "lat": -36.83941853,
+    "lng": 174.7393543,
+    "name": "Curran St Cyclist",
+    "registry_name": "Curran St"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-007",
+    "lat": -36.87038051,
+    "lng": 174.752876,
+    "name": "Dominion Rd",
+    "registry_name": "Dominion Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-008",
+    "lat": -36.74176,
+    "lng": 174.74125,
+    "name": "East Coast Rd",
+    "registry_name": "East Coast Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-009",
+    "lat": -36.85267,
+    "lng": 174.74749,
+    "name": "Franklin Rd",
+    "registry_name": "Franklin Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-010",
+    "lat": -36.8743,
+    "lng": 174.85135,
+    "name": "GI TO TAMAKI DR SECTION-1 Cyclist",
+    "registry_name": "GI to Tamaki Dr Section-1"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-011",
+    "lat": -36.86610515,
+    "lng": 174.8362264,
+    "name": "GI to Tamaki Dr Section-2 Cyclist",
+    "registry_name": "GI to Tamaki Dr Section-2"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-012",
+    "lat": -36.860126,
+    "lng": 174.76648,
+    "name": "Grafton Bridge Cyclist",
+    "registry_name": "Grafton Bridge"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-013",
+    "lat": -36.85532,
+    "lng": 174.76896,
+    "name": "Grafton Gully Cyclist",
+    "registry_name": "Grafton Gully"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-014",
+    "lat": -36.85407,
+    "lng": 174.7708,
+    "name": "Grafton Rd Cyclist",
+    "registry_name": "Grafton Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-015",
+    "lat": -36.89284,
+    "lng": 174.78945,
+    "name": "Green Lane West",
+    "registry_name": "Green Lane West"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-016",
+    "lat": -36.918542,
+    "lng": 174.759648,
+    "name": "Hendry Avenue Cyclist",
+    "registry_name": "Hendry Avenue"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-017",
+    "lat": -36.95042001,
+    "lng": 174.8594606,
+    "name": "Highbrook Dr",
+    "registry_name": "Highbrook Dr"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-018",
+    "lat": -36.79405,
+    "lng": 174.65949,
+    "name": "Hobsonville Point Road",
+    "registry_name": "Hobsonville Point Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-019",
+    "lat": -36.80949515,
+    "lng": 174.6340585,
+    "name": "Hobsonville Rd",
+    "registry_name": "Hobsonville Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-020",
+    "lat": -36.85609341,
+    "lng": 174.7575115,
+    "name": "Hopetoun St Cyclist",
+    "registry_name": "Hopetoun St"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-021",
+    "lat": -36.85819556,
+    "lng": 174.7563792,
+    "name": "Karangahape Rd Cyclist",
+    "registry_name": "Karangahape Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-022",
+    "lat": -36.90941,
+    "lng": 174.85966,
+    "name": "Lagoon Drive Cyclist",
+    "registry_name": "Lagoon Dr"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-023",
+    "lat": -36.80265,
+    "lng": 174.78749,
+    "name": "Lake Rd",
+    "registry_name": "Lake Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-024",
+    "lat": -36.80105,
+    "lng": 174.74455,
+    "name": "Lake Rd Northcote",
+    "registry_name": "Lake Rd Northcote"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-025",
+    "lat": -36.35201,
+    "lng": 174.7185,
+    "name": "Leigh Rd Cyclist",
+    "registry_name": "Leigh Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-026",
+    "lat": -36.8595,
+    "lng": 174.75861,
+    "name": "Lightpath Cyclist",
+    "registry_name": "Lightpath"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-027",
+    "lat": -37.03760775,
+    "lng": 174.8888712,
+    "name": "Mahia Road Cyclist",
+    "registry_name": "Mahia Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-028",
+    "lat": -36.93235,
+    "lng": 174.78625,
+    "name": "Mangere Foot Bridge Cyclist",
+    "registry_name": "Mangere Bridge"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-029",
+    "lat": -36.97232,
+    "lng": 174.79953,
+    "name": "Mangere Safe Routes Cyclist",
+    "registry_name": "Mangere Safe Routes"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-030",
+    "lat": -36.89585992,
+    "lng": 174.7738947,
+    "name": "Manukau Rd",
+    "registry_name": "Manukau Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-031",
+    "lat": -36.866473,
+    "lng": 174.821271,
+    "name": "Meadowbank SUP Cyclist",
+    "registry_name": "Meadowbank SUP"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-032",
+    "lat": -36.859454,
+    "lng": 174.714104,
+    "name": "Meola Road Cyclist",
+    "registry_name": "Meola Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-033",
+    "lat": -36.89269,
+    "lng": 174.72532,
+    "name": "Mount Albert Rd",
+    "registry_name": "Mount Albert Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-034",
+    "lat": -36.8870234,
+    "lng": 174.7607476,
+    "name": "Mount Eden Rd",
+    "registry_name": "Mount Eden Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-035",
+    "lat": -36.914971,
+    "lng": 174.799086,
+    "name": "Mt Smart Rd",
+    "registry_name": "Mt Smart Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-036",
+    "lat": -36.91149,
+    "lng": 174.838086,
+    "name": "Mt Wellington Hwy",
+    "registry_name": "Mt Wellington Hwy"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-037",
+    "lat": -36.84988712,
+    "lng": 174.7590002,
+    "name": "Nelson St",
+    "registry_name": "Nelson St"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-038",
+    "lat": -36.90219,
+    "lng": 174.69858,
+    "name": "New Lynn to Avondale SUP Cyclist",
+    "registry_name": "New Lynn to Avondale SUP"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-039",
+    "lat": -36.853584,
+    "lng": 174.805661,
+    "name": "Ngapipi Rd SUP Cyclist",
+    "registry_name": "Ngapipi Rd SUP"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-040",
+    "lat": -36.732979,
+    "lng": 174.717712,
+    "name": "Northern Pathway SH1 Cyclist",
+    "registry_name": "Northern Pathway SH1"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-041",
+    "lat": -36.78280555,
+    "lng": 174.6743317,
+    "name": "Northern Pathway SH18 Cyclist",
+    "registry_name": "Northern Pathway SH18"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-042",
+    "lat": -36.86918,
+    "lng": 174.74402,
+    "name": "NW Cycleway Kingsland Cyclist",
+    "registry_name": "NW Cycleway Kingsland"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-043",
+    "lat": -36.85874,
+    "lng": 174.65397,
+    "name": "NW Cycleway TeAtatu",
+    "registry_name": "NW Cycleway TeAtatu"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-044",
+    "lat": -36.78373906,
+    "lng": 175.0115236,
+    "name": "Ocean View Rd",
+    "registry_name": "Ocean View Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-045",
+    "lat": -36.59635,
+    "lng": 174.69415,
+    "name": "Orewa Path Cyclist",
+    "registry_name": "Orewa Path"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-046",
+    "lat": -36.96518,
+    "lng": 174.90931,
+    "name": "Ormiston Rd",
+    "registry_name": "Ormiston Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-047",
+    "lat": -36.71996,
+    "lng": 174.7105,
+    "name": "Oteha Valley Road Cyclist",
+    "registry_name": "Oteha Valley Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-048",
+    "lat": -36.9874402,
+    "lng": 174.8605917,
+    "name": "Puhinui Road Cyclist",
+    "registry_name": "Puhinui Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-049",
+    "lat": -36.99312791,
+    "lng": 174.8788425,
+    "name": "Putney Way, Manukau Cyclist",
+    "registry_name": "Putney Way, Manukau"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-050",
+    "lat": -36.84649,
+    "lng": 174.77784,
+    "name": "Quay St - Spark Arena",
+    "registry_name": "Quay St - Spark Arena"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-051",
+    "lat": -36.84288,
+    "lng": 174.76483,
+    "name": "Quay St Eco Display Classic",
+    "registry_name": "Quay St Eco Display Classic"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-052",
+    "lat": -37.20363,
+    "lng": 174.90097,
+    "name": "Queen St Pukekohe",
+    "registry_name": "Queen St Pukekohe"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-053",
+    "lat": -36.87039722,
+    "lng": 174.6205393,
+    "name": "Rathgar Road Cyclist",
+    "registry_name": "Rathgar Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-054",
+    "lat": -36.876697,
+    "lng": 174.788473,
+    "name": "Remuera Rd",
+    "registry_name": "Remuera Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-055",
+    "lat": -37.031629,
+    "lng": 174.868862,
+    "name": "Roscommon Road Cyclist",
+    "registry_name": "Roscommon Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-056",
+    "lat": -36.87144,
+    "lng": 174.72565,
+    "name": "Saint Lukes Rd",
+    "registry_name": "Saint Lukes Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-057",
+    "lat": -36.886144,
+    "lng": 174.738201,
+    "name": "Sandringham Rd",
+    "registry_name": "Sandringham Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-058",
+    "lat": -37.06091603,
+    "lng": 174.9235323,
+    "name": "SH1 Karaka Cyclist",
+    "registry_name": "SH1 Karaka"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-059",
+    "lat": -36.75172778,
+    "lng": 174.7230909,
+    "name": "SH18 Upper Harbour Dr Cyclist",
+    "registry_name": "SH18 Upper Harbour Dr"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-060",
+    "lat": -36.91470895,
+    "lng": 174.7463046,
+    "name": "SW SH20 Cyclist",
+    "registry_name": "SW SH20"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-061",
+    "lat": -36.85977364,
+    "lng": 174.7627015,
+    "name": "Symonds St",
+    "registry_name": "Symonds St"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-062",
+    "lat": -36.84916,
+    "lng": 174.79327,
+    "name": "Tamaki Dr - Parnell Cyclist",
+    "registry_name": "Tamaki Dr"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-063",
+    "lat": -36.87818029,
+    "lng": 174.8679648,
+    "name": "Taniwha St Cyclist",
+    "registry_name": "Taniwha St"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-064",
+    "lat": -36.84148,
+    "lng": 174.76064,
+    "name": "Te Wero Bridge Cyclist",
+    "registry_name": "TeWero Bridge"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-065",
+    "lat": -36.84989,
+    "lng": 174.65138,
+    "name": "TeAtatu Peninsula",
+    "registry_name": "TeAtatu Peninsula"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-066",
+    "lat": -36.92456,
+    "lng": 174.89234,
+    "name": "Ti Rakau - Near 180 Cyclist",
+    "registry_name": "Ti Rakau - Near 180"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-067",
+    "lat": -36.878807,
+    "lng": 174.62413,
+    "name": "Twin Streams Cyclist",
+    "registry_name": "Twin Streams"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-068",
+    "lat": -36.85928,
+    "lng": 174.76064,
+    "name": "Upper Queen St",
+    "registry_name": "Upper Queen St"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-069",
+    "lat": -36.84805,
+    "lng": 174.75366,
+    "name": "Victoria St West",
+    "registry_name": "Victoria St West"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-070",
+    "lat": -36.88286,
+    "lng": 174.70505,
+    "name": "Waterview Unitec Cyclist",
+    "registry_name": "Waterview Unitec"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-071",
+    "lat": -36.85135,
+    "lng": 174.724339,
+    "name": "West End Rd",
+    "registry_name": "West End Rd"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-072",
+    "lat": -36.8433923,
+    "lng": 174.7536154,
+    "name": "Westhaven Dr Cyclist",
+    "registry_name": "Westhaven Dr"
+  },
+  {
+    "coordinate_accuracy": "approximate_site_point_not_screenline_or_direction",
+    "coordinate_provenance": "project_maintained_approximate_site_registry_reviewed_by_exact_name",
+    "coordinate_registry_sha256": "6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf",
+    "counter_id": "at-july-2026-073",
+    "lat": -36.626379,
+    "lng": 174.723976,
+    "name": "Whangaparoa Rd",
+    "registry_name": "Whangaparoa Rd"
+  }
+]
+
