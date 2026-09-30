@@ -56,11 +56,13 @@ AddType application/json       .json
 # SPAN's scripts and styles carry a content hash in their names, so the root
 # file caches them for a year. STAND's (js/app.js, js/embed-shim.js, ld.css)
 # keep their names from one release to the next, so here they are checked
-# hourly, like the data. The root file's times for the page, JSON, GeoJSON and
+# hourly, like the data. The host sends .js as text/javascript, so both script
+# types are listed. The root file's times for the page, JSON, GeoJSON and
 # SVG apply unchanged; glyphs and images, which it does not list, change rarely.
 <IfModule mod_expires.c>
   ExpiresByType text/css                 "access plus 1 hour"
   ExpiresByType application/javascript   "access plus 1 hour"
+  ExpiresByType text/javascript          "access plus 1 hour"
   ExpiresByType application/x-protobuf   "access plus 1 month"
   ExpiresByType image/jpeg               "access plus 1 week"
   ExpiresByType image/png                "access plus 1 week"

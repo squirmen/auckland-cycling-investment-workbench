@@ -83,8 +83,11 @@ integrity check runs on the decoded bytes, so it is unchanged. The canonical
 Scripts served from a brotli copy are typed `application/javascript`, so the
 one-year cache rule for hashed file names now applies to them. `text/javascript`
 is added to the list compressed on request, which also covers scripts elsewhere
-on the site. No cache rule is added for that type, because STAND's scripts keep
-their names between releases and set their own.
+on the site. No cache rule is added for that type at the root, because STAND's
+scripts keep their names between releases. STAND's own `.htaccess` listed only
+`application/javascript`, so its scripts went out with no cache time; its
+source now lists `text/javascript` too, and the live folder gets it with
+STAND's next deployment.
 
 **Context layers no longer hold up the page.** Only the links are waited for.
 The existing network and any other visible layer load afterwards and are drawn
