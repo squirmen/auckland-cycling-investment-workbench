@@ -257,6 +257,7 @@ def test_large_text_files_get_checked_brotli_copies(tmp_path, monkeypatch, compa
             info = archive.getinfo(name)
             assert info.compress_type == package.ZIP_STORED
             assert info.external_attr >> 16 & 0o777 == 0o644
+            assert info.date_time[0] > 1980
     assert release["brotliCopies"]["files"] == len(expected)
     assert release["brotliCopies"]["bytes"] < release["brotliCopies"]["sourceBytes"]
     assert (

@@ -22,6 +22,11 @@ aggregate equity, programme, approximate counter and disclosure-safe safety
 context without presenting any of them as decision-ready. Full-network
 low-stress connectivity remains deliberately unreported.
 
+The seven captures below are the v1.0.0 release record and show the interface
+as it was then. The root README now shows the current SPAN interface from
+`span/span-link-detail.webp`, captured on 1 October 2026 from the same run at
+1440 × 900 with the Plain background, so it contains no hosted map tiles.
+
 Store each capture under the same basename in three subdirectories:
 
 - `full/`: lossless 1800 × 1100 PNG master;
@@ -54,8 +59,7 @@ is introduced.
 
 Before publication, verify every value against the checksummed export, all
 three directories contain all seven basenames in the declared formats, every
-checksum is populated, WebP copies remain legible, and the hero WebP is the
-file embedded by the root README. These file-integrity checks are complete for
+checksum is populated and WebP copies remain legible. These file-integrity checks are complete for
 the Auckland research snapshot. Public use still depends on the remaining
 method, validation, manual-audit, asset-rights, and Git approval gates.
 

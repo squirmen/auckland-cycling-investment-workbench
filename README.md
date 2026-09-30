@@ -14,7 +14,7 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
 · [Download v1.0.0](https://github.com/squirmen/auckland-cycling-investment-workbench/releases/tag/v1.0.0)
 · [Read the method](documentation/methodology/methodology.md)
 
-![SPAN, released as the Auckland Cycling Investment Workbench, showing the regional candidate map and a cumulative portfolio under the 8% commute sensitivity.](documentation/screenshots/web/workbench-overview.webp)
+![SPAN showing a NZ$100m build order of 12 cycling upgrades under the 8% commute sensitivity, with Beach Road selected: its cost, its connection points and the low-stress streets it joins.](documentation/screenshots/span/span-link-detail.webp)
 
 ## What you can do
 
@@ -29,11 +29,14 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
   layer.
 - Inspect the route and evidence behind a candidate rather than relying on a
   single composite score.
+- See which upgrades a complete journey needs, for a local sample of journeys
+  grouped by what a budget does for them.
 - Sketch a corridor on the routable graph and export the current selection as
   GeoJSON.
 - Switch between a clean analysis view and light or street basemaps without
   changing the model results.
 - Use the map on a desktop, tablet or phone, with keyboard-accessible controls.
+- Print a view or save it as a PDF, with the map fitted to the page.
 
 The current Auckland snapshot contains 12,580 candidate links derived from
 780,429 disaggregated trip-purpose records. Of the 42,708 records selected for
@@ -47,6 +50,8 @@ SPAN has one map workspace: **Build order**, **Value for money** and
 journey equivalents, sampling diagnostics and sensitivity sit behind expandable
 method notes. Connected journeys currently covers a local 4 km-radius sample, not
 a citywide or calibrated forecast. Old `research.html` links redirect into SPAN.
+The page opens on the 1,846 links in a build order or on a best-value frontier
+and loads all 12,580 when a view needs them.
 See the
 [results, limitations and reproduction commands](documentation/research/span-access-first-experiment.md).
 
@@ -74,7 +79,8 @@ See the [exact code entry points and adapter checklist](documentation/research/c
 and the [prioritised improvement review](documentation/audit/span-improvement-review-2026-09-24.md).
 The [search-limit and cost-sensitivity tests](documentation/audit/span-search-and-cost-sensitivity-2026-09-25.md)
 compare complete-route methods on paired samples without replacing public results.
-The latest note covers [staged loading and tighter search bounds](documentation/audit/span-staged-loading-and-stress-bounds-2026-09-26.md).
+Later notes cover [staged loading and tighter search bounds](documentation/audit/span-staged-loading-and-stress-bounds-2026-09-26.md)
+and [loading speed and interface fixes](documentation/audit/span-loading-and-interface-2026-10-01.md).
 Collaborator source archives, source runs and deployment bundles are not committed.
 
 ## Model foundations

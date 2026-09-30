@@ -209,8 +209,12 @@ def main() -> None:
     }
     output.parent.mkdir(parents=True, exist_ok=True)
 
+    # Entries written from memory take the packaging time; the default date is 1 January 1980,
+    # which an unpacking tool would pass on to the server as the file's age.
+    written = datetime.now().timetuple()[:6]
+
     def entry(name: str, compress_type: int) -> ZipInfo:
-        info = ZipInfo(name)
+        info = ZipInfo(name, date_time=written)
         info.create_system = 3
         info.external_attr = (stat.S_IFREG | 0o644) << 16
         info.compress_type = compress_type
