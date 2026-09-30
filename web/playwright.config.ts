@@ -13,6 +13,8 @@ export default defineConfig({
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
+    // Safari's engine, for faults that only show there. Only e2e/safari.spec.ts runs in it.
+    { name: "safari", use: { ...devices["Desktop Safari"] }, testMatch: /safari\.spec\.ts/ },
   ],
   webServer: {
     command: "npm run preview -- --port 4173",
