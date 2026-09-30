@@ -11,7 +11,7 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
 (CIW); the command-line tool and Python package keep the `ciw` name.
 
 [Open SPAN](https://span.tfwelch.com)
-· [Download v1.0.0](https://github.com/squirmen/auckland-cycling-investment-workbench/releases/tag/v1.0.0)
+· [Download v2.0.0](https://github.com/squirmen/spending-priorities-active-networks/releases/tag/v2.0.0)
 · [Read the method](documentation/methodology/methodology.md)
 
 ![SPAN showing a NZ$100m build order of 12 cycling upgrades under the 8% commute sensitivity, with Beach Road selected: its cost, its connection points and the low-stress streets it joins.](documentation/screenshots/span/span-link-detail.webp)
@@ -215,5 +215,9 @@ and [`DATA_LICENSES.md`](DATA_LICENSES.md).
 
 If you use SPAN in research, cite the software using
 [`CITATION.cff`](CITATION.cff) and cite the underlying methods and datasets
-relevant to your analysis. Version 1.0.0 was released as the Auckland Cycling
-Investment Workbench.
+relevant to your analysis. Version 2.0.0 is the first release as SPAN.
+Version 1.0.0 was released as the Auckland Cycling Investment Workbench, with a
+GitHub Pages copy that has since been retired; span.tfwelch.com replaces it.
+The repository was renamed from `auckland-cycling-investment-workbench` to
+`spending-priorities-active-networks` on 1 October 2026, and old links to it
+redirect.
