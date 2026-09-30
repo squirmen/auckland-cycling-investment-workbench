@@ -1,0 +1,73 @@
+# STAND at span.tfwelch.com/parking/uoa/: Apache settings for this folder.
+# pipeline/build_deploy.py copies this file to uoa/.htaccess in parking/build/site.
+# Ignored by hosts that are not Apache.
+#
+# SPAN's own .htaccess at the site root (web/public/.htaccess in SPAN's
+# repository) applies here too. It turns off directory listings, serves
+# index.html, types GeoJSON, compresses HTML, CSS, JavaScript, JSON, GeoJSON and
+# SVG, sets cache times, and sends X-Content-Type-Options and Referrer-Policy.
+# This file adds only what STAND needs on top of that, and changes one thing
+# (the cache time of scripts and styles, below).
+#
+# The map is static: index.html, ld.css, js/, GeoJSON and images under data/,
+# glyphs under assets/, the method pages under docs/. Nothing is written to the
+# server and no cookies are set.
+
+# ---- Types ------------------------------------------------------------------
+# Map glyphs, and oembed.json as application/json, the type oEmbed consumers
+# expect.
+AddType application/x-protobuf .pbf
+AddType application/json       .json
+
+# ---- Browser security -------------------------------------------------------
+# MapLibre loads from unpkg (pinned version, with Subresource Integrity) and the
+# Inter font from Google Fonts. The Plain and Aerial basemaps are STAND's own
+# images in data/; the only tile host is tile.openstreetmap.org, for the
+# optional Streets basemap. No CARTO or Esri tiles are used, so neither host is
+# allowed. frame-ancestors lets span.tfwelch.com itself and the lab's
+# CampusPress site embed the map (through WordPress's Embed block or a Safe
+# Iframe shortcode); every other site is refused.
+#
+# SPAN's address is listed next to 'self' on purpose. When WordPress embeds a
+# page it did not recognise, it sandboxes the frame without allow-same-origin,
+# which gives the page an opaque origin; the explicit host keeps the page's own
+# scripts, styles and data allowed in that case.
+#
+# "Header set", as in SPAN's root file: if both files ever set the same header,
+# this folder's value replaces the root's instead of being sent as a second copy.
+<IfModule mod_headers.c>
+  Header set Content-Security-Policy "default-src 'self' https://span.tfwelch.com; base-uri 'self'; object-src 'none'; form-action 'self'; frame-ancestors 'self' https://www.betterplaces.auckland.ac.nz https://betterplaces.auckland.ac.nz https://betterplaces.blogs.auckland.ac.nz; script-src 'self' https://span.tfwelch.com https://unpkg.com; style-src 'self' https://span.tfwelch.com 'unsafe-inline' https://unpkg.com https://fonts.googleapis.com; font-src 'self' https://span.tfwelch.com https://fonts.gstatic.com; connect-src 'self' https://span.tfwelch.com blob: https://unpkg.com https://tile.openstreetmap.org; img-src 'self' https://span.tfwelch.com data: blob: https://tile.openstreetmap.org; worker-src 'self' https://span.tfwelch.com blob:; child-src blob:; frame-src 'none'; manifest-src 'self'"
+  Header set Permissions-Policy "camera=(), geolocation=(), microphone=(), payment=(), usb=()"
+</IfModule>
+
+# ---- Embedding --------------------------------------------------------------
+# oembed.json describes the map to WordPress, so pasting
+# https://span.tfwelch.com/parking/uoa/ into an Embed block (or an [embed]
+# shortcode) can show the live map. A frame sandboxed that way has an opaque
+# origin, so its requests for the data files arrive from origin "null" and need
+# an open CORS header. The files are public.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(geojson|json|pbf|jpg|png|svg|css|js)$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+# ---- Caching ----------------------------------------------------------------
+# SPAN's scripts and styles carry a content hash in their names, so the root
+# file caches them for a year. STAND's (js/app.js, js/embed-shim.js, ld.css)
+# keep their names from one release to the next, so here they are checked
+# hourly, like the data. The root file's times for the page, JSON, GeoJSON and
+# SVG apply unchanged; glyphs and images, which it does not list, change rarely.
+<IfModule mod_expires.c>
+  ExpiresByType text/css                 "access plus 1 hour"
+  ExpiresByType application/javascript   "access plus 1 hour"
+  ExpiresByType application/x-protobuf   "access plus 1 month"
+  ExpiresByType image/jpeg               "access plus 1 week"
+  ExpiresByType image/png                "access plus 1 week"
+</IfModule>
+
+# ---- Compression ------------------------------------------------------------
+# The root file compresses the page, scripts, styles, JSON and GeoJSON (the
+# GeoJSON layers shrink about tenfold). No list is repeated here: a folder's own
+# AddOutputFilterByType list would replace the root's for this folder rather
+# than add to it. Glyphs and images are sent as they are.

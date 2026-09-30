@@ -1,0 +1,55 @@
+{
+  "_comment": "All demand-side assumptions in one place. Change here, rerun make model. Sources in docs/methodology.md.",
+  "arrivals_per_day": {
+    "city": 900,
+    "grafton": 140,
+    "newmarket": 90
+  },
+  "arrivals_note": "Typical-weekday cyclist arrivals per campus. Derived as: on-campus population on a typical day x cycling mode share. City: ~40,000 students + ~7,000 staff present, students 1.5% (AT 2018 tertiary survey found 1% for UoA; e-bike growth since), staff 5% -> ~950; rounded 900. Grafton: ~4,000 FMHS students + ~1,200 staff/clinical, 2% and 6% -> ~150; rounded down to 140, as the City figure is. Newmarket: ~1,500 postgraduates/staff, 6% -> ~90. These scale the flows; the ranking of sites is insensitive to them, the dock counts are not.",
+  "portal_share": 0.6,
+  "portal_share_note": "Share of arrivals attributed to riders living beyond the 3 km study window (entering via corridor portals). Auckland cycle commutes are typically 4-6 km, so most riders come from outside the window.",
+  "lambda_perceived_m": 3000,
+  "lambda_note": "Exponential distance-decay constant on perceived (stress- and grade-weighted) cycling cost.",
+  "walk_decay": {
+    "full_credit_m": 50,
+    "zero_credit_m": 250
+  },
+  "walk_decay_note": "Credit a dock gives a destination building falls from 1.0 at 50 m network-walk to 0 at 250 m. NZTA cycle parking guidance asks for public parking within 25 m of the entrance and long-stay users tolerate more (CROW); 50/250 m is the compromise for secure, multi-building campus docks.",
+  "min_spacing_m": 110,
+  "k_per_campus": {
+    "city": 6,
+    "grafton": 3,
+    "newmarket": 3
+  },
+  "k_sweep": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "suitability_weights": {
+    "coverage": 0.3,
+    "arrival_flow": 0.2,
+    "approach_lts": 0.1,
+    "surveillance": 0.15,
+    "lighting": 0.08,
+    "space_power": 0.07,
+    "slope": 0.05,
+    "revealed_demand": 0.05
+  },
+  "exclusions": {
+    "max_slope_pct": 8,
+    "min_dist_to_building_m": 2,
+    "classes_excluded": [
+      "steps",
+      "motorway",
+      "trunk",
+      "primary",
+      "secondary"
+    ]
+  }
+}

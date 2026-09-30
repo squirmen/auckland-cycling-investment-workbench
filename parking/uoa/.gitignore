@@ -1,0 +1,7 @@
+# STAND's generated files stay out of git, like SPAN's run outputs. `make all` and `make publish`
+# rebuild them; the README says where the published map data comes from.
+data/big/
+data/derived/
+web/data/
+web/docs/
+web/*_standalone.html

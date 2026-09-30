@@ -1,0 +1,59 @@
+{
+  "_note": "Curated names, stages and reasons for the recommended sites, from docs/recommendations.md. Numbers are not stored here: the map takes every number from web/data/results.json and candidates.geojson. 'also' lists neighbouring candidates at the same spot (within 40 m) that the model may pick instead after a rerun; pipeline/name_sites.py gives the site's name to whichever of them is selected. Candidate ids follow the order in which the model generates candidates, so a rerun can renumber them. 'pos' therefore stores the position (lon, lat) of the cid and of every 'also' id, from data/derived/candidates.parquet: name_sites.py stops if the selected candidate it would name is more than 15 m from the position stored for its id. Building names follow the model's own labels (for example Owen G. Glenn Building).",
+  "campuses": {
+    "city": {
+      "label": "City Campus",
+      "summary_template": "{k_words} docks put {share} of about {arrivals} daily cyclist arrivals within a short walk.",
+      "sites": [
+        {"cid": "CIT-079", "short": "Grafton Rd at Engineering", "stage": "First stage", "name": "Grafton Road frontage at Engineering and the Business School",
+         "why": "The east gateway from the Grafton Gully cycleway and the Domain, beside Engineering and the Owen G. Glenn Building, two of the campus’s biggest draws. An open rack is already mapped here. The ground slopes, so the station needs the flattest bay nearby.",
+         "pos": {"CIT-079": [174.770483, -36.852994]}},
+        {"cid": "CIT-172", "short": "Symonds St at Hiwa", "stage": "First stage", "name": "Symonds Street frontage at Hiwa and the Science Centre",
+         "why": "Reaches Hiwa and Science Centre 301 and 303 from the Symonds Street side, on open ground with a gentle slope (2.8%). The card-access bike shed beside Hiwa is close by, so this dock would mainly serve visitors and short stays.",
+         "pos": {"CIT-172": [174.768703, -36.852585]}},
+        {"cid": "CIT-142", "short": "Old Choral Hall lane", "stage": "First stage", "name": "Service lane between the General Library and the Old Choral Hall",
+         "why": "Reaches the General Library, the Old Choral Hall, Biology, Commerce A and the Thomas Building within a short walk, so it covers most of the northern precinct. It is a quiet service lane with no mapped lamps, so check lighting and vehicle access on site.",
+         "pos": {"CIT-142": [174.770138, -36.851075]}},
+        {"cid": "CIT-268", "short": "Symonds St south gateway", "stage": "Second stage", "name": "Symonds Street southern gateway, by Architecture and Planning",
+         "why": "One of the busiest approaches in the model: riders from homes near the campus and from the south and west are routed past here. It serves the Science Centre, Architecture and Hiwa from a footpath with mapped street lamps, bus stops and shops around it.",
+         "pos": {"CIT-268": [174.768219, -36.854028]}},
+        {"cid": "CIT-068", "also": ["CIT-066"], "short": "Wynyard Street", "stage": "Second stage", "name": "Wynyard Street by Social Sciences, Humanities and the Fale",
+         "why": "Covers the eastern arts and social-science buildings. The Building 201 store nearby needs a Campus Card; this dock would not.",
+         "pos": {"CIT-068": [174.771676, -36.852150], "CIT-066": [174.771879, -36.851990]}},
+        {"cid": "CIT-096", "short": "Waterloo Quadrant", "stage": "Optional", "name": "Waterloo Quadrant by the Fisher Building and the Davis Law Library",
+         "why": "Reaches the Fisher Building, the Davis Law Library and the other Waterloo Quadrant and Eden Crescent buildings, which no other dock reaches. It is the weakest of the six for eyes on the street, with no mapped lamps or shops close by, so treat it as optional.",
+         "pos": {"CIT-096": [174.770948, -36.849017]}}
+      ]
+    },
+    "grafton": {
+      "label": "Grafton Campus",
+      "summary_template": "{k_words} docks put {share} of about {arrivals} daily cyclist arrivals within a short walk.",
+      "sites": [
+        {"cid": "GRA-101", "short": "Park Avenue", "stage": "First stage", "name": "Park Avenue, at the main Medical and Health Sciences building",
+         "why": "About half of Grafton’s arrivals end within reach, on the approach from Park Road and the hospital. The card-access shed under Building 505 serves regular riders; this dock would serve visitors, clinicians and students without a card.",
+         "pos": {"GRA-101": [174.768611, -36.861691]}},
+        {"cid": "GRA-122", "short": "Park Rd at Boyle Crescent", "stage": "Second stage", "name": "Park Road frontage by the Boyle Crescent building",
+         "why": "Flat and busy, with shops and bus stops on Park Road. Fewer modelled riders pass here than on Park Avenue; it earns its place by reaching the Park Road and Boyle Crescent buildings.",
+         "pos": {"GRA-122": [174.769943, -36.861817]}},
+        {"cid": "GRA-094", "short": "Grafton Road", "stage": "Optional", "name": "Grafton Road near 89–93 Grafton Road",
+         "why": "Serves the northern Grafton buildings only. Two docks already cover most of the campus, so build this one only if those buildings need their own.",
+         "pos": {"GRA-094": [174.768408, -36.858844]}}
+      ]
+    },
+    "newmarket": {
+      "label": "Newmarket Campus",
+      "summary_template": "{k_words} docks put {share} of about {arrivals} daily cyclist arrivals within a short walk.",
+      "sites": [
+        {"cid": "NEW-018", "short": "Campus core path", "stage": "First stage", "name": "The campus core path, beside the main Khyber Pass Road buildings",
+         "why": "Three quarters of Newmarket’s arrivals end within reach. It has a gentle slope (3.4%) and open sightlines, and it appears to be University land, which would avoid road-reserve consent; confirm on site.",
+         "pos": {"NEW-018": [174.773890, -36.865944]}},
+        {"cid": "NEW-048", "also": ["NEW-049"], "short": "Ray Meyer Building", "stage": "Second stage", "name": "Khyber Pass Road entrance at the Ray Meyer Building",
+         "why": "The street-facing dock for riders on Khyber Pass Road, serving Structures and the Ray Meyer Building. The modelled point is on a slope, so the station should go on the flattest spot at the entrance.",
+         "pos": {"NEW-048": [174.771872, -36.866007], "NEW-049": [174.772196, -36.866070]}},
+        {"cid": "NEW-088", "short": "Suiter Street", "stage": "Second stage", "name": "Suiter Street at the School of Exercise, Sport and Rehabilitation Science",
+         "why": "Serves the School of Exercise, Sport and Rehabilitation Science and the eastern buildings, with shops and cafés around it.",
+         "pos": {"NEW-088": [174.775715, -36.866391]}}
+      ]
+    }
+  }
+}

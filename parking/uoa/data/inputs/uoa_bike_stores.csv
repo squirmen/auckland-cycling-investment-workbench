@@ -1,0 +1,15 @@
+id,name,campus,lon,lat,coord_quality,capacity,e_bike_charging,source,notes
+UBS-B124,"Bike store B124 (ground floor, between Old Government House and Thomas Building)",city,174.77070,-36.85040,osm_way_w918249409 (Bike Cage),,,uoa.custhelp.com/app/answers/detail/a_id/2935 + OSM,Campus Card access 24/7
+UBS-B201,Bike store B201 Level 1 (lane off Wynyard St),city,174.77155,-36.85205,osm_way_w1343431906 (Bike Cage 201),,,uoa.custhelp.com/app/answers/detail/a_id/2935 + OSM,Campus Card access 24/7
+UBS-B260,Bike store B260 OGGB P1 (vehicle entry off Grafton Rd),city,174.77120,-36.85290,approx_building,84,yes (12 e-bike bays with power points; repair station),facebook.com/libraryuoa; uoa.custhelp.com,Under-cover bike store in the OGGB car park
+UBS-B315,Bike cage 315 (Kate Edger / Science),city,174.76931,-36.85238,osm_node_n12430371741 (Bike Cage 315),,,OSM via Overture,
+UBS-B435,Bike store B435 58 Symonds St Level B (plus open rack and repair station),city,174.76680,-36.85560,approx_building,,,uoa.custhelp.com/app/answers/detail/a_id/2935,
+UBS-B439,Bike store B439 Bioengineering House B3,city,174.76661,-36.85606,building_centroid,,,uoa.custhelp.com/app/answers/detail/a_id/2935,
+UBS-B440,Bike store University Hall B440 (Whitaker Pl),city,174.76742,-36.85641,building_centroid,,,uoa.custhelp.com/app/answers/detail/a_id/2935,
+UBS-REC,City Bike Shed beside Hiwa Recreation Centre (off Symonds St),city,174.76860,-36.85290,approx_building,,,auckland.ac.nz sustainable commuting page,
+UBS-CPSV,Carlaw Park Student Village carpark cages,city,174.77650,-36.85200,approx_address,,,uoa.custhelp.com/app/answers/detail/a_id/2935,
+UBS-B838,Stuart McCutcheon House B838 (Carlaw Park Ave),city,174.77580,-36.85280,approx_address,,,uoa.custhelp.com/app/answers/detail/a_id/2935,
+UBS-B505,Grafton Bike Shed (basement of Building 505),grafton,174.76823,-36.86166,osm_node_n8628510175 (Bike Cage),,,auckland.ac.nz sustainable commuting page + OSM,
+UBS-N901,Newmarket secure bike racks Building 901,newmarket,174.77340,-36.86560,approx_building,,,auckland.ac.nz newmarket campus page,
+UBS-N906,Newmarket secure bike racks Building 906,newmarket,174.77250,-36.86620,approx_building,,,auckland.ac.nz newmarket campus page,
+UBS-N907,Newmarket secure bike racks Building 907,newmarket,174.77300,-36.86640,approx_building,,,auckland.ac.nz newmarket campus page,
