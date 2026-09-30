@@ -8,7 +8,8 @@ from math import isclose, isfinite
 from time import perf_counter
 
 from .active_search import InvestmentGraph, PlanningStandard, RouteOption
-from .investment import choose_investments, greedy_investments, served
+from .investment import InvestmentResult, choose_investments, greedy_investments, served
+from .priced_routes import DEFAULT_PRICES, RoutePrice, priced_columns
 
 
 def checked_route(
@@ -69,6 +70,34 @@ def checked_route(
     return route
 
 
+def _solution_row(
+    result: InvestmentResult,
+    project_costs: Mapping[str, float],
+    routes: Mapping[str, Sequence[RouteOption]],
+    weights: Mapping[str, float],
+    cap: float,
+) -> dict:
+    """Check a package's claimed journeys against complete route witnesses and describe it."""
+    witnesses = [
+        name
+        for name, options in routes.items()
+        if any(r.project_ids <= result.selected for r in options)
+    ]
+    if len(witnesses) != result.served_journeys or not isclose(
+        sum(weights[name] for name in witnesses), result.served_weight, abs_tol=1e-7
+    ):
+        raise ValueError("connector portfolio lacks its claimed route witnesses")
+    connectors = {p for p in result.selected if p.startswith("diagnostic-short:")}
+    return {
+        **asdict(result),
+        "selected": sorted(result.selected),
+        "budget": cap,
+        "shortConnectorCount": len(connectors),
+        "shortConnectorCostNzd": sum(project_costs[p] for p in connectors),
+        "checkedRouteWitnesses": len(witnesses),
+    }
+
+
 def _solve_columns(
     project_costs: Mapping[str, float],
     routes: Mapping[str, Sequence[RouteOption]],
@@ -77,34 +106,280 @@ def _solve_columns(
 ) -> list[dict]:
     used = {p for options in routes.values() for route in options for p in route.project_ids}
     costs = {p: project_costs[p] for p in sorted(used)}
-    solutions = []
-    for cap in budgets:
+    return [
+        _solution_row(result, costs, routes, weights, cap)
+        for cap in budgets
         for result in (
             greedy_investments(costs, routes, weights, budget=cap),
             greedy_investments(costs, routes, weights, budget=cap, packages=True),
             choose_investments(costs, routes, weights, budget=cap),
-        ):
-            witnesses = [
-                name
-                for name, options in routes.items()
-                if any(r.project_ids <= result.selected for r in options)
+        )
+    ]
+
+
+def _retained(
+    earlier: Sequence[dict],
+    stage: str,
+    project_costs: Mapping[str, float],
+    routes: Mapping[str, Sequence[RouteOption]],
+    weights: Mapping[str, float],
+) -> list[dict]:
+    """Re-evaluate an earlier stage's preferred packages on a larger route pool.
+
+    A package that was affordable stays affordable, and more routes can only
+    connect more journeys with it. Keeping it as a candidate means a time-limited
+    solver or a greedy pass cannot make a later stage look worse than an earlier one.
+    """
+    rows = []
+    for solution in earlier:
+        selected = frozenset(solution["selected"])
+        weight, count = served(selected, routes, weights)
+        result = InvestmentResult(
+            selected, solution["capital_cost"], weight, count, solution["method"]
+        )
+        row = _solution_row(result, project_costs, routes, weights, solution["budget"])
+        rows.append({**row, "retainedFrom": solution.get("retainedFrom", stage)})
+    return rows
+
+
+def priced_route_generation(
+    graph: InvestmentGraph,
+    routes: Mapping[str, Sequence[RouteOption]],
+    endpoints: Mapping[str, tuple[str, str]],
+    shortest: Mapping[str, float | None],
+    weights: Mapping[str, float],
+    *,
+    budget: float,
+    standard: PlanningStandard,
+    label_stage: Mapping,
+    prices: Sequence[RoutePrice] = DEFAULT_PRICES,
+    rounds: int = 3,
+    max_labels: int = 200_000,
+    progress: Callable[[str], None] | None = None,
+) -> dict:
+    """Add price-guided routes to the checked label-search pool and re-solve in stages.
+
+    Stage one is the label search as supplied. Stage two adds one route per price
+    for every journey. Stage three repeats for the journeys the current package
+    leaves unconnected, with that package's projects priced at zero, until a round
+    adds nothing, leaves the package unchanged, or reaches the round limit. Every
+    added route passes the same independent checker as the label-search columns,
+    and every method sees the same pool at each stage. Nothing here proves the
+    pool is complete.
+    """
+    if type(rounds) is not int or rounds < 0:
+        raise ValueError("priced rounds must be a non-negative whole number")
+    started = perf_counter()
+    budgets = sorted({0.0, budget / 4, budget / 2, budget})
+    pool = {name: {route.arc_ids: route for route in rows} for name, rows in routes.items()}
+
+    def columns() -> dict[str, tuple[RouteOption, ...]]:
+        return {name: tuple(rows.values()) for name, rows in pool.items()}
+
+    def add(found: Mapping[str, Sequence[RouteOption]]) -> int:
+        added = 0
+        for name, rows in found.items():
+            for route in rows:
+                checked_route(graph, route, endpoints[name], standard, shortest[name])
+                if route.capital_cost > budget + 1e-7:
+                    raise ValueError("priced route exceeds the comparison budget")
+                if route.arc_ids not in pool[name]:
+                    pool[name][route.arc_ids] = route
+                    added += 1
+        return added
+
+    def size() -> dict:
+        return {
+            "routeColumns": sum(len(rows) for rows in pool.values()),
+            "journeysWithRouteColumns": sum(bool(rows) for rows in pool.values()),
+        }
+
+    def at_budget(solutions: Sequence[dict]) -> dict:
+        return next(s for s in preferred_solutions(solutions) if s["budget"] == budget)
+
+    def pool_summary() -> dict:
+        """How many journeys have a route at all, by the capital of their cheapest one."""
+        cheapest = [
+            min((route.capital_cost for route in rows.values()), default=None)
+            for rows in pool.values()
+        ]
+        with_route = [value for value in cheapest if value is not None]
+        return {
+            "journeys": len(pool),
+            "disconnected": sum(shortest[name] is None for name in pool),
+            "withoutRoute": sum(
+                shortest[name] is not None and not rows for name, rows in pool.items()
+            ),
+            "connectedWithoutProjects": sum(value <= 1e-7 for value in with_route),
+            "cheapestRouteUpToQuarterBudget": sum(
+                1e-7 < value <= budget / 4 for value in with_route
+            ),
+            "cheapestRouteUpToHalfBudget": sum(
+                budget / 4 < value <= budget / 2 for value in with_route
+            ),
+            "cheapestRouteUpToBudget": sum(budget / 2 < value for value in with_route),
+        }
+
+    label_pool = pool_summary()
+
+    stages = [
+        {
+            "stage": "label_search",
+            **size(),
+            "solutions": label_stage["solutions"],
+            "preferredSolutions": label_stage["preferredSolutions"],
+            # Searching and solving together, as for the later stages.
+            "elapsedS": label_stage.get("elapsedS"),
+        }
+    ]
+    if progress:
+        progress(f"Priced routes: {len(prices)} prices for each journey…")
+    stage_started = perf_counter()
+    found, stats = priced_columns(
+        graph,
+        endpoints,
+        shortest,
+        budget=budget,
+        standard=standard,
+        prices=prices,
+        max_labels=max_labels,
+    )
+    added = add(found)
+    current = columns()
+    solutions = [
+        *_solve_columns(graph.projects, current, weights, budgets),
+        *_retained(
+            stages[0]["preferredSolutions"], "label_search", graph.projects, current, weights
+        ),
+    ]
+    stages.append(
+        {
+            "stage": "priced_paths",
+            **stats,
+            "newRouteColumns": added,
+            **size(),
+            "solutions": solutions,
+            "preferredSolutions": preferred_solutions(solutions),
+            "elapsedS": perf_counter() - stage_started,
+        }
+    )
+    if progress:
+        progress(f"Priced routes: {added} new routes; {stats['searchStopReasons']}")
+    stage_started = perf_counter()
+    round_rows = []
+    reference = at_budget(solutions)
+    stopped = "round_limit"
+    for number in range(1, rounds + 1):
+        funded = frozenset(reference["selected"])
+        unserved = [
+            name
+            for name, rows in pool.items()
+            if shortest[name] is not None
+            and not any(route.project_ids <= funded for route in rows.values())
+        ]
+        found, stats = priced_columns(
+            graph,
+            endpoints,
+            shortest,
+            budget=budget,
+            standard=standard,
+            prices=prices,
+            funded=funded,
+            journeys=unserved,
+            max_labels=max_labels,
+        )
+        added = add(found)
+        row = {
+            "round": number,
+            "fundedProjects": len(funded),
+            "unconnectedJourneys": len(unserved),
+            **stats,
+            "newRouteColumns": added,
+        }
+        round_rows.append(row)
+        if progress:
+            progress(f"Priced round {number}: {added} new routes for {len(unserved)} journeys")
+        if not added:
+            stopped = "no_new_routes"
+            break
+        current = columns()
+        # The package being improved stays a candidate, named for the stage it came from.
+        origin = "priced_paths" if number == 1 else "priced_rounds"
+        reference = at_budget(
+            [
+                *_solve_columns(graph.projects, current, weights, [budget]),
+                *_retained([reference], origin, graph.projects, current, weights),
             ]
-            if len(witnesses) != result.served_journeys or not isclose(
-                sum(weights[name] for name in witnesses), result.served_weight, abs_tol=1e-7
-            ):
-                raise ValueError("connector portfolio lacks its claimed route witnesses")
-            connectors = {p for p in result.selected if p.startswith("diagnostic-short:")}
-            solutions.append(
-                {
-                    **asdict(result),
-                    "selected": sorted(result.selected),
-                    "budget": cap,
-                    "shortConnectorCount": len(connectors),
-                    "shortConnectorCostNzd": sum(costs[p] for p in connectors),
-                    "checkedRouteWitnesses": len(witnesses),
-                }
-            )
-    return solutions
+        )
+        row["preferredServedWeight"] = reference["served_weight"]
+        row["preferredServedJourneys"] = reference["served_journeys"]
+        row["preferredCapitalCost"] = reference["capital_cost"]
+        if frozenset(reference["selected"]) == funded:
+            # The same package would price the same searches and find the same routes.
+            stopped = "package_unchanged"
+            break
+    if any(row["newRouteColumns"] for row in round_rows):
+        current = columns()
+        kept: dict[tuple, dict] = {}
+        for row in (
+            *_retained(
+                stages[1]["preferredSolutions"], "priced_paths", graph.projects, current, weights
+            ),
+            *_retained([reference], "priced_rounds", graph.projects, current, weights),
+        ):
+            # One row per package and budget, named for the earliest stage that found it.
+            kept.setdefault((row["budget"], tuple(row["selected"])), row)
+        solutions = [*_solve_columns(graph.projects, current, weights, budgets), *kept.values()]
+    stages.append(
+        {
+            "stage": "priced_rounds",
+            "rounds": round_rows,
+            "stopped": stopped,
+            "newRouteColumns": sum(row["newRouteColumns"] for row in round_rows),
+            **size(),
+            "solutions": solutions,
+            "preferredSolutions": preferred_solutions(solutions),
+            "elapsedS": perf_counter() - stage_started,
+        }
+    )
+    before = at_budget(stages[0]["preferredSolutions"])
+    after = at_budget(stages[-1]["preferredSolutions"])
+    package = frozenset(after["selected"])
+    # For each journey the package leaves unconnected: the least extra capital any of its
+    # routes in the pool would need. The pool is not complete, so the true figure may be lower.
+    additions = sorted(
+        min(sum(graph.projects[p] for p in route.project_ids - package) for route in rows.values())
+        for rows in pool.values()
+        if rows and not any(route.project_ids <= package for route in rows.values())
+    )
+    return {
+        "status": "heuristic_route_generation_without_completeness_or_optimality_proof",
+        "budget": budget,
+        "prices": [asdict(price) for price in prices],
+        "roundLimit": rounds,
+        "maxLabelsPerPricedSearch": max_labels,
+        "boundStrategy": "treatable_streets",
+        "stages": stages,
+        "labelSearchRoutePool": label_pool,
+        "routePool": pool_summary(),
+        "nextJourney": {
+            "unconnectedWithRoute": len(additions),
+            "remainingBudgetNzd": budget - after["capital_cost"],
+            "cheapestAdditionNzd": additions[0] if additions else None,
+        },
+        "change": {
+            "servedWeight": after["served_weight"] - before["served_weight"],
+            "servedJourneys": after["served_journeys"] - before["served_journeys"],
+            "capitalCost": after["capital_cost"] - before["capital_cost"],
+            "routeColumns": stages[-1]["routeColumns"] - stages[0]["routeColumns"],
+        },
+        "elapsedS": perf_counter() - started,
+        "note": "One label per junction movement, score and resources only: a heuristic, not a "
+        "complete search. Priced routes join the checked label-search pool; nothing is removed. "
+        "Each later stage also keeps the earlier preferred package as a candidate, so a stage "
+        "cannot report less access than the one before. Same journeys, weights, standards, "
+        "budget and provisional costs. Connected records are not extra cyclists.",
+    }
 
 
 def fixed_connector_cost_sensitivity(
@@ -208,6 +483,8 @@ def compare_budgeted_connectors(
     label_limits: Sequence[int] | None = None,
     fixed_connector_costs: Sequence[float] = (),
     stress_aware_bounds: bool = False,
+    priced_routes: bool = False,
+    priced_rounds: int = 3,
     progress: Callable[[str], None] | None = None,
 ) -> dict:
     """Search nested route unions with paired inputs and explicit truncation.
@@ -231,6 +508,7 @@ def compare_budgeted_connectors(
         raise ValueError("connector allowances must be finite and non-negative")
     started = perf_counter()
     routes = {name: tuple(rows) for name, rows in original_routes.items()}
+    shortest: dict[str, float | None] = {}
     checks = []
     for limit in limits:
         if progress:
@@ -247,6 +525,7 @@ def compare_budgeted_connectors(
                 stress_aware_bounds=stress_aware_bounds,
             )
             searches.append(search)
+            shortest[name] = search.shortest_legal_distance_m
             combined = {}
             for route in (*routes[name], *search.routes):
                 if search.shortest_legal_distance_m is None:
@@ -290,6 +569,21 @@ def compare_budgeted_connectors(
             fixed_costs=fixed_connector_costs,
             reference_selected=frozenset(reference["selected"]),
         )
+    priced = None
+    if priced_routes:
+        # A separate block: the label-search results above are reported unchanged.
+        priced = priced_route_generation(
+            graph,
+            routes,
+            endpoints,
+            shortest,
+            weights,
+            budget=budget,
+            standard=standard,
+            label_stage=final,
+            rounds=priced_rounds,
+            progress=progress,
+        )
     return {
         **final,
         "status": "budgeted_short_connector_experiment_not_buildability_validation",
@@ -298,6 +592,7 @@ def compare_budgeted_connectors(
         "originalRouteColumnsRetained": sum(len(r) for r in original_routes.values()),
         "searchLimitChecks": checks,
         "fixedConnectorCostSensitivity": sensitivity,
+        "pricedRouteGeneration": priced,
         "elapsedS": perf_counter() - started,
         "note": "Same crop, demand records, standards and screening cost rate. "
         "Short-chain options are hypothetical, not checked crossing designs. "

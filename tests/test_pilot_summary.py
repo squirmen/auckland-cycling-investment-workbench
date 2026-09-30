@@ -204,11 +204,87 @@ def test_budgeted_summary_does_not_copy_future_raw_journey_fields(tmp_path):
             },
         }
     )
+    stage = {
+        "stage": "priced_paths",
+        "routeColumns": 2,
+        "journeysWithRouteColumns": 1,
+        "journeysSearched": 1,
+        "searches": 12,
+        "searchStopReasons": {"route": 12},
+        "distinctRoutes": 1,
+        "newRouteColumns": 1,
+        "elapsedS": 0.1,
+        "solutions": [{**solution, "retainedFrom": "label_search"}],
+        "preferredSolutions": [solution],
+        "privateJourneyCoordinates": [1, 2],
+    }
+    item["budgetedConnectorComparison"]["pricedRouteGeneration"] = {
+        "status": "test",
+        "budget": 20,
+        "prices": [{"capital_s_per_nzd": 0.0, "distance_s_per_m": 0.0}],
+        "roundLimit": 3,
+        "maxLabelsPerPricedSearch": 10,
+        "boundStrategy": "treatable_streets",
+        "labelSearchRoutePool": {"journeys": 1, "withoutRoute": 1},
+        "routePool": {"journeys": 1, "withoutRoute": 0},
+        "nextJourney": {
+            "unconnectedWithRoute": 0,
+            "remainingBudgetNzd": 10,
+            "cheapestAdditionNzd": None,
+        },
+        "change": {"servedWeight": 1, "servedJourneys": 1, "capitalCost": 10, "routeColumns": 1},
+        "elapsedS": 0.2,
+        "note": "test",
+        "privateJourneyCoordinates": [1, 2],
+        "stages": [
+            {key: stage[key] for key in ("routeColumns", "journeysWithRouteColumns")}
+            | {"stage": "label_search", "solutions": [], "preferredSolutions": []},
+            stage,
+            {
+                **stage,
+                "stage": "priced_rounds",
+                "stopped": "no_new_routes",
+                "rounds": [
+                    {
+                        "round": 1,
+                        "fundedProjects": 1,
+                        "unconnectedJourneys": 1,
+                        "searches": 12,
+                        "newRouteColumns": 1,
+                        "preferredServedWeight": 1,
+                        "privateJourneyCoordinates": [1, 2],
+                    }
+                ],
+            },
+        ],
+    }
     process, path = run_summary(tmp_path, item)
     assert process.returncode == 0, process.stderr
     comparison = json.loads(path.read_text())["areas"][0]["budgetedConnectorComparison"]
     assert comparison["routeColumns"] == 1
     assert "privateJourneyCoordinates" not in json.dumps(comparison)
+    priced = comparison["pricedRouteGeneration"]
+    assert [row["stage"] for row in priced["stages"]] == [
+        "label_search",
+        "priced_paths",
+        "priced_rounds",
+    ]
+    assert priced["change"]["servedWeight"] == 1 and priced["prices"][0]["capital_s_per_nzd"] == 0
+    assert priced["stages"][1]["searches"] == 12
+    assert priced["stages"][2]["stopped"] == "no_new_routes"
+    assert priced["routePool"] == {"journeys": 1, "withoutRoute": 0}
+    assert priced["nextJourney"]["cheapestAdditionNzd"] is None
+    assert priced["stages"][1]["solutions"][0]["retainedFrom"] == "label_search"
+    assert priced["stages"][2]["rounds"] == [
+        {
+            "round": 1,
+            "fundedProjects": 1,
+            "unconnectedJourneys": 1,
+            "searches": 12,
+            "newRouteColumns": 1,
+            "preferredServedWeight": 1,
+        }
+    ]
     assert comparison["searchLimitChecks"][0]["maxLabelsPerSearch"] == 100
     case = comparison["fixedConnectorCostSensitivity"]["cases"][0]
     assert case["fixedProgrammeAffordable"]

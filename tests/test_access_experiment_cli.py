@@ -52,6 +52,7 @@ def test_research_output_cannot_overwrite_source_run(tmp_path):
     "arguments,message",
     [
         (["--connector-stress-bounds"], "require --budget-short-connectors"),
+        (["--connector-priced-routes"], "require --budget-short-connectors"),
         (["--connector-label-limits", "15000", "30000"], "require --budget-short-connectors"),
         (["--connector-fixed-costs-nzd", "100000"], "require --budget-short-connectors"),
         (["--budget-short-connectors", "--connector-label-limits", "30000"], "increase from"),

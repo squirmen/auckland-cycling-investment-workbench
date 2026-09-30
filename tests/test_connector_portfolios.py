@@ -318,3 +318,243 @@ def test_cost_reference_uses_checked_baseline_when_solver_stops_with_a_dearer_ti
     assert sensitivity["cases"][0]["fixedProgrammeCostNzd"] == 5
     assert sensitivity["cases"][1]["fixedProgrammeCostNzd"] == 7
     assert not sensitivity["cases"][1]["fixedProgrammeAffordable"]
+
+
+def test_priced_routes_add_checked_columns_when_the_label_search_is_capped():
+    messages = []
+    result = compare_budgeted_connectors(
+        graph(),
+        {"one": (), "two": ()},
+        {"one": ("a", "c"), "two": ("a", "d")},
+        {"one": 10, "two": 20},
+        budget=5,
+        standard=PlanningStandard(),
+        max_labels=1,
+        priced_routes=True,
+        progress=messages.append,
+    )
+    # The label-search results are reported as before.
+    assert result["routeColumns"] == 0 and result["searchStopReasons"] == {"label_limit": 2}
+    assert all(solution["served_journeys"] == 0 for solution in result["solutions"])
+    priced = result["pricedRouteGeneration"]
+    assert priced["status"].startswith("heuristic_route_generation")
+    assert len(priced["prices"]) == 12 and priced["boundStrategy"] == "treatable_streets"
+    label, paths, rounds = priced["stages"]
+    assert [label["stage"], paths["stage"], rounds["stage"]] == [
+        "label_search",
+        "priced_paths",
+        "priced_rounds",
+    ]
+    assert label["routeColumns"] == 0 and label["solutions"] == result["solutions"]
+    assert paths["searches"] == 24 and paths["searchStopReasons"] == {"route": 24}
+    assert 0 <= paths["searchElapsedS"] <= paths["elapsedS"]
+    assert paths["newRouteColumns"] == paths["routeColumns"] == paths["distinctRoutes"] == 2
+    best = paths["preferredSolutions"][-1]
+    assert best["budget"] == 5 and best["selected"] == ["diagnostic-short:1"]
+    assert best["served_journeys"] == best["checkedRouteWitnesses"] == 2
+    assert best["served_weight"] == 30 and best["capital_cost"] == 5
+    assert all(row["served_journeys"] == 0 for row in paths["preferredSolutions"][:-1])
+    # Every journey is connected, so the first round has nothing to search for.
+    assert rounds["rounds"] == [
+        {
+            "round": 1,
+            "fundedProjects": 1,
+            "unconnectedJourneys": 0,
+            "journeysSearched": 0,
+            "searches": 0,
+            "searchStopReasons": {},
+            "distinctRoutes": 0,
+            "searchElapsedS": rounds["rounds"][0]["searchElapsedS"],
+            "newRouteColumns": 0,
+        }
+    ]
+    assert rounds["preferredSolutions"] == paths["preferredSolutions"]
+    assert rounds["stopped"] == "no_new_routes"
+    none = {
+        "journeys": 2,
+        "disconnected": 0,
+        "withoutRoute": 2,
+        "connectedWithoutProjects": 0,
+        "cheapestRouteUpToQuarterBudget": 0,
+        "cheapestRouteUpToHalfBudget": 0,
+        "cheapestRouteUpToBudget": 0,
+    }
+    assert priced["labelSearchRoutePool"] == none
+    assert priced["routePool"] == {**none, "withoutRoute": 0, "cheapestRouteUpToBudget": 2}
+    assert priced["nextJourney"] == {
+        "unconnectedWithRoute": 0,
+        "remainingBudgetNzd": 0,
+        "cheapestAdditionNzd": None,
+    }
+    assert priced["change"] == {
+        "servedWeight": 30,
+        "servedJourneys": 2,
+        "capitalCost": 5,
+        "routeColumns": 2,
+    }
+    assert len(messages) == 5 and messages[-1].startswith("Priced round 1: 0 new routes")
+
+
+def shared_project_network():
+    """One journey needs P. The other can use its own cheaper Q, or a longer way through P."""
+    return InvestmentGraph(
+        [
+            Arc("xy", "xy", "x", "y", 10, 10, 4, "P"),
+            Arc("st", "st", "s", "t", 14, 14, 4, "Q"),
+            Arc("sx", "sx", "s", "x", 3, 3, 1),
+            Arc("yt", "yt", "y", "t", 3, 3, 1),
+        ],
+        {"P": 5, "Q": 4},
+    )
+
+
+def test_priced_rounds_find_a_route_that_reuses_the_funded_package():
+    result = compare_budgeted_connectors(
+        shared_project_network(),
+        {"main": (), "minor": ()},
+        {"main": ("x", "y"), "minor": ("s", "t")},
+        {"main": 10, "minor": 1},
+        budget=5,
+        standard=PlanningStandard(),
+        max_labels=1,
+        priced_routes=True,
+    )
+    _, paths, rounds = result["pricedRouteGeneration"]["stages"]
+    # On their own, the prices give the minor journey only its cheaper project.
+    assert paths["routeColumns"] == 2
+    first = paths["preferredSolutions"][-1]
+    assert (first["selected"], first["served_weight"], first["served_journeys"]) == (["P"], 10, 1)
+    # With P funded and free, the round finds the longer route through it.
+    (one,) = rounds["rounds"]
+    assert (one["fundedProjects"], one["unconnectedJourneys"], one["newRouteColumns"]) == (1, 1, 1)
+    assert one["searches"] == 12 and one["distinctRoutes"] == 2
+    assert (one["preferredServedWeight"], one["preferredServedJourneys"]) == (11, 2)
+    assert one["preferredCapitalCost"] == 5
+    # The package is the same set of projects, so a second round would repeat the first.
+    assert rounds["stopped"] == "package_unchanged"
+    final = rounds["preferredSolutions"][-1]
+    assert (final["selected"], final["served_weight"], final["capital_cost"]) == (["P"], 11, 5)
+    assert final["served_journeys"] == final["checkedRouteWitnesses"] == 2
+    assert rounds["routeColumns"] == 3 and rounds["newRouteColumns"] == 1
+    assert result["pricedRouteGeneration"]["change"]["servedWeight"] == 11
+    # A round limit of zero stops after the priced paths.
+    stopped = compare_budgeted_connectors(
+        shared_project_network(),
+        {"main": (), "minor": ()},
+        {"main": ("x", "y"), "minor": ("s", "t")},
+        {"main": 10, "minor": 1},
+        budget=5,
+        standard=PlanningStandard(),
+        max_labels=1,
+        priced_routes=True,
+        priced_rounds=0,
+    )["pricedRouteGeneration"]
+    assert stopped["roundLimit"] == 0 and stopped["stages"][-1]["rounds"] == []
+    assert stopped["stages"][-1]["stopped"] == "round_limit"
+    assert stopped["stages"][-1]["preferredSolutions"][-1]["served_weight"] == 10
+    # The minor journey has only its own project in the pool: 4 more, with nothing left.
+    assert stopped["nextJourney"] == {
+        "unconnectedWithRoute": 1,
+        "remainingBudgetNzd": 0,
+        "cheapestAdditionNzd": 4,
+    }
+    assert stopped["routePool"]["cheapestRouteUpToBudget"] == 2
+
+
+def test_a_later_stage_keeps_the_earlier_package_when_its_own_solve_is_worse(monkeypatch):
+    from cycling_investment_workbench.research import connector_portfolios
+
+    network = shared_project_network()
+    endpoints = {"main": ("x", "y"), "minor": ("s", "t")}
+    weights = {"main": 10, "minor": 1}
+    complete = compare_budgeted_connectors(
+        network,
+        {"main": (), "minor": ()},
+        endpoints,
+        weights,
+        budget=5,
+        standard=PlanningStandard(),
+        max_labels=100,
+    )
+    good = complete["preferredSolutions"][-1]
+    assert (good["selected"], good["served_weight"]) == (["P"], 11)
+    routes = {name: network.search(*pair, budget=5).routes for name, pair in endpoints.items()}
+    # Every later solve returns nothing, as a solver out of time might.
+    monkeypatch.setattr(connector_portfolios, "_solve_columns", lambda *args: [])
+    priced = connector_portfolios.priced_route_generation(
+        network,
+        routes,
+        endpoints,
+        {"main": 10.0, "minor": 14.0},
+        weights,
+        budget=5,
+        standard=PlanningStandard(),
+        label_stage=complete,
+    )
+    for stage in priced["stages"][1:]:
+        kept = stage["preferredSolutions"][-1]
+        assert kept["retainedFrom"] == "label_search"
+        assert (kept["selected"], kept["served_weight"], kept["capital_cost"]) == (["P"], 11, 5)
+        assert kept["checkedRouteWitnesses"] == 2 and kept["method"] == good["method"]
+    assert priced["change"]["servedWeight"] == 0
+    assert "retainedFrom" not in priced["stages"][0]["preferredSolutions"][-1]
+
+
+def test_priced_generation_is_off_by_default_and_refuses_a_bad_round_limit():
+    base = {
+        "original_routes": {"x": ()},
+        "endpoints": {"x": ("a", "c")},
+        "weights": {"x": 10},
+        "budget": 5,
+        "standard": PlanningStandard(),
+        "max_labels": 100,
+    }
+    assert compare_budgeted_connectors(graph(), **base)["pricedRouteGeneration"] is None
+    for rounds in (-1, 1.5, True):
+        with pytest.raises(ValueError, match="priced rounds"):
+            compare_budgeted_connectors(graph(), **base, priced_routes=True, priced_rounds=rounds)
+
+
+def test_a_round_that_changes_the_package_is_followed_by_another():
+    # The minor journey's cheapest route on its own is through Q. Once P is funded, a route
+    # through P and the small project T costs less extra, and fits what is left.
+    network = InvestmentGraph(
+        [
+            Arc("xy", "xy", "x", "y", 10, 10, 4, "P"),
+            Arc("st", "st", "s", "t", 14, 14, 4, "Q"),
+            Arc("sx", "sx", "s", "x", 3, 3, 1),
+            Arc("yt", "yt", "y", "t", 3, 3, 4, "T"),
+        ],
+        {"P": 5, "Q": 4, "T": 1},
+    )
+    priced = compare_budgeted_connectors(
+        network,
+        {"main": (), "minor": ()},
+        {"main": ("x", "y"), "minor": ("s", "t")},
+        {"main": 10, "minor": 1},
+        budget=7,
+        standard=PlanningStandard(),
+        max_labels=1,
+        priced_routes=True,
+    )["pricedRouteGeneration"]
+    paths, rounds = priced["stages"][1:]
+    assert paths["preferredSolutions"][-1]["selected"] == ["P"]
+    one, two = rounds["rounds"]
+    assert (one["fundedProjects"], one["unconnectedJourneys"], one["newRouteColumns"]) == (1, 1, 1)
+    assert (one["preferredServedWeight"], one["preferredCapitalCost"]) == (11, 6)
+    assert (two["fundedProjects"], two["unconnectedJourneys"], two["searches"]) == (2, 0, 0)
+    assert rounds["stopped"] == "no_new_routes"
+    final = rounds["preferredSolutions"][-1]
+    assert (final["selected"], final["capital_cost"]) == (["P", "T"], 6)
+    assert final["served_journeys"] == 2 and "retainedFrom" not in final
+    assert priced["nextJourney"] == {
+        "unconnectedWithRoute": 0,
+        "remainingBudgetNzd": 1,
+        "cheapestAdditionNzd": None,
+    }
+    assert priced["change"] == {
+        "servedWeight": 11,
+        "servedJourneys": 2,
+        "capitalCost": 6,
+        "routeColumns": 3,
+    }

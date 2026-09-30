@@ -6,6 +6,7 @@ planning material, equations, references, and visual record.
 Current SPAN additions:
 
 - [Priorities and acceptance criteria](roadmap.md)
+- [A second way to generate routes](audit/span-priced-routes-2026-10-01.md)
 - [Loading speed and interface fixes](audit/span-loading-and-interface-2026-10-01.md)
 - [Staged candidate loading and tighter search bounds](audit/span-staged-loading-and-stress-bounds-2026-09-26.md)
 - [Crossing costs: evidence needed](research/crossing-cost-evidence.md)

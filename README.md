@@ -79,8 +79,9 @@ See the [exact code entry points and adapter checklist](documentation/research/c
 and the [prioritised improvement review](documentation/audit/span-improvement-review-2026-09-24.md).
 The [search-limit and cost-sensitivity tests](documentation/audit/span-search-and-cost-sensitivity-2026-09-25.md)
 compare complete-route methods on paired samples without replacing public results.
-Later notes cover [staged loading and tighter search bounds](documentation/audit/span-staged-loading-and-stress-bounds-2026-09-26.md)
-and [loading speed and interface fixes](documentation/audit/span-loading-and-interface-2026-10-01.md).
+Later notes cover [staged loading and tighter search bounds](documentation/audit/span-staged-loading-and-stress-bounds-2026-09-26.md),
+[loading speed and interface fixes](documentation/audit/span-loading-and-interface-2026-10-01.md)
+and [a second way to generate routes](documentation/audit/span-priced-routes-2026-10-01.md).
 Collaborator source archives, source runs and deployment bundles are not committed.
 
 ## Model foundations

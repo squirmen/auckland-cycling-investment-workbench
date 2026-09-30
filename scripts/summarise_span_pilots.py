@@ -28,10 +28,68 @@ def public_solutions(solutions):
                 "checkedRouteWitnesses",
             )
         }
-        if "projectOverlapWithReference" in solution:
-            row["projectOverlapWithReference"] = solution["projectOverlapWithReference"]
+        for key in ("projectOverlapWithReference", "retainedFrom"):
+            if key in solution:
+                row[key] = solution[key]
         output.append(row)
     return output
+
+
+def priced_summary(priced):
+    """Aggregate counts and packages from price-guided route generation, field by field."""
+    search_keys = (
+        "journeysSearched",
+        "searches",
+        "searchStopReasons",
+        "distinctRoutes",
+        "newRouteColumns",
+        "searchElapsedS",
+        "elapsedS",
+    )
+    stages = []
+    for stage in priced["stages"]:
+        row = {key: stage[key] for key in ("stage", "routeColumns", "journeysWithRouteColumns")}
+        row.update({key: stage[key] for key in (*search_keys, "stopped") if key in stage})
+        if "rounds" in stage:
+            row["rounds"] = [
+                {
+                    key: item[key]
+                    for key in (
+                        "round",
+                        "fundedProjects",
+                        "unconnectedJourneys",
+                        *search_keys,
+                        "preferredServedWeight",
+                        "preferredServedJourneys",
+                        "preferredCapitalCost",
+                    )
+                    if key in item
+                }
+                for item in stage["rounds"]
+            ]
+        row["solutions"] = public_solutions(stage["solutions"])
+        row["preferredSolutions"] = public_solutions(stage["preferredSolutions"])
+        stages.append(row)
+    return {
+        **{
+            key: priced[key]
+            for key in (
+                "status",
+                "budget",
+                "prices",
+                "roundLimit",
+                "maxLabelsPerPricedSearch",
+                "boundStrategy",
+                "labelSearchRoutePool",
+                "routePool",
+                "nextJourney",
+                "change",
+                "elapsedS",
+                "note",
+            )
+        },
+        "stages": stages,
+    }
 
 
 def budgeted_summary(report):
@@ -84,6 +142,8 @@ def budgeted_summary(report):
             }
             for check in report["searchLimitChecks"]
         ]
+    if report.get("pricedRouteGeneration"):
+        output["pricedRouteGeneration"] = priced_summary(report["pricedRouteGeneration"])
     sensitivity = report.get("fixedConnectorCostSensitivity")
     if sensitivity:
         output["fixedConnectorCostSensitivity"] = {
