@@ -1,9 +1,10 @@
 # SPAN effective-network beta
 
 This is an extension of **SPAN: Spending Priorities for Active Networks**, at
-`span.tfwelch.com`. The source repository still has its historical
-`auckland-cycling-investment-workbench` name. It is not the separate legacy
-Python PCT workbench in the parent `car_dependency` project.
+`span.tfwelch.com`. The source repository is
+`squirmen/spending-priorities-active-networks`, renamed from
+`auckland-cycling-investment-workbench` on 1 October 2026. It is not the
+separate legacy Python PCT workbench in the parent `car_dependency` project.
 
 ## What is implemented
 

@@ -1,30 +1,67 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using this metadata and cite the underlying methodological sources listed in NOTICE.md."
-title: "Auckland Cycling Investment Workbench"
+title: "SPAN: Spending Priorities for Active Networks"
 type: software
 authors:
   - family-names: Welch
     given-names: Tim
-version: 1.0.0
-date-released: "2026-08-30"
-repository-code: "https://github.com/squirmen/auckland-cycling-investment-workbench"
-url: "https://squirmen.github.io/auckland-cycling-investment-workbench/"
+version: 2.0.0
+date-released: "2026-10-01"
+repository-code: "https://github.com/squirmen/spending-priorities-active-networks"
+url: "https://span.tfwelch.com"
 license: MIT
 abstract: >-
-  An interactive research tool for exploring how cycling projects could affect
-  demand, low-stress connectivity, access, equity, and investment priorities in
-  Auckland, New Zealand.
+  An open research tool that ranks possible new cycling links in Auckland, New
+  Zealand, and puts them in a build order for a goal and a budget. It shows what
+  each link would add, what it costs and how firm the estimate is, and checks
+  which upgrades must be built together to complete a journey. Versions up to
+  1.0 were released as the Auckland Cycling Investment Workbench.
 keywords:
   - cycling
   - active transport
   - transport planning
+  - investment prioritisation
   - network connectivity
   - Auckland
   - reproducible research
 references:
   - type: article
     title: "The Propensity to Cycle Tool: An open source online system for sustainable transport planning"
+    authors:
+      - family-names: Lovelace
+        given-names: Robin
+      - family-names: Goodman
+        given-names: Anna
+      - family-names: Aldred
+        given-names: Rachel
+      - family-names: Berkoff
+        given-names: Nikolai
+      - family-names: Abbas
+        given-names: Ali
+      - family-names: Woodcock
+        given-names: James
+    journal: "Journal of Transport and Land Use"
+    year: 2017
     doi: "10.5198/jtlu.2016.862"
   - type: article
-    title: "Scenarios of cycling to school in England, and associated health and carbon impacts"
+    title: "Scenarios of cycling to school in England, and associated health and carbon impacts: Application of the 'Propensity to Cycle Tool'"
+    authors:
+      - family-names: Goodman
+        given-names: Anna
+      - family-names: Rojas
+        given-names: Ilan Fridman
+      - family-names: Woodcock
+        given-names: James
+      - family-names: Aldred
+        given-names: Rachel
+      - family-names: Berkoff
+        given-names: Nikolai
+      - family-names: Morgan
+        given-names: Malcolm
+      - family-names: Abbas
+        given-names: Ali
+      - family-names: Lovelace
+        given-names: Robin
+    journal: "Journal of Transport & Health"
+    year: 2019
     doi: "10.1016/j.jth.2019.01.008"
