@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   NetworkGraph,
+  buildOrderCsv,
+  connectedGroups,
   objectiveValue,
   paretoFront,
   portfolioAtBudget,
@@ -133,6 +135,48 @@ describe("portfolio model", () => {
     const output = portfolioGeoJson([candidate("A"), candidate("B")], new Set(["B"]));
     expect(output.features).toHaveLength(1);
     expect(output.features[0]?.properties.candidate_id).toBe("B");
+  });
+
+  it("writes the build order as a table a spreadsheet can open safely", () => {
+    const first = candidate("A");
+    const second = candidate("B", { available: false, objectiveValue: null });
+    const step = (candidateId: string, order: number) => ({
+      candidateId, step: order, cumulativeCostNzd: 1_000_000.4 * order, marginalObjective: 12.345678,
+      cumulativeObjective: 12.345678 * order, objectiveUnit: "additional usual commute cyclists", paretoMember: true,
+    });
+    const csv = buildOrderCsv([
+      { name: 'Ōrewa "Main" Road, north', step: step("A", 1), candidate: first, metric: first.properties.metrics.baseline.network },
+      { name: "=HYPERLINK(1)", step: step("B", 2), candidate: second, metric: second.properties.metrics.baseline.network },
+    ], { scenario: "baseline", purpose: "network", budgetNzd: 5_000_000, runId: "run-test", dataStatus: "synthetic_demo" });
+    expect(csv.startsWith("\uFEFFbuild_order,name,candidate_id,length_km,")).toBe(true);
+    const lines = csv.slice(1).trimEnd().split("\r\n");
+    expect(lines).toHaveLength(3);
+    expect(lines[0]!.split(",")).toHaveLength(19);
+    // Quotes are doubled, commas are kept inside quotes, and costs are whole dollars.
+    expect(lines[1]).toContain('1,"Ōrewa ""Main"" Road, north",A,');
+    expect(lines[1]).toContain(",1000000,1200000,100,additional cycle users,12.3457,12.3457,additional usual commute cyclists,1000000,unprogrammed,,baseline,network,5000000,run-test,synthetic_demo");
+    // A name that a spreadsheet would run as a formula is made plain text; a missing value is left empty.
+    expect(lines[2]).toContain("2,'=HYPERLINK(1),B,");
+    expect(lines[2]).toContain(",1000000,1200000,,additional cycle users,12.3457,24.6914,");
+  });
+});
+
+describe("physical network groups", () => {
+  it("joins transitive source contacts without merging coincident geometries", () => {
+    const a = candidate("a");
+    const b = candidate("b");
+    const c = candidate("c");
+    const separate = candidate("separate");
+    for (const item of [a, b, c, separate]) item.properties.networkContext = {
+      role: "extends_area", lengthKm: 1, direction: "both", existingKm: 1,
+      componentIds: [], touchingCandidateIds: [], endpoints: [],
+    };
+    a.properties.networkContext!.componentIds = ["area"];
+    b.properties.networkContext!.componentIds = ["area"];
+    b.properties.networkContext!.touchingCandidateIds = ["c"];
+    expect(connectedGroups([a, b, c, separate]).map((group) => group.map((item) => item.properties.candidateId)))
+      .toEqual([["a", "b", "c"], ["separate"]]);
+    expect(connectedGroups([a, c]).map((group) => group.length)).toEqual([1, 1]);
   });
 });
 

@@ -10,10 +10,10 @@ whereas the comparable CIW field is a census-derived count of people whose
 usual commute mode is bicycle. Error, regression, calibration, and null-model
 statistics across those incompatible units are intentionally not reported.
 
-The counter layer remains empty in the public Auckland snapshot. The inherited
-coordinate registry has been audited by exact name and geometry, but its exact
-AT publisher-file lineage, direction, and screenline identifiers have not been
-recovered.
+The public counter layer uses project-maintained approximate locations audited
+by exact name and geometry. It has no AT publisher site identifier, direction,
+bearing or screenline identity. The map therefore presents neutral spatial
+context and the exact July period, not a model-versus-observed ratio.
 
 ## Immutable evidence
 
@@ -27,7 +27,7 @@ recovered.
 | Published columns | 83 counter columns |
 | Coordinate registry | May 2026 legacy dashboard registry; 86 named points; SHA-256 `6004b7c8f534e8c6d41b7b2917e7682a00c5c2822b7846688609a60f1fc0ecbf` |
 | Reviewed mapping | [`configs/at-cycle-counter-mapping.yml`](../../configs/at-cycle-counter-mapping.yml) |
-| Retained output | 73 sites; location JSON SHA-256 `b0ddc052b851b1302cf622d8b018b2c51b29ef1cc127a4b97eb930d830b2bf09`; observation JSON SHA-256 `7e1ef887f223d7e516a5825d2eb10c74af250b16ac3183a1cb25f3679bf947b8` |
+| Retained output | 73 sites; location JSON SHA-256 `15312afd9ccaa997982347d81d21b80891eac3f13acd5d950db029d8be5d4328`; observation JSON SHA-256 `6ce1d863487b65bdbf688dfcf4eb29f9b17a638c99493d45a8dfa9ab51c14302` |
 
 Reproduce the two configured JSON inputs outside Git with:
 
@@ -86,8 +86,8 @@ or screenline matches.
 
 - The exact observation workbook and derived observation JSON are cleared
   under AT's CC BY 4.0 statement.
-- The point layer stays local and the browser exports an empty, checksummed
-  counter FeatureCollection.
+- The browser may display the approximate point layer with its provenance and
+  limitations adjacent to the data.
 - No model flow is rescaled from these counts.
 - A future predictive validation requires a present-day, purpose- and
   period-compatible model target plus publisher site IDs, bearing/direction,

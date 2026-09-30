@@ -32,7 +32,9 @@ from .provenance import (
     read_json,
     write_json_atomic,
 )
+from .safety_sources import SafetySourceError, prepare_cycle_crash_grid
 from .sources import SourceError, SourceRegistry
+from .transit_sources import TransitSourceError, prepare_at_major_transit_nodes
 
 EXIT_OK = 0
 EXIT_USAGE = 2
@@ -112,6 +114,37 @@ def build_parser() -> argparse.ArgumentParser:
         default=("https://at.govt.nz/media/zj0lgcmg/at-daily-cycle-count-data-july-2026.xlsx"),
     )
     counter_parser.add_argument("--json", action="store_true", help="Emit machine-readable output")
+
+    transit_parser = data_commands.add_parser(
+        "prepare-at-transit",
+        help="Prepare major transit nodes for one declared AT GTFS service day",
+    )
+    _add_config_argument(transit_parser)
+    transit_parser.add_argument("--gtfs", type=Path, required=True)
+    transit_parser.add_argument("--service-date", required=True, help="Service date (YYYY-MM-DD)")
+    transit_parser.add_argument(
+        "--busiest-bus-fraction",
+        type=float,
+        default=0.01,
+        help="Fraction of busiest bus nodes to retain (default: 0.01)",
+    )
+    transit_parser.add_argument(
+        "--source-url",
+        default="https://gtfs.at.govt.nz/gtfs.zip",
+    )
+    transit_parser.add_argument("--json", action="store_true", help="Emit machine-readable output")
+
+    safety_parser = data_commands.add_parser(
+        "prepare-cas-safety",
+        help="Prepare a disclosure-safe cycle-crash grid from a local CAS export",
+    )
+    _add_config_argument(safety_parser)
+    safety_parser.add_argument("--cas-csv", type=Path, required=True)
+    safety_parser.add_argument("--start-year", type=int, default=2016)
+    safety_parser.add_argument("--end-year", type=int, default=2025)
+    safety_parser.add_argument("--cell-size-m", type=int, default=500)
+    safety_parser.add_argument("--minimum-count", type=int, default=3)
+    safety_parser.add_argument("--json", action="store_true", help="Emit machine-readable output")
 
     run_parser = commands.add_parser("run", help="Run configured, content-addressed stages")
     _add_config_argument(run_parser)
@@ -234,7 +267,11 @@ def _run_output_path(
         raise ConfigError(f"run manifest identity does not match {run_id}")
     stages = manifest.get("stages")
     stage = stages.get(stage_name) if isinstance(stages, Mapping) else None
-    if not isinstance(stage, Mapping) or stage.get("status") not in {"succeeded", "skipped"}:
+    if not isinstance(stage, Mapping) or stage.get("status") not in {
+        "succeeded",
+        "skipped",
+        "cached",
+    }:
         raise ConfigError(f"run {run_id} has no completed {stage_name} stage")
     outputs = stage.get("outputs")
     output = outputs.get(output_name) if isinstance(outputs, Mapping) else None
@@ -299,6 +336,49 @@ def _command_prepare_at_counters(args: argparse.Namespace) -> int:
         )
         print(f"Locations SHA-256: {payload['locations']['sha256']}")
         print(f"Observations SHA-256: {payload['observations']['sha256']}")
+    return EXIT_OK
+
+
+def _command_prepare_at_transit(args: argparse.Namespace) -> int:
+    config = load_config(args.config, data_root=args.data_root)
+    result = prepare_at_major_transit_nodes(
+        gtfs_path=args.gtfs,
+        output_path=_source_destination(config, "major_transit_nodes"),
+        service_date=args.service_date,
+        busiest_bus_fraction=args.busiest_bus_fraction,
+        source_url=args.source_url,
+    )
+    payload = result.to_dict()
+    if args.json:
+        _print_json(payload)
+    else:
+        print(
+            f"Prepared {result.feature_count} major transit nodes for "
+            f"{result.service_date}; feed version {result.feed_version}"
+        )
+        print(f"Output SHA-256: {payload['output']['sha256']}")
+    return EXIT_OK
+
+
+def _command_prepare_cas_safety(args: argparse.Namespace) -> int:
+    config = load_config(args.config, data_root=args.data_root)
+    result = prepare_cycle_crash_grid(
+        cas_csv_path=args.cas_csv,
+        output_path=_source_destination(config, "crash_safety_aggregate"),
+        start_year=args.start_year,
+        end_year=args.end_year,
+        cell_size_m=args.cell_size_m,
+        minimum_count=args.minimum_count,
+    )
+    payload = result.to_dict()
+    if args.json:
+        _print_json(payload)
+    else:
+        print(
+            f"Prepared {result.published_cells} crash-context cells from "
+            f"{result.input_cycle_crashes} cycle-involved crashes"
+        )
+        print(f"Output SHA-256: {payload['output']['sha256']}")
     return EXIT_OK
 
 
@@ -433,7 +513,9 @@ def _command_demo(args: argparse.Namespace) -> int:
         registry=demo_stage_registry(),
         resume=not args.no_resume,
     )
-    evidence_path = run.run_dir / "artifacts" / "appraisal-uncertainty-validation" / "evidence.json"
+    evidence_path = _run_output_path(
+        config, run.run_id, stage_name="appraisal-uncertainty-validation", output_name="evidence"
+    )
     result = read_json(evidence_path)
     payload: dict[str, Any] = {
         "run": run.to_dict(root=config.root_dir),
@@ -444,7 +526,9 @@ def _command_demo(args: argparse.Namespace) -> int:
         write_json_atomic(destination, result)
         payload["analysis_output"] = _portable_user_path(destination, root=Path.cwd())
     if args.export_web:
-        web_payload_path = run.run_dir / "artifacts" / "export-outputs" / "web-payload.json"
+        web_payload_path = _run_output_path(
+            config, run.run_id, stage_name="export-outputs", output_name="web_payload"
+        )
         export = export_web_payload(
             load_web_payload(web_payload_path),
             export_config=config.export,
@@ -469,6 +553,10 @@ def _dispatch(args: argparse.Namespace) -> int:
         return _command_data_fetch(args)
     if args.command == "data" and args.data_command == "prepare-at-counters":
         return _command_prepare_at_counters(args)
+    if args.command == "data" and args.data_command == "prepare-at-transit":
+        return _command_prepare_at_transit(args)
+    if args.command == "data" and args.data_command == "prepare-cas-safety":
+        return _command_prepare_cas_safety(args)
     if args.command == "run":
         return _command_run(args)
     if args.command == "validate":
@@ -485,7 +573,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         return _dispatch(args)
-    except (ConfigError, CounterSourceError, SourceError, ExportError, ProvenanceError) as exc:
+    except (
+        ConfigError,
+        CounterSourceError,
+        SafetySourceError,
+        TransitSourceError,
+        SourceError,
+        ExportError,
+        ProvenanceError,
+    ) as exc:
         if args.debug:
             raise
         print(f"Input error: {exc}", file=sys.stderr)

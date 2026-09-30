@@ -41,13 +41,21 @@ def test_web_adapter_has_all_exact_scenarios_purposes_and_layers() -> None:
     assert len(manifest["configSha256"]) == 64
     assert tuple(item["id"] for item in manifest["scenarios"]) == SCENARIO_IDS
     assert tuple(item["id"] for item in manifest["purposes"]) == PURPOSE_IDS
-    assert set(payload["layers"]) == {"cells", "network", "candidates", "programmes", "counters"}
+    assert set(payload["layers"]) == {
+        "cells",
+        "network",
+        "candidates",
+        "programmes",
+        "counters",
+        "safety",
+    }
     assert payload["manifest"]["validation"] == {
         "periodLabel": "Synthetic fixture; no calendar period",
         "counterCount": 2,
         "matchedCount": 2,
         "coverage": 1.0,
         "purposeAlignment": "Synthetic daily cycling counts",
+        "status": "synthetic_fixture",
     }
     assert len(payload["layers"]["programmes"]["features"]) == 1
     assert set(manifest["summaries"]) == set(SCENARIO_IDS)

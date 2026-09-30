@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "auckland-cycling-investment-workbench"
 version = "0.1.0"
-description = "Reproducible analysis and publishing pipeline for Auckland cycling investment scenarios."
+description = "SPAN (Spending Priorities for Active Networks): reproducible analysis and publishing pipeline for Auckland cycling investment scenarios."
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license = { text = "MIT" }
@@ -42,6 +42,7 @@ dev = [
 
 [project.scripts]
 ciw = "cycling_investment_workbench.cli:main"
+span = "cycling_investment_workbench.cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

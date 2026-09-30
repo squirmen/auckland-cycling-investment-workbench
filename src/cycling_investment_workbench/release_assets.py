@@ -13,7 +13,15 @@ from typing import Any
 
 from .provenance import canonical_json, hash_path, read_json, sha256_bytes, sha256_file
 
-_WEB_OUTPUTS = ("web_manifest", "cells", "network", "candidates", "programmes", "counters")
+_WEB_OUTPUTS = (
+    "web_manifest",
+    "cells",
+    "network",
+    "candidates",
+    "programmes",
+    "counters",
+    "safety",
+)
 _APPRAISAL_WITHHELD_WARNING = (
     "Appraisal is withheld from the public research snapshot until local cost, "
     "maintenance, renewal, benefit, e-bike, and price-base inputs pass expert review."
@@ -73,9 +81,13 @@ def _release_inputs(run_dir: Path) -> tuple[str, Path, dict[str, Path], Mapping[
     }:
         raise ReleaseAssetError("run has no completed export-web stage")
     outputs = stage.get("outputs")
-    if not isinstance(outputs, Mapping) or set(outputs) != set(_WEB_OUTPUTS):
+    if (
+        not isinstance(outputs, Mapping)
+        or not set(_WEB_OUTPUTS).issubset(outputs)
+        or set(outputs) - set(_WEB_OUTPUTS) - {"existing"}
+    ):
         raise ReleaseAssetError("export-web outputs do not match the release contract")
-    paths = {name: _safe_run_output(run_dir, outputs[name], name) for name in _WEB_OUTPUTS}
+    paths = {name: _safe_run_output(run_dir, outputs[name], name) for name in outputs}
     web_manifest = read_json(paths["web_manifest"])
     if not isinstance(web_manifest, Mapping) or web_manifest.get("runId") != run_id:
         raise ReleaseAssetError("browser manifest identity does not match the run")
@@ -119,12 +131,23 @@ def _asset_notice(
             "network.geojson": (
                 "OSM-derived database: ODbL 1.0; AT and LINZ inputs retain CC BY 4.0 attribution."
             ),
+            "existing.geojson": (
+                "OSM-derived low-stress network: ODbL 1.0; "
+                "AT and LINZ inputs retain CC BY 4.0 attribution."
+            ),
             "candidates.geojson": (
                 "OSM-derived database: ODbL 1.0; Stats NZ, Education Counts, AT, "
                 "and LINZ inputs retain CC BY 4.0 attribution."
             ),
-            "programmes.geojson": "Empty FeatureCollection; programme sources were withheld.",
-            "counters.geojson": "Empty FeatureCollection; counter coordinates were withheld.",
+            "programmes.geojson": (
+                "Auckland Transport Future Connect and RLTP active-modes context; CC BY 4.0."
+            ),
+            "counters.geojson": (
+                "AT observations under CC BY 4.0; approximate site points maintained by CIW."
+            ),
+            "safety.geojson": (
+                "Disclosure-safe aggregate from NZTA CAS open data; record-level data excluded."
+            ),
         },
         "required_attribution": [
             "© OpenStreetMap contributors; data available under ODbL 1.0.",
@@ -132,6 +155,7 @@ def _asset_notice(
             "Contains data sourced from the LINZ Data Service licensed for reuse under CC BY 4.0.",
             "Auckland Transport.",
             "Ministry of Education / Education Counts.",
+            "University of Otago NZDep2023; Stats NZ; Eagle Technology public ArcGIS service.",
         ],
         "licence_urls": {
             "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
@@ -139,12 +163,16 @@ def _asset_notice(
         },
         "limitations": [
             "Research snapshot; not an investment recommendation or business case.",
-            "Full-network OD low-stress connectivity is withheld pending rerouting.",
+            (
+                "Full-network OD low-stress connectivity is intentionally reserved for "
+                "separate research integration; no Auckland point estimate is included."
+            ),
             *([_APPRAISAL_WITHHELD_WARNING] if appraisal_withheld else []),
             (
-                "Equity, programme, transit-candidate, and counter layers or metrics "
-                "are withheld where rights or evidence are unresolved."
+                "Counter comparisons are spatial plausibility checks only; daily all-purpose "
+                "movements are not calibrated against usual-commute people."
             ),
+            "Safety cells are police-reported counts and are not adjusted for cycling exposure.",
         ],
     }
     return (canonical_json(notice) + "\n").encode("utf-8")
@@ -170,7 +198,7 @@ def _withhold_unreviewed_appraisal(
     capabilities = web_manifest.get("capabilities")
     appraisal_status = capabilities.get("appraisal") if isinstance(capabilities, Mapping) else None
     payloads: dict[str, _Payload] = {path.name: path for path in paths.values()}
-    if appraisal_status == "reviewed":
+    if appraisal_status in {"reviewed", "research_only"}:
         return payloads, web_manifest, False
 
     manifest = json.loads(json.dumps(web_manifest))

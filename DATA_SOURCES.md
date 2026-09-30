@@ -7,7 +7,7 @@ similarly named dataset without recording the change.
 
 The configured source-by-source publication decision is maintained in
 [`documentation/audit/public-layer-rights.csv`](documentation/audit/public-layer-rights.csv).
-That file covers all 18 configured Auckland sources plus each proposed public
+That file covers all 20 configured Auckland sources plus each proposed public
 layer, the offline demonstration, hosted basemaps, and screenshots. The source
 registry's `redistribution` field is deliberately conservative: `unknown` or
 `restricted` fails public export even when a nearby publisher page appears to
@@ -42,19 +42,21 @@ describe similar material as open.
 | `stats_nz_sa1_geography` | permit | include | Publisher-owned Stats NZ SA1 layer; only `SA12023_V1_00`, `VAR_1_3`, and geometry are acquired |
 | `stats_nz_sa2_geography` | permit | include | Publisher-owned Stats NZ SA2 layer with code, name, and geometry |
 | `stats_nz_auckland_boundary` | permit | include | Publisher-owned Stats NZ territorial-authority layer filtered to code `076` Auckland |
-| `nzdep2023_sa1` | pending | block | Optional University of Otago dataset; the report is CC BY 4.0 but the exact data-download page does not state that the dataset shares those terms |
+| `nzdep2023_sa1` | permit | include aggregate only | Public combined SA1/NZDep snapshot is hash-pinned; only aggregate decile 8–10 origin metrics are exported, with University of Otago, Stats NZ and source-service attribution |
 | `educationcounts_schools_auckland` | permit | include | Exact Ministry catalogue record is CC BY 4.0; personal and contact fields are excluded |
 | `stats_nz_business_demography_sa2_2024` | permit | include | Exact Stats NZ ArcGIS item and CC BY 4.0 record verified |
 | `geofabrik_new_zealand_osm` | permit | include | Exact replication timestamp and hash recorded; ODbL obligations apply |
 | `auckland_transport_cycle_network` | permit | include | Exact service item states CC BY 4.0 |
-| `auckland_transport_future_connect` | pending | block | Exact service has no accessible dataset-licence metadata |
-| `auckland_transport_rltp` | pending | block | Derived snapshot lacks an exact source endpoint, date, and dataset terms |
-| `cycle_counter_locations` | pending | block | The 73-point local ledger is hash-pinned and spatially audited, but the inherited coordinate registry lacks exact publisher-file, direction, and screenline lineage |
-| `cycle_counter_observations` | permit | include | Exact AT July 2026 workbook, period, CC BY 4.0 statement, transformation, and source/output hashes are recorded; the current counter web layer remains omitted because its coordinate dependency is pending |
-| `crash_hazard` | pending | block | Configured export is not tied to the exact CC BY CAS portal item; raw rows are excluded |
-| `linz_auckland_dem` | permit | include | Exact LINZ layer and CC BY 4.0 terms verified; full raster-tile manifest still required |
-| `linz_auckland_dem_manifest` | permit | include | Rights follow the exact LINZ layer; the required local tile-integrity manifest is not yet present or hashed, so release remains blocked |
-| `major_transit_nodes` | pending | block | AT GTFS is CC BY 4.0 but the archived upstream feed date and hash are missing |
+| `auckland_transport_future_connect` | permit | include | Immutable 2,005-feature snapshot is hash-pinned and used only as strategic context under AT's open-data CC BY 4.0 statement |
+| `auckland_transport_rltp` | permit | include | Exact service endpoint and 12-feature active-mode snapshot are pinned; source `committed` and `planned` values are retained and never relabelled funded |
+| `cycle_counter_locations` | permit | include with warning | The 73 project-maintained points are explicitly approximate and lack direction, bearing and screenline identity; spatial plausibility only |
+| `cycle_counter_observations` | permit | include | Exact AT July 2026 workbook, period, CC BY 4.0 statement, transformation and source/output hashes are recorded |
+| `crash_hazard` | restricted | exclude | Raw local CAS rows, identifiers, exact points and narratives never enter public output |
+| `crash_safety_aggregate` | permit | include | Cycle-involved crashes for 2016–2025 are aggregated to 500 m cells; cells below three are suppressed and only severity totals are retained |
+| `linz_auckland_dem` | permit | include | Exact LINZ layer and CC BY 4.0 terms verified; 32 raster tiles are individually pinned |
+| `linz_auckland_dem_manifest` | permit | include | Schema-1 integrity manifest pins byte counts and SHA-256 hashes for all 32 VRT-referenced tiles |
+| `at_gtfs_schedule_2026_09_01` | permit | local source snapshot | Exact AT feed, retrieval date, service dates, feed version and hash are recorded under CC BY 4.0 |
+| `major_transit_nodes` | permit | include | Derived 2026-09-02 service-day layer contains 199 consolidated nodes; scheduled stop visits are opportunity weights, not patronage |
 
 These decisions describe rights evidence, not methodological fitness. In
 particular, the configured contour-interpolated 8 m DEM is identified by LINZ

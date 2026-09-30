@@ -87,7 +87,7 @@ jobs:
         run: npm run build
       - name: Install browser runtime
         working-directory: web
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium webkit
       - name: End-to-end and accessibility tests
         working-directory: web
         run: npm run test:e2e

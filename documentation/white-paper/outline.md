@@ -156,7 +156,8 @@ Bullets below are drafting prompts, not finished claims.
   distinguish the current production choice set from the tested full-network
   reference algorithm.
 - Demand-weighted OD low-stress connectivity definition with detour cap; state
-  why the current Auckland point estimate is withheld.
+  that the Auckland point estimate is reserved for the separate sabbatical
+  research integration.
 - Named priority presets, Pareto dominance, and cumulative retained-path
   portfolio recomputation.
 - Lifecycle benefits/costs in common real prices, with the current stepped

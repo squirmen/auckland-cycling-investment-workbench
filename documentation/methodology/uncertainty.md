@@ -1,6 +1,6 @@
 # Uncertainty framework
 
-The workbench avoids compressing all uncertainty into one interval. Each source
+SPAN avoids compressing all uncertainty into one interval. Each source
 has a different interpretation and mitigation.
 
 | Class | Examples | Principal treatment | What remains outside it |

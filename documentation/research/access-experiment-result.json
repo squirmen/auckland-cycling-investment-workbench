@@ -1,0 +1,324 @@
+{
+  "area": "Rangatira Road / North Shore pilot",
+  "baseline": {
+    "journeys": 0,
+    "weight": 0
+  },
+  "budget": 20000000.0,
+  "centre": [
+    174.69294893016277,
+    -36.80337781096317
+  ],
+  "crancStatus": "integration_reserved_not_computed",
+  "elapsedS": 14.009400042006746,
+  "graph": {
+    "directedArcs": 47146,
+    "nodes": 24467,
+    "projects": 195
+  },
+  "implementationHash": "5fe0d2bd44eb35b0e03f8297c796081893c5b12a96bc97fbb2519b23dfc7c663",
+  "limitations": [
+    "A local graph crop and deterministic OD sample; not an Auckland forecast or recommendation.",
+    "Weights retain source OD expansion factors without an additional pilot sampling expansion.",
+    "Complete means LTS \u2264 2, distance \u2264 1.5 times the shortest legal route and time \u2264 30 minutes.",
+    "Time assumes 15 km/h on flat ground with a declared uphill penalty; it is not calibrated.",
+    "Street treatment retains recorded intersection stress. Movement-specific turning evidence is unavailable in this pilot.",
+    "Only complete source candidate projects in the crop are eligible; prices are provisional protected-lane estimates.",
+    "Search caps can omit routes. Solver optimality applies to generated routes, not unsearched possibilities.",
+    "No induced-ridership, crash-reduction or benefit-cost forecast is produced by this experiment."
+  ],
+  "radiusM": 4000,
+  "ridershipForecast": null,
+  "runId": "run-313e0277521633d3",
+  "sample": {
+    "citywideRepresentative": false,
+    "eligibleWithinArea": 169,
+    "selected": 12,
+    "weightedDemand": 672.88
+  },
+  "schemaVersion": "1.0.0",
+  "searchComplete": true,
+  "seed": 20260915,
+  "solutions": [
+    {
+      "budget": 0.0,
+      "capital_cost": 0,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 0.0,
+      "capital_cost": 0,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 0.0,
+      "capital_cost": 0,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 5000000.0,
+      "capital_cost": 0,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 5000000.0,
+      "capital_cost": 0,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 5000000.0,
+      "capital_cost": 0,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 10000000.0,
+      "capital_cost": 0,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 10000000.0,
+      "capital_cost": 6204599.837614104,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-b965b3e2ea80f96b",
+        "candidate-f0c429710eb33c5b"
+      ],
+      "served_journeys": 1,
+      "served_weight": 278.76000000000005
+    },
+    {
+      "budget": 10000000.0,
+      "capital_cost": 6204599.837614104,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [
+        "candidate-b965b3e2ea80f96b",
+        "candidate-f0c429710eb33c5b"
+      ],
+      "served_journeys": 1,
+      "served_weight": 278.76000000000005
+    },
+    {
+      "budget": 20000000.0,
+      "capital_cost": 0,
+      "method": "single_project_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [],
+      "served_journeys": 0,
+      "served_weight": 0
+    },
+    {
+      "budget": 20000000.0,
+      "capital_cost": 6204599.837614104,
+      "method": "package_greedy",
+      "optimal_within_columns": false,
+      "relative_gap": null,
+      "selected": [
+        "candidate-b965b3e2ea80f96b",
+        "candidate-f0c429710eb33c5b"
+      ],
+      "served_journeys": 1,
+      "served_weight": 278.76000000000005
+    },
+    {
+      "budget": 20000000.0,
+      "capital_cost": 14850059.841573399,
+      "method": "route_packages_milp",
+      "optimal_within_columns": true,
+      "relative_gap": 0.0,
+      "selected": [
+        "candidate-3dfab135e275127c",
+        "candidate-99a45f6741bd327b",
+        "candidate-d7b5e9ef7f0b1684",
+        "candidate-fc268bc1e8ab63a5"
+      ],
+      "served_journeys": 1,
+      "served_weight": 298.08000000000004
+    }
+  ],
+  "sourceHashes": {
+    "candidateLedger": "f9334b5b083dd3ada394a6a29064313ab101705d4811b23e61eed2c518ebc773",
+    "odLedger": "9e89176035853da46bba4061d986ee9713e06fc140dafb2115c1f3158b8b6614",
+    "topology": "33fc0b546326193333c382cbdae742aa9acc41a5ed4e9a235a3c2257dfd1d66e"
+  },
+  "standard": {
+    "maximum_detour": 1.5,
+    "maximum_stress": 2,
+    "maximum_time_s": 1800
+  },
+  "status": "local_research_pilot",
+  "title": "Complete journeys before extra cycling",
+  "journeySummary": [
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.015662999998312443,
+      "labelsExpanded": 0,
+      "name": "Journey 1",
+      "searchComplete": true,
+      "shortestLegalDistanceM": null,
+      "stopReason": "disconnected",
+      "weight": 9.0,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.016766417014878243,
+      "labelsExpanded": 748,
+      "name": "Journey 2",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 5970.1005616692455,
+      "stopReason": "exhausted",
+      "weight": 8.64,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.019839583954308182,
+      "labelsExpanded": 1997,
+      "name": "Journey 3",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 3807.9414588458,
+      "stopReason": "exhausted",
+      "weight": 2.5,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.016732207965105772,
+      "labelsExpanded": 176,
+      "name": "Journey 4",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 3381.5143317659745,
+      "stopReason": "exhausted",
+      "weight": 39.0,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.016973167017567903,
+      "labelsExpanded": 91,
+      "name": "Journey 5",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 653.7972211070004,
+      "stopReason": "exhausted",
+      "weight": 278.76000000000005,
+      "routeCount": 1
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.01649091695435345,
+      "labelsExpanded": 312,
+      "name": "Journey 6",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 1109.1745451858758,
+      "stopReason": "exhausted",
+      "weight": 298.08000000000004,
+      "routeCount": 1
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.015718124981503934,
+      "labelsExpanded": 315,
+      "name": "Journey 7",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 2883.9240756607696,
+      "stopReason": "exhausted",
+      "weight": 8.64,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 8.167000487446785e-06,
+      "labelsExpanded": 0,
+      "name": "Journey 8",
+      "searchComplete": true,
+      "shortestLegalDistanceM": null,
+      "stopReason": "disconnected",
+      "weight": 6.0,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.015982249984517694,
+      "labelsExpanded": 0,
+      "name": "Journey 9",
+      "searchComplete": true,
+      "shortestLegalDistanceM": null,
+      "stopReason": "disconnected",
+      "weight": 12.0,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.015727083024103194,
+      "labelsExpanded": 325,
+      "name": "Journey 10",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 2348.98053193271,
+      "stopReason": "exhausted",
+      "weight": 2.3000000000000003,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.017050291993655264,
+      "labelsExpanded": 1070,
+      "name": "Journey 11",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 4493.800980327913,
+      "stopReason": "exhausted",
+      "weight": 2.2,
+      "routeCount": 0
+    },
+    {
+      "baselineFeasible": false,
+      "elapsedS": 0.016587582998909056,
+      "labelsExpanded": 446,
+      "name": "Journey 12",
+      "searchComplete": true,
+      "shortestLegalDistanceM": 3612.325661950548,
+      "stopReason": "exhausted",
+      "weight": 5.76,
+      "routeCount": 0
+    }
+  ]
+}

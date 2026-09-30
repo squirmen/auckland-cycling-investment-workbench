@@ -2,7 +2,7 @@
 
 ## Appropriate use
 
-The workbench is suitable for:
+SPAN is suitable for:
 
 - finding network gaps worthy of investigation;
 - comparing candidate packages under common, visible assumptions;
@@ -92,10 +92,12 @@ or claiming causal health, safety, emissions, or equity outcomes.
 - Future Connect is a strategic planning network, not an investment-ranking
   tool. Alignment is context, not validation of a candidate score.
 
-The CIW OD low-stress connectivity share is conditional on its OD set, demand
+The SPAN OD low-stress connectivity share is conditional on its OD set, demand
 weights, routing coverage, stress threshold, and detour threshold. It is not a
 universal city index and cannot be compared with differently constructed
-connectivity measures without harmonisation.
+connectivity measures without harmonisation. The Auckland full-network result
+is intentionally reserved for integration with Steve Gehrke's sabbatical
+research; this release reports no point estimate.
 
 ## Benefits and costs
 
@@ -106,32 +108,39 @@ connectivity measures without harmonisation.
 - Benefits depend on trip purpose, traveller, distance, counterfactual mode,
   ramp-up, decay, and additionality; average values can conceal distribution.
 - An indicative lifecycle ratio is not an approved business-case BCR.
-- The current public Auckland research asset withholds appraisal entirely:
-  candidate BCR fields are null and the Appraisal lens is disabled until local
-  capital, maintenance, renewal, residual, benefit, e-bike, price-base, and
-  demand-response inputs pass expert review.
+- The public research snapshot may expose candidate-level indicative BCR
+  intervals for its declared evidence scenario. These are research-only:
+  provisional capital, maintenance, renewal, residual, benefit, e-bike,
+  price-base and demand-response inputs require expert review before decision
+  use, and candidate BCRs must not be summed into a programme BCR.
 - Monetary parameters and rules change. The exact MBCM version applicable when
   appraisal commences controls any formal claim.
 
 ## Equity, safety, and access
 
-- NZDep is a relative area index; missing/withheld values require explicit
-  handling, and area deprivation must not be assigned to individuals or read as
-  absolute change over time.
+- NZDep is a relative area index; missing values require explicit handling, and
+  area deprivation must not be assigned to individuals or read as absolute
+  change over time. The public equity view is an aggregate decile 8–10 origin
+  subgroup objective, not an individual attribute or welfare weight.
 - Distributional maps can reveal unequal opportunity but do not establish who
   receives or bears project effects.
 - Destination datasets differ in completeness and quality; a missing point is
   not necessarily missing access.
 - Recorded crashes understate incidents and are influenced by exposure and
   reporting. Crash clusters do not by themselves estimate treatment effects.
+- Public safety cells suppress counts below three and remove exact points and
+  record-level attributes. They remain police-reported counts, not an
+  exposure-adjusted risk surface.
 - A commute-led demand score can under-prioritise children, older people,
   disabled riders, caregivers, low-income households, and people not in formal
   employment.
 
 ## Validation
 
-- Sparse counters cover selected corridors, count existing users, and may not
-  represent low-cycling or candidate areas.
+- Sparse counters cover selected corridors, count existing all-purpose daily
+  movements, and may not represent low-cycling or candidate areas. The public
+  points are project-maintained approximate sites without direction, bearing or
+  screenline identity.
 - Spatial matching can associate a counter with the wrong parallel edge.
 - Present-day counts cannot directly validate a future target scenario.
 - Correlation does not establish unbiased scale or correct intervention effects;

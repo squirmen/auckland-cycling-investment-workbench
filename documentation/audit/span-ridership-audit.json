@@ -1,0 +1,488 @@
+{
+  "calendarAssumptions": {
+    "daysPerYear": 220,
+    "legsPerDay": 2
+  },
+  "candidateCount": 12580,
+  "demandContext": {
+    "capitalCostPerKm": 6000000.0,
+    "internalCoverage": 0.995551228144739,
+    "internalEligible": 622209.4999948432,
+    "note": "Suppressed bicycle cells use the lower bound. Internal OD and full-origin margins have different coverage; they are not interchangeable totals.",
+    "routedBaselineUsers": 817.1999999999998,
+    "routedEligible": 619441.4318831901,
+    "sourceCoverage": 0.7086652174168399,
+    "sourceEligible": 874096.0,
+    "sourceMarginUsers": 8179.5
+  },
+  "distribution": {
+    "p100": 54.476310952448586,
+    "p50": 0.2593391366443294,
+    "p90": 3.5893936113458245,
+    "p95": 6.027569371504531,
+    "p99": 15.032975951593414
+  },
+  "limitations": [
+    "Agreement with stored source results does not validate the demand model.",
+    "Annual/monthly equivalents reuse people with an assumed commuting frequency; they do not add unique riders, purposes or measured traffic.",
+    "Return journeys are assumed; reverse routes are not separately assigned.",
+    "Affected OD records are sampled, weighted model records, not observed riders.",
+    "Confidentiality and new-route sensitivities are not rerun by this audit. OD response sensitivities are included only when odDiagnostics is present."
+  ],
+  "matchedScenarioCandidateRecords": 61855,
+  "odDiagnostics": {
+    "candidateLayerSha256": "21190f0bf77577a1f48fe5f48add935061dd1221b322905abce1db942b76e165",
+    "candidates": [
+      {
+        "additionalUsualCommuters": 54.476310952448614,
+        "affectedEligible": 1491.46,
+        "affectedOdRecords": 65,
+        "affectedStartingCycleCommuters": 118.60211333009326,
+        "candidateId": "candidate-2923bae90b476f70",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 23.7398196824545,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 54.476310952448614,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 135.8385846332479,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.9460897457751941,
+        "meanRelativeCostSavingWeightedByEligible": 0.18529543206018637,
+        "topThreeOdContributionShare": 0.9794146585698266
+      },
+      {
+        "additionalUsualCommuters": 52.526689438959686,
+        "affectedEligible": 4037.3800000000006,
+        "affectedOdRecords": 262,
+        "affectedStartingCycleCommuters": 303.4816208514318,
+        "candidateId": "candidate-8d60dfb42cab4400",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 24.837639046340364,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 52.526689438959686,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 116.36025642373227,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.6857497692688312,
+        "meanRelativeCostSavingWeightedByEligible": 0.07672024021950709,
+        "topThreeOdContributionShare": 0.8087574281907589
+      },
+      {
+        "additionalUsualCommuters": 52.25182161016295,
+        "affectedEligible": 742.3199999999999,
+        "affectedOdRecords": 9,
+        "affectedStartingCycleCommuters": 56.191479451451684,
+        "candidateId": "candidate-504e47db5d6b70c5",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 22.56563687086335,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 52.25182161016295,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 134.65024273159858,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.998978556779617,
+        "meanRelativeCostSavingWeightedByEligible": 0.43388075753546046,
+        "topThreeOdContributionShare": 0.9999935681812782
+      },
+      {
+        "additionalUsualCommuters": 51.38241719974124,
+        "affectedEligible": 1660.76,
+        "affectedOdRecords": 98,
+        "affectedStartingCycleCommuters": 186.91722843986585,
+        "candidateId": "candidate-b60a1202854aa4d2",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 21.96030995367157,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 51.38241719974124,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 124.7018333579356,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.9612486842530705,
+        "meanRelativeCostSavingWeightedByEligible": 0.11863609141687484,
+        "topThreeOdContributionShare": 0.9732206047091728
+      },
+      {
+        "additionalUsualCommuters": 51.3557011112467,
+        "affectedEligible": 2986.7200000000007,
+        "affectedOdRecords": 220,
+        "affectedStartingCycleCommuters": 162.24619705090663,
+        "candidateId": "candidate-7752cbaf3904bd63",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 23.312040941766025,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 51.3557011112467,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 120.16890106074017,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.9288191869223054,
+        "meanRelativeCostSavingWeightedByEligible": 0.08732755070001891,
+        "topThreeOdContributionShare": 0.9580856393352084
+      },
+      {
+        "additionalUsualCommuters": 50.89686103329028,
+        "affectedEligible": 1697.6200000000003,
+        "affectedOdRecords": 94,
+        "affectedStartingCycleCommuters": 181.20264715261087,
+        "candidateId": "candidate-0792220e8369e029",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 23.49086518011854,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 50.89686103329028,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 114.6266913020671,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.6211971443816797,
+        "meanRelativeCostSavingWeightedByEligible": 0.13265356700982103,
+        "topThreeOdContributionShare": 0.8705616370983597
+      },
+      {
+        "additionalUsualCommuters": 45.142991729099165,
+        "affectedEligible": 5941.440000000004,
+        "affectedOdRecords": 407,
+        "affectedStartingCycleCommuters": 536.4885333409288,
+        "candidateId": "candidate-411d92bafee5f5d1",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 21.9561848848749,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 45.142991729099165,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 95.17416073930231,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.18063627664421497,
+        "meanRelativeCostSavingWeightedByEligible": 0.055176535985592357,
+        "topThreeOdContributionShare": 0.35768243437394776
+      },
+      {
+        "additionalUsualCommuters": 43.68337846100373,
+        "affectedEligible": 3370.340000000001,
+        "affectedOdRecords": 170,
+        "affectedStartingCycleCommuters": 323.6063953739858,
+        "candidateId": "candidate-d29af3b7143689a7",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 19.907498563287614,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 43.68337846100373,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 103.7012750194952,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.9809687478312216,
+        "meanRelativeCostSavingWeightedByEligible": 0.08171453020519291,
+        "topThreeOdContributionShare": 0.9846301718161155
+      },
+      {
+        "additionalUsualCommuters": 37.92294932208693,
+        "affectedEligible": 3282.700000000001,
+        "affectedOdRecords": 124,
+        "affectedStartingCycleCommuters": 284.889999531427,
+        "candidateId": "candidate-93dcb500489db8cd",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 18.133819895573914,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 37.92294932208693,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 82.76744335436223,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.5668196700671788,
+        "meanRelativeCostSavingWeightedByEligible": 0.09011848024579915,
+        "topThreeOdContributionShare": 0.8167059672296844
+      },
+      {
+        "additionalUsualCommuters": 35.42837364358994,
+        "affectedEligible": 9255.140000000005,
+        "affectedOdRecords": 682,
+        "affectedStartingCycleCommuters": 407.03975595199466,
+        "candidateId": "candidate-3bfdf65225ae782f",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 16.825953988578494,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 35.42837364358994,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 77.72145042596695,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.6619433430689337,
+        "meanRelativeCostSavingWeightedByEligible": 0.021653824055979473,
+        "topThreeOdContributionShare": 0.7513640361270466
+      },
+      {
+        "additionalUsualCommuters": 33.385948223980904,
+        "affectedEligible": 1528.9,
+        "affectedOdRecords": 56,
+        "affectedStartingCycleCommuters": 96.36261967649553,
+        "candidateId": "candidate-2adbcf7a8cd91c4e",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 15.025755219141892,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 33.385948223980904,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 81.60027727262658,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.8154143570044962,
+        "meanRelativeCostSavingWeightedByEligible": 0.1624905545610191,
+        "topThreeOdContributionShare": 0.9447693060665727
+      },
+      {
+        "additionalUsualCommuters": 32.37508477364918,
+        "affectedEligible": 3154.320000000002,
+        "affectedOdRecords": 186,
+        "affectedStartingCycleCommuters": 174.61583419498774,
+        "candidateId": "candidate-2913f3ba205d34fd",
+        "elasticitySensitivity": [
+          {
+            "additionalUsualCommuters": 15.380706030925586,
+            "elasticity": 0.5
+          },
+          {
+            "additionalUsualCommuters": 32.37508477364918,
+            "elasticity": 1.0
+          },
+          {
+            "additionalUsualCommuters": 71.18693062288696,
+            "elasticity": 2.0
+          }
+        ],
+        "largestOdContributionShare": 0.7753879454392754,
+        "meanRelativeCostSavingWeightedByEligible": 0.057453389111841245,
+        "topThreeOdContributionShare": 0.9616583084467807
+      }
+    ],
+    "commuteRecordsPerStratum": 1,
+    "runId": "run-313e0277521633d3",
+    "scenario": "commute_8pct",
+    "sourceHashes": {
+      "od_ledger.parquet": "9e89176035853da46bba4061d986ee9713e06fc140dafb2115c1f3158b8b6614",
+      "path_candidate_savings.parquet": "2f7e36f3b811c6c52ec7af0d64a02fffb39beccf3574703e284cda595a296464",
+      "path_ledger.parquet": "570b5d6c20725f4fe7559fb37a3ffedcfd860cdd24414131a43cbf34c90dc031",
+      "scenario_od_ledger.parquet": "53ea020501e12d497ad9ec389421eca9edfb8dc45b18a5a5ddf3fc81d530c08b"
+    },
+    "status": "exploratory_sensitivity_not_confidence_interval"
+  },
+  "positiveAdditionalEstimates": 12309,
+  "programme100m": {
+    "additionalUsualCommuters": 548.2000873183761,
+    "annualAdditionalJourneyEquivalent": 241208.03842008548,
+    "annualRouteUserJourneyEquivalent": 1027378.7756653449,
+    "capitalCost": 97049225.83581392,
+    "links": 12,
+    "routeUsersAfter": 2334.951762875784
+  },
+  "runId": "run-313e0277521633d3",
+  "scenario": "commute_8pct",
+  "sourceHashes": {
+    "browserCandidates": "21190f0bf77577a1f48fe5f48add935061dd1221b322905abce1db942b76e165",
+    "browserManifest": "3f0a5b65dd08fc9e8e44dd978c322297d8fb12a79ce3c8873683a0f50471c5bb",
+    "configuration": "5e5a1f1c29b94f56103b36a1cfd7da4f11160c58979b7646052d3240c340c30e",
+    "counterfactualLedger": "0066bd574aa65052475562dc92094b0915b398229c2254d77bea11ce7b36bd59"
+  },
+  "status": "aggregate_accounting_passed_not_demand_validation",
+  "topStandaloneCandidates": [
+    {
+      "additionalUsualCommuters": 54.476310952448614,
+      "affectedOdRecords": 65,
+      "annualAdditionalJourneyEquivalent": 23969.57681907739,
+      "annualRouteUserJourneyEquivalent": 64044.89532235507,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-2923bae90b476f70",
+      "name": "Beach Road",
+      "routeUsersAfter": 145.5565802780797,
+      "routeUsersBefore": 88.50357561331569
+    },
+    {
+      "additionalUsualCommuters": 52.526689438959686,
+      "affectedOdRecords": 262,
+      "annualAdditionalJourneyEquivalent": 23111.74335314226,
+      "annualRouteUserJourneyEquivalent": 123929.6546505816,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-8d60dfb42cab4400",
+      "name": "Hurstmere Road / Kitchener Road",
+      "routeUsersAfter": 281.65830602404907,
+      "routeUsersBefore": 222.49677408650032
+    },
+    {
+      "additionalUsualCommuters": 52.25182161016295,
+      "affectedOdRecords": 9,
+      "annualAdditionalJourneyEquivalent": 22990.801508471697,
+      "annualRouteUserJourneyEquivalent": 47715.052467110436,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-504e47db5d6b70c5",
+      "name": "Shelly Beach Road",
+      "routeUsersAfter": 108.44330106161462,
+      "routeUsersBefore": 56.191479451451684
+    },
+    {
+      "additionalUsualCommuters": 51.38241719974124,
+      "affectedOdRecords": 98,
+      "annualAdditionalJourneyEquivalent": 22608.263567886144,
+      "annualRouteUserJourneyEquivalent": 53788.58211237173,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-b60a1202854aa4d2",
+      "name": "Grand Drive",
+      "routeUsersAfter": 122.24677752811758,
+      "routeUsersBefore": 62.06500870235791
+    },
+    {
+      "additionalUsualCommuters": 51.3557011112467,
+      "affectedOdRecords": 220,
+      "annualAdditionalJourneyEquivalent": 22596.508488948548,
+      "annualRouteUserJourneyEquivalent": 80942.75092887285,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-7752cbaf3904bd63",
+      "name": "O'Neills Road / Pooks Road",
+      "routeUsersAfter": 183.9607975656201,
+      "routeUsersBefore": 127.06262776883345
+    },
+    {
+      "additionalUsualCommuters": 50.89686103329028,
+      "affectedOdRecords": 94,
+      "annualAdditionalJourneyEquivalent": 22394.618854647724,
+      "annualRouteUserJourneyEquivalent": 86072.71918613157,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-0792220e8369e029",
+      "name": "Boundary Road",
+      "routeUsersAfter": 195.61981633211718,
+      "routeUsersBefore": 114.42526793105606
+    },
+    {
+      "additionalUsualCommuters": 45.142991729099165,
+      "affectedOdRecords": 407,
+      "annualAdditionalJourneyEquivalent": 19862.916360803632,
+      "annualRouteUserJourneyEquivalent": 180585.0989424333,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-411d92bafee5f5d1",
+      "name": "Hospital Road",
+      "routeUsersAfter": 410.4206794146212,
+      "routeUsersBefore": 343.33536475348035
+    },
+    {
+      "additionalUsualCommuters": 43.68337846100373,
+      "affectedOdRecords": 170,
+      "annualAdditionalJourneyEquivalent": 19220.68652284164,
+      "annualRouteUserJourneyEquivalent": 70604.72927955647,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-d29af3b7143689a7",
+      "name": "Athens Road",
+      "routeUsersAfter": 160.4652938171738,
+      "routeUsersBefore": 110.42263495914847
+    },
+    {
+      "additionalUsualCommuters": 37.92294932208693,
+      "affectedOdRecords": 124,
+      "annualAdditionalJourneyEquivalent": 16686.09770171825,
+      "annualRouteUserJourneyEquivalent": 124637.22298333157,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-93dcb500489db8cd",
+      "name": "Rangatira Road",
+      "routeUsersAfter": 283.2664158712081,
+      "routeUsersBefore": 175.5573077100956
+    },
+    {
+      "additionalUsualCommuters": 35.42837364358994,
+      "affectedOdRecords": 682,
+      "annualAdditionalJourneyEquivalent": 15588.484403179575,
+      "annualRouteUserJourneyEquivalent": 97621.19091064233,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-3bfdf65225ae782f",
+      "name": "Porchester Road",
+      "routeUsersAfter": 221.86634297873258,
+      "routeUsersBefore": 159.73231968150586
+    },
+    {
+      "additionalUsualCommuters": 33.385948223980904,
+      "affectedOdRecords": 56,
+      "annualAdditionalJourneyEquivalent": 14689.817218551598,
+      "annualRouteUserJourneyEquivalent": 54793.39910955712,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-2adbcf7a8cd91c4e",
+      "name": "Gulf Harbour Drive",
+      "routeUsersAfter": 124.53045252172072,
+      "routeUsersBefore": 91.0691298998393
+    },
+    {
+      "additionalUsualCommuters": 32.37508477364918,
+      "affectedOdRecords": 186,
+      "annualAdditionalJourneyEquivalent": 14245.037300405638,
+      "annualRouteUserJourneyEquivalent": 69472.54784932997,
+      "baselineRouteUsers": 0.0,
+      "candidateId": "candidate-2913f3ba205d34fd",
+      "name": "Whangaparaoa Road",
+      "routeUsersAfter": 157.89215420302267,
+      "routeUsersBefore": 114.2536097752774
+    }
+  ]
+}

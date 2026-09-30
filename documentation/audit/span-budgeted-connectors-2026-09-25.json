@@ -1,0 +1,1839 @@
+{
+  "areas": [
+    {
+      "anchorCandidateId": "candidate-296e3eb561e8e2d7",
+      "area": "Ponsonby Road area",
+      "baseline": {
+        "journeys": 1,
+        "weight": 9.0
+      },
+      "budgetedConnectorComparison": {
+        "elapsedS": 6.90543529111892,
+        "journeysWithRouteColumns": 17,
+        "labelsExpanded": 236326,
+        "note": "Same crop, demand records, standards and screening cost rate. Short-chain options are hypothetical, not checked crossing designs. All methods use the same checked route union, including original columns. Search caps can omit alternatives. Connected records are not extra cyclists.",
+        "originalRouteColumnsRetained": 28,
+        "routeColumns": 431,
+        "sameJourneysAndWeights": true,
+        "searchComplete": false,
+        "searchStopReasons": {
+          "disconnected": 1,
+          "exhausted": 8,
+          "label_limit": 15
+        },
+        "solutions": [
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 1,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 1,
+            "served_weight": 9.0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 1,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 1,
+            "served_weight": 9.0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 1,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [],
+            "served_journeys": 1,
+            "served_weight": 9.0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 491280.8327844169,
+            "checkedRouteWitnesses": 2,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "diagnostic-short:exclusion-644170946001fed8"
+            ],
+            "served_journeys": 2,
+            "served_weight": 84.0,
+            "shortConnectorCostNzd": 491280.8327844169,
+            "shortConnectorCount": 1
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 4455453.683788385,
+            "checkedRouteWitnesses": 4,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-1fed28c8591cd3ce",
+              "candidate-5da61af2c6fc59c6",
+              "candidate-770f6c2a77491961",
+              "diagnostic-short:exclusion-001ce4b707c499e3",
+              "diagnostic-short:exclusion-644170946001fed8"
+            ],
+            "served_journeys": 4,
+            "served_weight": 156.0,
+            "shortConnectorCostNzd": 705590.2374739546,
+            "shortConnectorCount": 2
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 4455453.683788386,
+            "checkedRouteWitnesses": 4,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-1fed28c8591cd3ce",
+              "candidate-5da61af2c6fc59c6",
+              "candidate-770f6c2a77491961",
+              "diagnostic-short:exclusion-001ce4b707c499e3",
+              "diagnostic-short:exclusion-644170946001fed8"
+            ],
+            "served_journeys": 4,
+            "served_weight": 156.0,
+            "shortConnectorCostNzd": 705590.2374739546,
+            "shortConnectorCount": 2
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 491280.8327844169,
+            "checkedRouteWitnesses": 2,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "diagnostic-short:exclusion-644170946001fed8"
+            ],
+            "served_journeys": 2,
+            "served_weight": 84.0,
+            "shortConnectorCostNzd": 491280.8327844169,
+            "shortConnectorCount": 1
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 9813238.597125717,
+            "checkedRouteWitnesses": 4,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-770f6c2a77491961",
+              "candidate-b186115725ceffa4",
+              "candidate-c7bfd511f5f1cdba",
+              "candidate-c8fbb3d2f7a4d50d",
+              "diagnostic-short:exclusion-001ce4b707c499e3",
+              "diagnostic-short:exclusion-1375b17dcc20a4a0",
+              "diagnostic-short:exclusion-264e63cfad095b89",
+              "diagnostic-short:exclusion-644170946001fed8",
+              "diagnostic-short:exclusion-807e4f6b5acee16b"
+            ],
+            "served_journeys": 4,
+            "served_weight": 546.6,
+            "shortConnectorCostNzd": 1081517.822928821,
+            "shortConnectorCount": 5
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 9813238.597125717,
+            "checkedRouteWitnesses": 4,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-770f6c2a77491961",
+              "candidate-b186115725ceffa4",
+              "candidate-c7bfd511f5f1cdba",
+              "candidate-c8fbb3d2f7a4d50d",
+              "diagnostic-short:exclusion-001ce4b707c499e3",
+              "diagnostic-short:exclusion-1375b17dcc20a4a0",
+              "diagnostic-short:exclusion-264e63cfad095b89",
+              "diagnostic-short:exclusion-644170946001fed8",
+              "diagnostic-short:exclusion-807e4f6b5acee16b"
+            ],
+            "served_journeys": 4,
+            "served_weight": 546.6,
+            "shortConnectorCostNzd": 1081517.822928821,
+            "shortConnectorCount": 5
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 491280.8327844169,
+            "checkedRouteWitnesses": 2,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "diagnostic-short:exclusion-644170946001fed8"
+            ],
+            "served_journeys": 2,
+            "served_weight": 84.0,
+            "shortConnectorCostNzd": 491280.8327844169,
+            "shortConnectorCount": 1
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 18924322.422976878,
+            "checkedRouteWitnesses": 8,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-1fed28c8591cd3ce",
+              "candidate-4cc078f987444844",
+              "candidate-5da61af2c6fc59c6",
+              "candidate-770f6c2a77491961",
+              "candidate-a36dd371ba9a3b38",
+              "candidate-b186115725ceffa4",
+              "candidate-c7bfd511f5f1cdba",
+              "candidate-c8fbb3d2f7a4d50d",
+              "candidate-f7fa73131d06dc4e",
+              "diagnostic-short:exclusion-001ce4b707c499e3",
+              "diagnostic-short:exclusion-1258a85c9002b9f9",
+              "diagnostic-short:exclusion-1375b17dcc20a4a0",
+              "diagnostic-short:exclusion-264e63cfad095b89",
+              "diagnostic-short:exclusion-3b1a3288545e097f",
+              "diagnostic-short:exclusion-3d85d6d91bb09721",
+              "diagnostic-short:exclusion-50fc5168a7f45010",
+              "diagnostic-short:exclusion-63e666f0002efde3",
+              "diagnostic-short:exclusion-644170946001fed8",
+              "diagnostic-short:exclusion-807e4f6b5acee16b",
+              "diagnostic-short:exclusion-b48ad9d936c89b6b",
+              "diagnostic-short:exclusion-be58c2c2c4337e5d",
+              "diagnostic-short:exclusion-f32387af6705067e"
+            ],
+            "served_journeys": 8,
+            "served_weight": 635.52,
+            "shortConnectorCostNzd": 4052349.1721842894,
+            "shortConnectorCount": 13
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 18924322.422976878,
+            "checkedRouteWitnesses": 8,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-1fed28c8591cd3ce",
+              "candidate-4cc078f987444844",
+              "candidate-5da61af2c6fc59c6",
+              "candidate-770f6c2a77491961",
+              "candidate-a36dd371ba9a3b38",
+              "candidate-b186115725ceffa4",
+              "candidate-c7bfd511f5f1cdba",
+              "candidate-c8fbb3d2f7a4d50d",
+              "candidate-f7fa73131d06dc4e",
+              "diagnostic-short:exclusion-001ce4b707c499e3",
+              "diagnostic-short:exclusion-1258a85c9002b9f9",
+              "diagnostic-short:exclusion-1375b17dcc20a4a0",
+              "diagnostic-short:exclusion-264e63cfad095b89",
+              "diagnostic-short:exclusion-3b1a3288545e097f",
+              "diagnostic-short:exclusion-3d85d6d91bb09721",
+              "diagnostic-short:exclusion-50fc5168a7f45010",
+              "diagnostic-short:exclusion-63e666f0002efde3",
+              "diagnostic-short:exclusion-644170946001fed8",
+              "diagnostic-short:exclusion-807e4f6b5acee16b",
+              "diagnostic-short:exclusion-b48ad9d936c89b6b",
+              "diagnostic-short:exclusion-be58c2c2c4337e5d",
+              "diagnostic-short:exclusion-f32387af6705067e"
+            ],
+            "served_journeys": 8,
+            "served_weight": 635.52,
+            "shortConnectorCostNzd": 4052349.1721842894,
+            "shortConnectorCount": 13
+          }
+        ],
+        "status": "budgeted_short_connector_experiment_not_buildability_validation"
+      },
+      "candidateCoverage": {
+        "note": "Counts of distinct physical edges in the crop, not journeys or buildable projects. Source exclusions are read from the checked original ledger. Unlisted edges are not assigned an inferred exclusion reason.",
+        "untreatedHighStressEdgesByReason": {
+          "not_in_source_candidate_ledgers": 108,
+          "source_candidate_crosses_crop": 238,
+          "source_exclusion:below_declared_minimum_physical_length": 6376,
+          "source_exclusion:closed_component_has_no_unambiguous_terminals": 13,
+          "source_exclusion:no_exposure_in_routed_purpose_markets": 217
+        }
+      },
+      "centre": [
+        174.75184033273996,
+        -36.85921545825368
+      ],
+      "cropCoverage": {
+        "assignedCommuteRecordsCitywide": 28056,
+        "bothEndpointsInCrop": 1751,
+        "bothEndpointsOutsideCrop": 17236,
+        "note": "Endpoint coverage among previously assigned commute records. An in-crop disconnected search is not proof of citywide disconnection.",
+        "oneEndpointOutsideCrop": 9069,
+        "sourceSelectedUnassignedCommuteRecords": 117
+      },
+      "elapsedS": 51.383167083142325,
+      "graph": {
+        "directedArcs": 85057,
+        "nodes": 46258,
+        "projects": 1014
+      },
+      "reportSha256": "7e2bfa7993f2ce706bc8c7cd8d38e28803145f51c89a2bd6fa0cc0d58c062f52",
+      "sample": {
+        "citywideRepresentative": false,
+        "eligibleWithinArea": 1751,
+        "selected": 24,
+        "weightedDemand": 791.72
+      },
+      "searchComplete": false,
+      "searchSummary": {
+        "allProjectsDiagnostics": {
+          "conclusiveNoRoute": 18,
+          "labelLimit": 1,
+          "note": "Diagnostic only: every in-crop modelled project funded, with unchanged stress/time/detour standards and crossing assumptions. Not a proposed or affordable programme.",
+          "routeFound": 0,
+          "stressRelaxedLabelLimit": 2,
+          "stressRelaxedWitnessFound": 16,
+          "testedNoRouteJourneys": 19
+        },
+        "labelsExpanded": 94731,
+        "peakProcessRssMiB": 4621.5625,
+        "searchElapsedS": 2.0833323744591326,
+        "stopReasons": {
+          "disconnected": 1,
+          "exhausted": 19,
+          "label_limit": 4
+        }
+      },
+      "shortConnectorDiagnostic": {
+        "acceptableRouteFound": 16,
+        "additionalProjects": 1660,
+        "additionalScreeningCostNzd": 430231066.6196859,
+        "conclusiveNoRoute": 1,
+        "foundAfterConclusiveFailure": 16,
+        "foundAfterPreviouslyCappedSearch": 0,
+        "labelLimit": 2,
+        "note": "All projects plus complete in-crop chains excluded for minimum length are funded hypothetically. Original stress, time, detour, turn and crop rules remain. This tests coverage, not affordability, buildability or optimal investment. The budgeted portfolio and its assignments are unchanged.",
+        "screeningCostPerM": 6000,
+        "sourceCandidateManifestSha256": "103bc39a5eb621ff3d6d9c21e4ccff7843f2d7262773739f22c072da4376d11a",
+        "sourceMinimumLengthM": 100.0,
+        "testedJourneys": 19
+      },
+      "solutions": [
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 4546880.136186594,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [
+            "candidate-1b2e77c6b3406f51",
+            "candidate-1fed28c8591cd3ce",
+            "candidate-5da61af2c6fc59c6",
+            "candidate-770f6c2a77491961"
+          ],
+          "served_journeys": 3,
+          "served_weight": 81.0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 4546880.136186594,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [
+            "candidate-1b2e77c6b3406f51",
+            "candidate-1fed28c8591cd3ce",
+            "candidate-5da61af2c6fc59c6",
+            "candidate-770f6c2a77491961"
+          ],
+          "served_journeys": 3,
+          "served_weight": 81.0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 4546880.136186594,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [
+            "candidate-1b2e77c6b3406f51",
+            "candidate-1fed28c8591cd3ce",
+            "candidate-5da61af2c6fc59c6",
+            "candidate-770f6c2a77491961"
+          ],
+          "served_journeys": 3,
+          "served_weight": 81.0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 4546880.136186594,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [
+            "candidate-1b2e77c6b3406f51",
+            "candidate-1fed28c8591cd3ce",
+            "candidate-5da61af2c6fc59c6",
+            "candidate-770f6c2a77491961"
+          ],
+          "served_journeys": 3,
+          "served_weight": 81.0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 18092866.11249193,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [
+            "candidate-06a26be56d46ef40",
+            "candidate-1b2e77c6b3406f51",
+            "candidate-1fed28c8591cd3ce",
+            "candidate-2626572b3a1fb7f5",
+            "candidate-5da61af2c6fc59c6",
+            "candidate-770f6c2a77491961",
+            "candidate-7b37b9bf09056da6",
+            "candidate-94bd43545a3feabe",
+            "candidate-b9f159710ff39892",
+            "candidate-c0bd591e94e2b29c",
+            "candidate-e71d3fe0c638d51f",
+            "candidate-f603edaeb3432946"
+          ],
+          "served_journeys": 5,
+          "served_weight": 101.52
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 18092866.11249193,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [
+            "candidate-06a26be56d46ef40",
+            "candidate-1b2e77c6b3406f51",
+            "candidate-1fed28c8591cd3ce",
+            "candidate-2626572b3a1fb7f5",
+            "candidate-5da61af2c6fc59c6",
+            "candidate-770f6c2a77491961",
+            "candidate-7b37b9bf09056da6",
+            "candidate-94bd43545a3feabe",
+            "candidate-b9f159710ff39892",
+            "candidate-c0bd591e94e2b29c",
+            "candidate-e71d3fe0c638d51f",
+            "candidate-f603edaeb3432946"
+          ],
+          "served_journeys": 5,
+          "served_weight": 101.52
+        }
+      ],
+      "stressGapReasonWitnessCounts": {
+        "source_exclusion:below_declared_minimum_physical_length": 16
+      },
+      "stressGapWitnessCounts": {
+        "physicalEdgesStillHighStressAfterTreatment": 0,
+        "turnMovementsStillHighStress": 0,
+        "untreatedPhysicalEdges": 16
+      }
+    },
+    {
+      "anchorCandidateId": "candidate-504e47db5d6b70c5",
+      "area": "Shelly Beach Road area",
+      "baseline": {
+        "journeys": 0,
+        "weight": 0
+      },
+      "budgetedConnectorComparison": {
+        "elapsedS": 0.0016317919362336397,
+        "journeysWithRouteColumns": 0,
+        "labelsExpanded": 19,
+        "note": "Same crop, demand records, standards and screening cost rate. Short-chain options are hypothetical, not checked crossing designs. All methods use the same checked route union, including original columns. Search caps can omit alternatives. Connected records are not extra cyclists.",
+        "originalRouteColumnsRetained": 0,
+        "routeColumns": 0,
+        "sameJourneysAndWeights": true,
+        "searchComplete": true,
+        "searchStopReasons": {
+          "exhausted": 1
+        },
+        "solutions": [
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          }
+        ],
+        "status": "budgeted_short_connector_experiment_not_buildability_validation"
+      },
+      "candidateCoverage": {
+        "note": "Counts of distinct physical edges in the crop, not journeys or buildable projects. Source exclusions are read from the checked original ledger. Unlisted edges are not assigned an inferred exclusion reason.",
+        "untreatedHighStressEdgesByReason": {
+          "source_candidate_crosses_crop": 195,
+          "source_exclusion:below_declared_minimum_physical_length": 3,
+          "source_exclusion:no_exposure_in_routed_purpose_markets": 104
+        }
+      },
+      "centre": [
+        174.3533224270394,
+        -36.57516874373309
+      ],
+      "cropCoverage": {
+        "assignedCommuteRecordsCitywide": 28056,
+        "bothEndpointsInCrop": 1,
+        "bothEndpointsOutsideCrop": 28043,
+        "note": "Endpoint coverage among previously assigned commute records. An in-crop disconnected search is not proof of citywide disconnection.",
+        "oneEndpointOutsideCrop": 12,
+        "sourceSelectedUnassignedCommuteRecords": 117
+      },
+      "elapsedS": 13.726079458137974,
+      "graph": {
+        "directedArcs": 4576,
+        "nodes": 2297,
+        "projects": 7
+      },
+      "reportSha256": "72619b6cc7212ee6f05101f77da1c44251f1992a56450950748613e93ce6e725",
+      "sample": {
+        "citywideRepresentative": false,
+        "eligibleWithinArea": 1,
+        "selected": 1,
+        "weightedDemand": 555.0
+      },
+      "searchComplete": true,
+      "searchSummary": {
+        "allProjectsDiagnostics": {
+          "conclusiveNoRoute": 0,
+          "labelLimit": 0,
+          "note": "Diagnostic only: every in-crop modelled project funded, with unchanged stress/time/detour standards and crossing assumptions. Not a proposed or affordable programme.",
+          "routeFound": 1,
+          "stressRelaxedLabelLimit": 0,
+          "stressRelaxedWitnessFound": 0,
+          "testedNoRouteJourneys": 1
+        },
+        "labelsExpanded": 19,
+        "peakProcessRssMiB": 3254.0625,
+        "searchElapsedS": 0.0015820830594748259,
+        "stopReasons": {
+          "exhausted": 1
+        }
+      },
+      "shortConnectorDiagnostic": {
+        "acceptableRouteFound": 0,
+        "additionalProjects": 1,
+        "additionalScreeningCostNzd": 126164.62534154952,
+        "conclusiveNoRoute": 0,
+        "foundAfterConclusiveFailure": 0,
+        "foundAfterPreviouslyCappedSearch": 0,
+        "labelLimit": 0,
+        "note": "All projects plus complete in-crop chains excluded for minimum length are funded hypothetically. Original stress, time, detour, turn and crop rules remain. This tests coverage, not affordability, buildability or optimal investment. The budgeted portfolio and its assignments are unchanged.",
+        "screeningCostPerM": 6000,
+        "sourceCandidateManifestSha256": "103bc39a5eb621ff3d6d9c21e4ccff7843f2d7262773739f22c072da4376d11a",
+        "sourceMinimumLengthM": 100.0,
+        "testedJourneys": 0
+      },
+      "solutions": [
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        }
+      ],
+      "stressGapReasonWitnessCounts": {},
+      "stressGapWitnessCounts": {
+        "physicalEdgesStillHighStressAfterTreatment": 0,
+        "turnMovementsStillHighStress": 0,
+        "untreatedPhysicalEdges": 0
+      }
+    },
+    {
+      "anchorCandidateId": "candidate-411d92bafee5f5d1",
+      "area": "Hospital Road area",
+      "baseline": {
+        "journeys": 0,
+        "weight": 0
+      },
+      "budgetedConnectorComparison": {
+        "elapsedS": 5.776715042069554,
+        "journeysWithRouteColumns": 9,
+        "labelsExpanded": 214297,
+        "note": "Same crop, demand records, standards and screening cost rate. Short-chain options are hypothetical, not checked crossing designs. All methods use the same checked route union, including original columns. Search caps can omit alternatives. Connected records are not extra cyclists.",
+        "originalRouteColumnsRetained": 0,
+        "routeColumns": 239,
+        "sameJourneysAndWeights": true,
+        "searchComplete": false,
+        "searchStopReasons": {
+          "disconnected": 2,
+          "exhausted": 6,
+          "label_limit": 16
+        },
+        "solutions": [
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 7220684.1326288385,
+            "checkedRouteWitnesses": 1,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-0a06705fd69c50ec",
+              "candidate-76def8c686742372",
+              "diagnostic-short:exclusion-02b43287594da9ce",
+              "diagnostic-short:exclusion-221b4121802e2c45",
+              "diagnostic-short:exclusion-3998f0c8d8cccee6",
+              "diagnostic-short:exclusion-3d00799a72fc86d3",
+              "diagnostic-short:exclusion-3de56d87073a842a",
+              "diagnostic-short:exclusion-50e2ccd9ea25899f",
+              "diagnostic-short:exclusion-a12807155ab5e2d3",
+              "diagnostic-short:exclusion-aa2db982f03fc721",
+              "diagnostic-short:exclusion-b08bc3cdd392a466",
+              "diagnostic-short:exclusion-d5d30f6e3de26fc7",
+              "diagnostic-short:exclusion-e841008f16f815a9",
+              "diagnostic-short:exclusion-f98e4b0c8367077b"
+            ],
+            "served_journeys": 1,
+            "served_weight": 18.0,
+            "shortConnectorCostNzd": 3952377.4767791606,
+            "shortConnectorCount": 12
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 7220684.1326288385,
+            "checkedRouteWitnesses": 1,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-0a06705fd69c50ec",
+              "candidate-76def8c686742372",
+              "diagnostic-short:exclusion-02b43287594da9ce",
+              "diagnostic-short:exclusion-221b4121802e2c45",
+              "diagnostic-short:exclusion-3998f0c8d8cccee6",
+              "diagnostic-short:exclusion-3d00799a72fc86d3",
+              "diagnostic-short:exclusion-3de56d87073a842a",
+              "diagnostic-short:exclusion-50e2ccd9ea25899f",
+              "diagnostic-short:exclusion-a12807155ab5e2d3",
+              "diagnostic-short:exclusion-aa2db982f03fc721",
+              "diagnostic-short:exclusion-b08bc3cdd392a466",
+              "diagnostic-short:exclusion-d5d30f6e3de26fc7",
+              "diagnostic-short:exclusion-e841008f16f815a9",
+              "diagnostic-short:exclusion-f98e4b0c8367077b"
+            ],
+            "served_journeys": 1,
+            "served_weight": 18.0,
+            "shortConnectorCostNzd": 3952377.4767791606,
+            "shortConnectorCount": 12
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 15671221.383104887,
+            "checkedRouteWitnesses": 1,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-2e62747cc868bafa",
+              "candidate-3a95bfee477ecbaa",
+              "candidate-411d92bafee5f5d1",
+              "candidate-bde38d8d4fe465d2",
+              "candidate-c71f07fc0f8c07a4",
+              "candidate-e6d0ce759a7b6d20",
+              "candidate-ef88b70103be687a",
+              "diagnostic-short:exclusion-010e54524cfb18b4",
+              "diagnostic-short:exclusion-0fc84867b18eae8f",
+              "diagnostic-short:exclusion-28e7a3b6d41764f5",
+              "diagnostic-short:exclusion-7b26ac5493ec3b27",
+              "diagnostic-short:exclusion-82592e3ea8d1fac8",
+              "diagnostic-short:exclusion-91294a40a94c926b",
+              "diagnostic-short:exclusion-9c1d9ae90caf6b43",
+              "diagnostic-short:exclusion-da1cd7ec52a7512d",
+              "diagnostic-short:exclusion-ee0c361fa96f6397"
+            ],
+            "served_journeys": 1,
+            "served_weight": 100.80000000000001,
+            "shortConnectorCostNzd": 1849250.9052131781,
+            "shortConnectorCount": 9
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 15671221.383104885,
+            "checkedRouteWitnesses": 1,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-2e62747cc868bafa",
+              "candidate-3a95bfee477ecbaa",
+              "candidate-411d92bafee5f5d1",
+              "candidate-bde38d8d4fe465d2",
+              "candidate-c71f07fc0f8c07a4",
+              "candidate-e6d0ce759a7b6d20",
+              "candidate-ef88b70103be687a",
+              "diagnostic-short:exclusion-010e54524cfb18b4",
+              "diagnostic-short:exclusion-0fc84867b18eae8f",
+              "diagnostic-short:exclusion-28e7a3b6d41764f5",
+              "diagnostic-short:exclusion-7b26ac5493ec3b27",
+              "diagnostic-short:exclusion-82592e3ea8d1fac8",
+              "diagnostic-short:exclusion-91294a40a94c926b",
+              "diagnostic-short:exclusion-9c1d9ae90caf6b43",
+              "diagnostic-short:exclusion-da1cd7ec52a7512d",
+              "diagnostic-short:exclusion-ee0c361fa96f6397"
+            ],
+            "served_journeys": 1,
+            "served_weight": 100.80000000000001,
+            "shortConnectorCostNzd": 1849250.9052131781,
+            "shortConnectorCount": 9
+          }
+        ],
+        "status": "budgeted_short_connector_experiment_not_buildability_validation"
+      },
+      "candidateCoverage": {
+        "note": "Counts of distinct physical edges in the crop, not journeys or buildable projects. Source exclusions are read from the checked original ledger. Unlisted edges are not assigned an inferred exclusion reason.",
+        "untreatedHighStressEdgesByReason": {
+          "not_in_source_candidate_ledgers": 85,
+          "source_candidate_crosses_crop": 361,
+          "source_exclusion:below_declared_minimum_physical_length": 3385,
+          "source_exclusion:no_exposure_in_routed_purpose_markets": 392
+        }
+      },
+      "centre": [
+        174.83678743279316,
+        -36.95921800807268
+      ],
+      "cropCoverage": {
+        "assignedCommuteRecordsCitywide": 28056,
+        "bothEndpointsInCrop": 495,
+        "bothEndpointsOutsideCrop": 24971,
+        "note": "Endpoint coverage among previously assigned commute records. An in-crop disconnected search is not proof of citywide disconnection.",
+        "oneEndpointOutsideCrop": 2590,
+        "sourceSelectedUnassignedCommuteRecords": 117
+      },
+      "elapsedS": 24.05482191592455,
+      "graph": {
+        "directedArcs": 45959,
+        "nodes": 23987,
+        "projects": 886
+      },
+      "reportSha256": "560fdfab1ecf3ff5e5892a282ea08e9c1e8b7544ab32a8919a44cc15b41a0ee5",
+      "sample": {
+        "citywideRepresentative": false,
+        "eligibleWithinArea": 495,
+        "selected": 24,
+        "weightedDemand": 350.86
+      },
+      "searchComplete": true,
+      "searchSummary": {
+        "allProjectsDiagnostics": {
+          "conclusiveNoRoute": 24,
+          "labelLimit": 0,
+          "note": "Diagnostic only: every in-crop modelled project funded, with unchanged stress/time/detour standards and crossing assumptions. Not a proposed or affordable programme.",
+          "routeFound": 0,
+          "stressRelaxedLabelLimit": 0,
+          "stressRelaxedWitnessFound": 19,
+          "testedNoRouteJourneys": 24
+        },
+        "labelsExpanded": 19370,
+        "peakProcessRssMiB": 3745.40625,
+        "searchElapsedS": 0.88072674931027,
+        "stopReasons": {
+          "disconnected": 2,
+          "exhausted": 22
+        }
+      },
+      "shortConnectorDiagnostic": {
+        "acceptableRouteFound": 19,
+        "additionalProjects": 1177,
+        "additionalScreeningCostNzd": 306606917.59291553,
+        "conclusiveNoRoute": 5,
+        "foundAfterConclusiveFailure": 19,
+        "foundAfterPreviouslyCappedSearch": 0,
+        "labelLimit": 0,
+        "note": "All projects plus complete in-crop chains excluded for minimum length are funded hypothetically. Original stress, time, detour, turn and crop rules remain. This tests coverage, not affordability, buildability or optimal investment. The budgeted portfolio and its assignments are unchanged.",
+        "screeningCostPerM": 6000,
+        "sourceCandidateManifestSha256": "103bc39a5eb621ff3d6d9c21e4ccff7843f2d7262773739f22c072da4376d11a",
+        "sourceMinimumLengthM": 100.0,
+        "testedJourneys": 24
+      },
+      "solutions": [
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        }
+      ],
+      "stressGapReasonWitnessCounts": {
+        "not_in_source_candidate_ledgers": 1,
+        "source_exclusion:below_declared_minimum_physical_length": 19
+      },
+      "stressGapWitnessCounts": {
+        "physicalEdgesStillHighStressAfterTreatment": 0,
+        "turnMovementsStillHighStress": 0,
+        "untreatedPhysicalEdges": 19
+      }
+    },
+    {
+      "anchorCandidateId": "candidate-b60a1202854aa4d2",
+      "area": "Grand Drive area",
+      "baseline": {
+        "journeys": 0,
+        "weight": 0
+      },
+      "budgetedConnectorComparison": {
+        "elapsedS": 33.073246458079666,
+        "journeysWithRouteColumns": 13,
+        "labelsExpanded": 260100,
+        "note": "Same crop, demand records, standards and screening cost rate. Short-chain options are hypothetical, not checked crossing designs. All methods use the same checked route union, including original columns. Search caps can omit alternatives. Connected records are not extra cyclists.",
+        "originalRouteColumnsRetained": 3,
+        "routeColumns": 460,
+        "sameJourneysAndWeights": true,
+        "searchComplete": false,
+        "searchStopReasons": {
+          "disconnected": 1,
+          "exhausted": 5,
+          "label_limit": 18
+        },
+        "solutions": [
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 0.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 4269142.719657707,
+            "checkedRouteWitnesses": 1,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-86fe0a1062e4d688",
+              "candidate-a67258c402de07cd",
+              "candidate-dd265a93f681a213",
+              "diagnostic-short:exclusion-50baf87378afeaa6",
+              "diagnostic-short:exclusion-6ffc34d245293722",
+              "diagnostic-short:exclusion-8109d6b11c4f1d44",
+              "diagnostic-short:exclusion-e9702d1176d14bc9"
+            ],
+            "served_journeys": 1,
+            "served_weight": 8.64,
+            "shortConnectorCostNzd": 1677048.584469663,
+            "shortConnectorCount": 4
+          },
+          {
+            "budget": 5000000.0,
+            "capital_cost": 4269142.719657707,
+            "checkedRouteWitnesses": 1,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-86fe0a1062e4d688",
+              "candidate-a67258c402de07cd",
+              "candidate-dd265a93f681a213",
+              "diagnostic-short:exclusion-50baf87378afeaa6",
+              "diagnostic-short:exclusion-6ffc34d245293722",
+              "diagnostic-short:exclusion-8109d6b11c4f1d44",
+              "diagnostic-short:exclusion-e9702d1176d14bc9"
+            ],
+            "served_journeys": 1,
+            "served_weight": 8.64,
+            "shortConnectorCostNzd": 1677048.584469663,
+            "shortConnectorCount": 4
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 9163968.459355867,
+            "checkedRouteWitnesses": 2,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-86fe0a1062e4d688",
+              "candidate-a67258c402de07cd",
+              "candidate-c22da643bd4d8032",
+              "candidate-cd8c7ca1b8ec21a2",
+              "candidate-dd265a93f681a213",
+              "diagnostic-short:exclusion-1096c4b40104f58a",
+              "diagnostic-short:exclusion-2bb5187000731ed5",
+              "diagnostic-short:exclusion-2c6361b041a524c7",
+              "diagnostic-short:exclusion-50baf87378afeaa6",
+              "diagnostic-short:exclusion-58c348ee06587edb",
+              "diagnostic-short:exclusion-6ffc34d245293722",
+              "diagnostic-short:exclusion-7f17f394cef4cde7",
+              "diagnostic-short:exclusion-8109d6b11c4f1d44",
+              "diagnostic-short:exclusion-ae84cfb1378d44f0",
+              "diagnostic-short:exclusion-cb498e1c3e48128a",
+              "diagnostic-short:exclusion-cca94dcf6a44a5ef",
+              "diagnostic-short:exclusion-e9702d1176d14bc9",
+              "diagnostic-short:exclusion-f5bf3b79749d4dca"
+            ],
+            "served_journeys": 2,
+            "served_weight": 26.64,
+            "shortConnectorCostNzd": 4108892.5505066463,
+            "shortConnectorCount": 13
+          },
+          {
+            "budget": 10000000.0,
+            "capital_cost": 9163968.459355867,
+            "checkedRouteWitnesses": 2,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-86fe0a1062e4d688",
+              "candidate-a67258c402de07cd",
+              "candidate-c22da643bd4d8032",
+              "candidate-cd8c7ca1b8ec21a2",
+              "candidate-dd265a93f681a213",
+              "diagnostic-short:exclusion-1096c4b40104f58a",
+              "diagnostic-short:exclusion-2bb5187000731ed5",
+              "diagnostic-short:exclusion-2c6361b041a524c7",
+              "diagnostic-short:exclusion-50baf87378afeaa6",
+              "diagnostic-short:exclusion-58c348ee06587edb",
+              "diagnostic-short:exclusion-6ffc34d245293722",
+              "diagnostic-short:exclusion-7f17f394cef4cde7",
+              "diagnostic-short:exclusion-8109d6b11c4f1d44",
+              "diagnostic-short:exclusion-ae84cfb1378d44f0",
+              "diagnostic-short:exclusion-cb498e1c3e48128a",
+              "diagnostic-short:exclusion-cca94dcf6a44a5ef",
+              "diagnostic-short:exclusion-e9702d1176d14bc9",
+              "diagnostic-short:exclusion-f5bf3b79749d4dca"
+            ],
+            "served_journeys": 2,
+            "served_weight": 26.64,
+            "shortConnectorCostNzd": 4108892.5505066467,
+            "shortConnectorCount": 13
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 0,
+            "checkedRouteWitnesses": 0,
+            "method": "single_project_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [],
+            "served_journeys": 0,
+            "served_weight": 0,
+            "shortConnectorCostNzd": 0,
+            "shortConnectorCount": 0
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 16933766.90595045,
+            "checkedRouteWitnesses": 3,
+            "method": "package_greedy",
+            "optimal_within_columns": false,
+            "relative_gap": null,
+            "selected": [
+              "candidate-1ce66074d7393d58",
+              "candidate-789e495480e2dcf6",
+              "candidate-86fe0a1062e4d688",
+              "candidate-9deddd2a7bc8af87",
+              "candidate-a67258c402de07cd",
+              "candidate-c22da643bd4d8032",
+              "candidate-cd8c7ca1b8ec21a2",
+              "candidate-da1bd3a3c2b19183",
+              "candidate-dd265a93f681a213",
+              "candidate-f2bd4ca3eb741259",
+              "candidate-fe53117ee73ae300",
+              "diagnostic-short:exclusion-1096c4b40104f58a",
+              "diagnostic-short:exclusion-2bb5187000731ed5",
+              "diagnostic-short:exclusion-2c6361b041a524c7",
+              "diagnostic-short:exclusion-50baf87378afeaa6",
+              "diagnostic-short:exclusion-58c348ee06587edb",
+              "diagnostic-short:exclusion-6ffc34d245293722",
+              "diagnostic-short:exclusion-7f17f394cef4cde7",
+              "diagnostic-short:exclusion-8109d6b11c4f1d44",
+              "diagnostic-short:exclusion-ae84cfb1378d44f0",
+              "diagnostic-short:exclusion-cb498e1c3e48128a",
+              "diagnostic-short:exclusion-cca94dcf6a44a5ef",
+              "diagnostic-short:exclusion-e9702d1176d14bc9",
+              "diagnostic-short:exclusion-f5bf3b79749d4dca"
+            ],
+            "served_journeys": 3,
+            "served_weight": 56.64,
+            "shortConnectorCostNzd": 4108892.5505066463,
+            "shortConnectorCount": 13
+          },
+          {
+            "budget": 20000000.0,
+            "capital_cost": 16933766.90595045,
+            "checkedRouteWitnesses": 3,
+            "method": "route_packages_milp",
+            "optimal_within_columns": true,
+            "relative_gap": 0.0,
+            "selected": [
+              "candidate-1ce66074d7393d58",
+              "candidate-789e495480e2dcf6",
+              "candidate-86fe0a1062e4d688",
+              "candidate-9deddd2a7bc8af87",
+              "candidate-a67258c402de07cd",
+              "candidate-c22da643bd4d8032",
+              "candidate-cd8c7ca1b8ec21a2",
+              "candidate-da1bd3a3c2b19183",
+              "candidate-dd265a93f681a213",
+              "candidate-f2bd4ca3eb741259",
+              "candidate-fe53117ee73ae300",
+              "diagnostic-short:exclusion-1096c4b40104f58a",
+              "diagnostic-short:exclusion-2bb5187000731ed5",
+              "diagnostic-short:exclusion-2c6361b041a524c7",
+              "diagnostic-short:exclusion-50baf87378afeaa6",
+              "diagnostic-short:exclusion-58c348ee06587edb",
+              "diagnostic-short:exclusion-6ffc34d245293722",
+              "diagnostic-short:exclusion-7f17f394cef4cde7",
+              "diagnostic-short:exclusion-8109d6b11c4f1d44",
+              "diagnostic-short:exclusion-ae84cfb1378d44f0",
+              "diagnostic-short:exclusion-cb498e1c3e48128a",
+              "diagnostic-short:exclusion-cca94dcf6a44a5ef",
+              "diagnostic-short:exclusion-e9702d1176d14bc9",
+              "diagnostic-short:exclusion-f5bf3b79749d4dca"
+            ],
+            "served_journeys": 3,
+            "served_weight": 56.64,
+            "shortConnectorCostNzd": 4108892.5505066467,
+            "shortConnectorCount": 13
+          }
+        ],
+        "status": "budgeted_short_connector_experiment_not_buildability_validation"
+      },
+      "candidateCoverage": {
+        "note": "Counts of distinct physical edges in the crop, not journeys or buildable projects. Source exclusions are read from the checked original ledger. Unlisted edges are not assigned an inferred exclusion reason.",
+        "untreatedHighStressEdgesByReason": {
+          "not_in_source_candidate_ledgers": 61,
+          "source_candidate_crosses_crop": 568,
+          "source_exclusion:below_declared_minimum_physical_length": 5475,
+          "source_exclusion:closed_component_has_no_unambiguous_terminals": 2,
+          "source_exclusion:no_exposure_in_routed_purpose_markets": 542
+        }
+      },
+      "centre": [
+        174.82074004589663,
+        -36.885169243470436
+      ],
+      "cropCoverage": {
+        "assignedCommuteRecordsCitywide": 28056,
+        "bothEndpointsInCrop": 592,
+        "bothEndpointsOutsideCrop": 23547,
+        "note": "Endpoint coverage among previously assigned commute records. An in-crop disconnected search is not proof of citywide disconnection.",
+        "oneEndpointOutsideCrop": 3917,
+        "sourceSelectedUnassignedCommuteRecords": 117
+      },
+      "elapsedS": 65.43572433292866,
+      "graph": {
+        "directedArcs": 72913,
+        "nodes": 38614,
+        "projects": 1159
+      },
+      "reportSha256": "8e435fe0bbc4b3ca88c1f842a508a065e5bc68117deb274c726def61eda4f9ad",
+      "sample": {
+        "citywideRepresentative": false,
+        "eligibleWithinArea": 592,
+        "selected": 24,
+        "weightedDemand": 300.03999999999996
+      },
+      "searchComplete": false,
+      "searchSummary": {
+        "allProjectsDiagnostics": {
+          "conclusiveNoRoute": 23,
+          "labelLimit": 0,
+          "note": "Diagnostic only: every in-crop modelled project funded, with unchanged stress/time/detour standards and crossing assumptions. Not a proposed or affordable programme.",
+          "routeFound": 0,
+          "stressRelaxedLabelLimit": 1,
+          "stressRelaxedWitnessFound": 20,
+          "testedNoRouteJourneys": 23
+        },
+        "labelsExpanded": 51580,
+        "peakProcessRssMiB": 2831.140625,
+        "searchElapsedS": 1.7232453341130167,
+        "stopReasons": {
+          "disconnected": 1,
+          "exhausted": 22,
+          "label_limit": 1
+        }
+      },
+      "shortConnectorDiagnostic": {
+        "acceptableRouteFound": 19,
+        "additionalProjects": 1587,
+        "additionalScreeningCostNzd": 362209662.72520256,
+        "conclusiveNoRoute": 3,
+        "foundAfterConclusiveFailure": 19,
+        "foundAfterPreviouslyCappedSearch": 0,
+        "labelLimit": 1,
+        "note": "All projects plus complete in-crop chains excluded for minimum length are funded hypothetically. Original stress, time, detour, turn and crop rules remain. This tests coverage, not affordability, buildability or optimal investment. The budgeted portfolio and its assignments are unchanged.",
+        "screeningCostPerM": 6000,
+        "sourceCandidateManifestSha256": "103bc39a5eb621ff3d6d9c21e4ccff7843f2d7262773739f22c072da4376d11a",
+        "sourceMinimumLengthM": 100.0,
+        "testedJourneys": 23
+      },
+      "solutions": [
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 0.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 5000000.0,
+          "capital_cost": 0,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 6601894.498106146,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [
+            "candidate-0dcf7f10fdc99b52",
+            "candidate-9b7b3c9904093eef",
+            "candidate-ac500dd8a8c73646",
+            "candidate-b28a05554c081ed4",
+            "candidate-b541e52563cddc4b",
+            "candidate-d00fd9997a651712"
+          ],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 10000000.0,
+          "capital_cost": 6601894.498106147,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [
+            "candidate-0dcf7f10fdc99b52",
+            "candidate-9b7b3c9904093eef",
+            "candidate-ac500dd8a8c73646",
+            "candidate-b28a05554c081ed4",
+            "candidate-b541e52563cddc4b",
+            "candidate-d00fd9997a651712"
+          ],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 0,
+          "method": "single_project_greedy",
+          "optimal_within_columns": false,
+          "selected": [],
+          "served_journeys": 0,
+          "served_weight": 0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 6601894.498106146,
+          "method": "package_greedy",
+          "optimal_within_columns": false,
+          "selected": [
+            "candidate-0dcf7f10fdc99b52",
+            "candidate-9b7b3c9904093eef",
+            "candidate-ac500dd8a8c73646",
+            "candidate-b28a05554c081ed4",
+            "candidate-b541e52563cddc4b",
+            "candidate-d00fd9997a651712"
+          ],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        },
+        {
+          "budget": 20000000.0,
+          "capital_cost": 6601894.498106147,
+          "method": "route_packages_milp",
+          "optimal_within_columns": true,
+          "selected": [
+            "candidate-0dcf7f10fdc99b52",
+            "candidate-9b7b3c9904093eef",
+            "candidate-ac500dd8a8c73646",
+            "candidate-b28a05554c081ed4",
+            "candidate-b541e52563cddc4b",
+            "candidate-d00fd9997a651712"
+          ],
+          "served_journeys": 1,
+          "served_weight": 9.0
+        }
+      ],
+      "stressGapReasonWitnessCounts": {
+        "source_candidate_crosses_crop": 2,
+        "source_exclusion:below_declared_minimum_physical_length": 20
+      },
+      "stressGapWitnessCounts": {
+        "physicalEdgesStillHighStressAfterTreatment": 0,
+        "turnMovementsStillHighStress": 0,
+        "untreatedPhysicalEdges": 20
+      }
+    }
+  ],
+  "budget": 20000000.0,
+  "experimentScriptHash": "2abd5277892461fffd84bead77567c710f559fdb2eb3bd2c82b57390dffdd567",
+  "implementationHash": "4aeb7a27ee5f129efedee4677398aa3821c083453ec4b2223795148523915d59",
+  "intersectionEvidenceSha256": "f15d6e4dd22193a53d82e2afed4cd34ce37a8e44f643bea1e5214781699019c7",
+  "limitations": [
+    "Same journeys, candidate costs and route columns for methods within each area.",
+    "Small bounded samples do not represent all travel in these areas or Auckland.",
+    "Some searches hit their caps; optimality is only within generated route columns.",
+    "Only previously assigned commute records enter area sampling.",
+    "Journeys with an endpoint outside the crop and routes outside it are excluded.",
+    "Relaxed-stress witnesses are diagnostic, not acceptable cycling routes.",
+    "Witness gap counts count journeys, not unique assets or minimum treatment sets.",
+    "A journey may have several exclusion reasons; reason counts are not additive.",
+    "Short-connector checks fund every original and hypothetical project, not the budgeted portfolio; they do not establish buildability or affordability.",
+    "No new ridership forecast, measured signal wait or engineering design."
+  ],
+  "parameters": {
+    "budgetShortConnectors": true,
+    "flatSpeedKph": 15,
+    "maxLabelsPerSearch": 15000,
+    "protectedCostSource": "candidate_ledger.capital_cost_base_nzd",
+    "sampleSizeRequested": 24,
+    "testShortConnectors": true,
+    "uphillExponent": 3
+  },
+  "radiusM": 4000,
+  "runId": "run-313e0277521633d3",
+  "seed": 20260924,
+  "sourceHashes": {
+    "candidateExclusionLedger": "4651d6a9a8e64a92532e936022e8feb1964ee55de53a28e43ef922f5a688e522",
+    "candidateLedger": "f9334b5b083dd3ada394a6a29064313ab101705d4811b23e61eed2c518ebc773",
+    "odLedger": "9e89176035853da46bba4061d986ee9713e06fc140dafb2115c1f3158b8b6614",
+    "scenarioOdLedger": "53ea020501e12d497ad9ec389421eca9edfb8dc45b18a5a5ddf3fc81d530c08b",
+    "topology": "33fc0b546326193333c382cbdae742aa9acc41a5ed4e9a235a3c2257dfd1d66e"
+  },
+  "standard": {
+    "maximum_detour": 1.5,
+    "maximum_stress": 2,
+    "maximum_time_s": 1800
+  },
+  "status": "bounded_multi_area_screening_not_citywide_validation"
+}

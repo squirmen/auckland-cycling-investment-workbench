@@ -176,6 +176,40 @@ def test_public_cli_demo_and_offline_source_interfaces(tmp_path: Path, capsys) -
     assert '"ok": true' in capsys.readouterr().out
 
 
+def test_demo_reads_verified_cache_paths_instead_of_assuming_filenames(tmp_path, monkeypatch):
+    config_path, run_id = _temporary_demo_run(tmp_path)
+    run_dir = tmp_path / "runs" / run_id
+    manifest_path = run_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    for stage, name in [
+        ("appraisal-uncertainty-validation", "evidence"),
+        ("export-outputs", "web_payload"),
+    ]:
+        result = manifest["stages"][stage]
+        output = result["outputs"][name]
+        original = run_dir / output["path"]
+        cached = original.parent / "cache-test" / original.name
+        cached.parent.mkdir()
+        original.rename(cached)
+        output["path"] = cached.relative_to(run_dir).as_posix()
+        result["status"] = "cached"
+    manifest_path.write_text(json.dumps(manifest))
+    monkeypatch.setattr(
+        cli_module,
+        "run_project",
+        lambda *a, **kw: SimpleNamespace(
+            run_id=run_id,
+            run_dir=run_dir,
+            to_dict=lambda **kw: {"run_id": run_id},
+        ),
+    )
+    assert main(["demo", "--config", str(config_path), "--export-web", "--json"]) == EXIT_OK
+    assert (tmp_path / "web/public/data/manifest.json").is_file()
+    evidence = manifest["stages"]["appraisal-uncertainty-validation"]["outputs"]["evidence"]
+    (run_dir / evidence["path"]).write_text("{}")
+    assert main(["demo", "--config", str(config_path), "--json"]) == EXIT_INPUT
+
+
 def test_cli_reports_invalid_run_reference_without_traceback(tmp_path: Path, capsys) -> None:
     config_path, _ = _temporary_demo_run(tmp_path)
 
