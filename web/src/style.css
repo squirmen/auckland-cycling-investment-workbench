@@ -513,7 +513,8 @@ button.quiet-button { min-height: 0; padding: 4px 0; border: 0; background: none
   position: absolute;
   z-index: 1100;
   bottom: 24px;
-  left: 50%;
+  /* Centred on the map beside the panel, clear of the map key. */
+  left: calc(50% + var(--panel-width) / 2);
   max-width: min(460px, calc(100% - 48px));
   padding: 9px 14px;
   border: 1px solid var(--line);
@@ -563,6 +564,8 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
 
 @media (max-width: 1100px) {
   :root { --panel-width: 360px; --card-width: 320px; }
+  /* The narrower panel still shows the full name. */
+  .brand .tagline { font-size: 10px; }
 }
 
 @media (max-width: 760px) {
@@ -585,7 +588,8 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
   /* A bottom sheet opens upwards, so the arrow points up while it is folded. */
   .panel-toggle svg { transform: rotate(180deg); }
   body[data-panel="collapsed"] .panel-toggle svg { transform: none; }
-  .tabs { top: 57px; }
+  /* Tucked a little under the header, so nothing scrolls through a gap between them. */
+  .tabs { top: 54px; }
   .hero-figure { font-size: 38px; }
   .map-tools { right: 8px; left: 8px; flex-wrap: wrap; justify-content: flex-end; }
   .layers-body { width: min(280px, calc(100vw - 32px)); }
@@ -593,7 +597,7 @@ body[data-card="open"] .leaflet-bottom.leaflet-right { right: calc(var(--card-wi
   .map-legend > summary { display: list-item; }
   .map-legend:not([open]) #map-legend-items { display: none !important; }
   .loading-panel { left: 50%; }
-  .status-message { top: 56px; bottom: auto; }
+  .status-message { top: 56px; bottom: auto; left: 50%; }
   .leaflet-bottom.leaflet-right { bottom: calc(62dvh + 16px); }
   /* One line of credits above the sheet, so they do not cover the map. */
   .leaflet-control-attribution { max-width: calc(100vw - 16px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

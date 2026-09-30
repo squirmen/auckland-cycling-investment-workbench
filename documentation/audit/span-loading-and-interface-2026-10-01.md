@@ -112,11 +112,13 @@ that wait without changing what the views show.
   fitted to the build order or the selected upgrade, then the key, the panel
   and the link card.
 - **Phones.** The full name fits in the header, the map credits take one line,
-  and routes are fitted clear of the key and the credits.
+  and routes are fitted clear of the key and the credits. Text no longer shows
+  through a gap between the header and the tabs.
 - **Smaller things.** Each view opens at its top. The key for an unfunded gap
   is dashed, as on the map. With every layer on, the key scrolls. The opening
   sentence no longer changes once the data arrives. The About note on
-  intersections says what the sites are.
+  intersections says what the sites are. Status messages sit clear of the map
+  key. The full name fits on a tablet.
 - **Link previews.** The page has a title, description and image for messaging
   and social tools.
 

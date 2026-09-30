@@ -485,8 +485,8 @@ export function renderLinkCard(ctx: ViewContext): void {
   body.push(create("h3", { text: "What the model estimates" }),
     create("p", { className: "card-lead", text: leadSentence(candidate, metric, step, ctx) }),
     create("p", { className: "help estimate-status", text: matchedDiagnostic && matchedDiagnostic.largestOdContributionShare > 0.5
-      ? "Preliminary estimate — most of the gain depends on one sampled journey."
-      : "Preliminary estimate — not a measured or calibrated forecast." }));
+      ? "Preliminary estimate. Most of the gain depends on one sampled journey."
+      : "Preliminary estimate, not a measured or calibrated forecast." }));
 
   const evidence = create("details", { className: "method-note", id: "candidate-evidence" });
   evidence.append(create("summary", { text: "How this was estimated" }));
@@ -553,7 +553,7 @@ function connectionDetails(candidate: CandidateFeature, ctx: ViewContext): HTMLE
     endpoints.append(row);
   }
   parts.push(endpoints);
-  if (!context.endpoints.some(endpoint => endpoint.componentId) && context.componentIds.length) parts.push(create("p", { className: "help", text: "The low-stress connection is part-way along this section, at a blue dot on the map—not at either end." }));
+  if (!context.endpoints.some(endpoint => endpoint.componentId) && context.componentIds.length) parts.push(create("p", { className: "help", text: "The low-stress connection is part-way along this section, at a blue dot on the map, not at either end." }));
   const direction = context.direction === "mixed"
     ? "Conflicting one-way directions prevent riding this whole chain end to end under the current access rules."
     : context.direction === "both" ? "The candidate chain permits travel in both directions."

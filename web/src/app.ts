@@ -768,7 +768,7 @@ function mapPadding(): MapPadding {
   if (window.matchMedia("(max-width: 760px)").matches) {
     const sheet = card.hidden ? panel : card.getBoundingClientRect();
     // Clear of the map key above, and of the credits line that sits on top of the sheet.
-    return { topLeft: [24, 100], bottomRight: [24, Math.max(24, Math.round(window.innerHeight - sheet.top) + 40)] };
+    return { topLeft: [24, 100], bottomRight: [24, Math.max(24, Math.round(window.innerHeight - sheet.top) + 56)] };
   }
   const cardWidth = card.hidden ? 0 : card.getBoundingClientRect().width;
   return { topLeft: [Math.round(panel.right) + 24, 72], bottomRight: [cardWidth ? Math.round(cardWidth) + 48 : 72, 48] };
