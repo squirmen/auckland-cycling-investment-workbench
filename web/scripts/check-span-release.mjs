@@ -82,8 +82,9 @@ try {
       await page.locator("#layers-disclosure > summary").click();
       await page.locator("#layer-intersections").uncheck();
       await expect(page.locator("#map-legend-items")).not.toContainText("Matched signal-controlled site");
+      // Turning a layer on waits for its file, which may still be downloading on a slow link.
       await page.locator("#layer-intersections").check();
-      await expect(page.locator("#map-legend-items")).toContainText("Matched signal-controlled site");
+      await expect(page.locator("#map-legend-items")).toContainText("Matched signal-controlled site", { timeout: 60_000 });
       await page.screenshot({ path: path.join(output, "desktop-layers.png") });
       await page.locator("#layers-disclosure > summary").click();
       // The intersection layer arrives after the first view, so wait until it is drawn.
