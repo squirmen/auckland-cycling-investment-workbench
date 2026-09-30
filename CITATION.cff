@@ -27,7 +27,41 @@ keywords:
 references:
   - type: article
     title: "The Propensity to Cycle Tool: An open source online system for sustainable transport planning"
+    authors:
+      - family-names: Lovelace
+        given-names: Robin
+      - family-names: Goodman
+        given-names: Anna
+      - family-names: Aldred
+        given-names: Rachel
+      - family-names: Berkoff
+        given-names: Nikolai
+      - family-names: Abbas
+        given-names: Ali
+      - family-names: Woodcock
+        given-names: James
+    journal: "Journal of Transport and Land Use"
+    year: 2017
     doi: "10.5198/jtlu.2016.862"
   - type: article
-    title: "Scenarios of cycling to school in England, and associated health and carbon impacts"
+    title: "Scenarios of cycling to school in England, and associated health and carbon impacts: Application of the 'Propensity to Cycle Tool'"
+    authors:
+      - family-names: Goodman
+        given-names: Anna
+      - family-names: Rojas
+        given-names: Ilan Fridman
+      - family-names: Woodcock
+        given-names: James
+      - family-names: Aldred
+        given-names: Rachel
+      - family-names: Berkoff
+        given-names: Nikolai
+      - family-names: Morgan
+        given-names: Malcolm
+      - family-names: Abbas
+        given-names: Ali
+      - family-names: Lovelace
+        given-names: Robin
+    journal: "Journal of Transport & Health"
+    year: 2019
     doi: "10.1016/j.jth.2019.01.008"
