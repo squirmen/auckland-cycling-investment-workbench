@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: "STAND: Secure Two-wheeler Access Network Design"
+message: "If you use this model or map, please cite it as below."
+type: software
+version: 0.1.0
+date-released: 2026-09-28
+authors:
+  - family-names: Welch
+    given-names: Timothy F.
+    affiliation: "Better Places Lab, Te Pare School of Architecture, Planning and Design, Waipapa Taumata Rau | University of Auckland"
+contact:
+  - name: "Better Places Lab, Te Pare School of Architecture, Planning and Design, Waipapa Taumata Rau | University of Auckland"
+    website: "https://www.betterplaces.auckland.ac.nz/"
+repository-code: "https://github.com/squirmen/auckland-cycling-investment-workbench"
+url: "https://span.tfwelch.com/parking/uoa/"
+abstract: "A siting model and interactive map for secure bike parking (Locky Dock stations) on the University of Auckland's City, Grafton and Newmarket campuses, part of SPAN (Spending Priorities for Active Networks): cyclist approach flows over SPAN's traffic-stress network, eight site indicators from Overture/OpenStreetMap and LINZ LiDAR, and an exact k-dock coverage optimisation."
+keywords: [bicycle parking, secure cycle parking, campus, site selection, maximal covering, level of traffic stress, Auckland]
+license: MIT

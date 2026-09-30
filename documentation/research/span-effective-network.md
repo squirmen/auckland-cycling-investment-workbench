@@ -163,6 +163,12 @@ the page last. Leave everything else where it is, and confirm afterwards that
 it has not changed. STAND relies on SPAN's root `.htaccess` for its types,
 compression and cache times, so keep those directives.
 
+A package built without STAND has no `parking/` folder; leave the live one in
+place. A package built after STAND's `make publish` includes it (see
+`parking/README.md` in the repository); `parking/` is then one of the entries
+to swap, and the check afterwards should open `/parking/uoa/` as well. The package gives STAND no brotli copies, because its
+own `.htaccess` sets headers by file name.
+
 Use HTTPS because browser data-integrity checks require a secure context.
 Apache must permit the bundled settings; on other servers configure equivalent
 MIME types, compression and cache behaviour. Do not use the parent project's
