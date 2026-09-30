@@ -14,7 +14,11 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },
     // Safari's engine, for faults that only show there. Only e2e/safari.spec.ts runs in it.
-    { name: "safari", use: { ...devices["Desktop Safari"] }, testMatch: /safari\.spec\.ts/ },
+    // CI installs WebKit and always runs this. Locally it runs when SPAN_E2E_WEBKIT is set,
+    // after `npx playwright install webkit`.
+    ...(process.env.CI || process.env.SPAN_E2E_WEBKIT
+      ? [{ name: "safari", use: { ...devices["Desktop Safari"] }, testMatch: /safari\.spec\.ts/ }]
+      : []),
   ],
   webServer: {
     command: "npm run preview -- --port 4173",
