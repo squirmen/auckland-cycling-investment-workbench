@@ -3,7 +3,22 @@
 1 October 2026. Follow-up to
 [staged loading and tighter search bounds](span-staged-loading-and-stress-bounds-2026-09-26.md).
 Model values, rankings and data files are unchanged; every data file keeps its
-SHA-256.
+SHA-256. Commit `701fc6e` was deployed to [span.tfwelch.com](https://span.tfwelch.com)
+on 1 October 2026 at 00:26 NZDT.
+
+## Result
+
+Four cold visits to the live site from Auckland, in desktop Chrome, straight
+after deployment:
+
+| | 24 September site | This release |
+| --- | --- | --- |
+| First view | 35 seconds or more, or a failure | 3.0–3.7 s |
+| Existing network drawn | with the first view | by 3.9–4.3 s |
+| All 12,580 links, after opening Value for money | with the first view | 5.2–8.5 s |
+
+The host's speed varies, as the next section shows, so these times will be
+longer when it is slow.
 
 ## What was wrong on the live site
 
@@ -12,11 +27,12 @@ Measured from Auckland on 30 September against the 24 September deployment:
 - The page waited for `candidates.geojson`: 234 MB, sent as 14.0 MB of gzip.
   That download took 31–32 seconds. In one browser test it was cut off at 31
   seconds and the page showed "The data could not be loaded".
-- The host sends about 0.5 MB a second to Auckland whatever the file. Two
+- The host was sending about 0.5 MB a second to Auckland whatever the file. Two
   images of 2.7 and 2.9 MB arrived at 0.46 and 0.49 MB/s. A 13.4 MB file sent without
   compression arrived at 0.54 MB/s. Four downloads at once shared the same
-  total, so the limit is per visitor, not per file. The same computer received
-  5.5 MB/s from a content-delivery test file.
+  total, so the limit was per visitor, not per file. The same computer received
+  5.5 MB/s from a content-delivery test file. About an hour later the host
+  was sending 0.9–2.2 MB/s, so its speed varies.
 
 - Scripts were sent at full size with no cache lifetime. The host labels them
   `text/javascript`, which the compression and cache rules did not list. That
@@ -84,10 +100,11 @@ page opens, and "Loading all 12,580 links… 62%" for the full set. That message
 stays until the download ends; it used to disappear after four seconds while
 the download carried on.
 
-The full set is still 8.8 MB, about 18 seconds on this host. Value for money
-and Other proposals wait for it. A content-delivery network in front of the
-host, or a faster host, is the remaining fix; nothing in the page can remove
-that wait without changing what the views show.
+The full set is still 8.8 MB. Value for money and Other proposals wait for it:
+5 to 9 seconds in the tests above, and about 18 when the host is at its
+slowest measured speed. A content-delivery network in front of the host, or a
+faster host, is the remaining fix; nothing in the page can remove that wait
+without changing what the views show.
 
 ## Interface faults fixed
 
@@ -139,6 +156,21 @@ that wait without changing what the views show.
   compressed on request; a subfolder with its own `.htaccess` keeps its own
   headers. The full Auckland desktop and phone check passes through that
   server with no runtime or HTTP errors.
+
+## Deployment
+
+- The archive is 69.4 MB and holds 50 files and their record. Eighteen are
+  brotli copies (252 MB down to 22.5 MB). Archive SHA-256:
+  `00c7e721b17eaf15d47b44647646e83aae81ebb83794b98efc15a633534151d7`.
+- It was unpacked beside the live site and every file checked against the
+  record. A preview folder served it from the same host; the headers, the
+  decoded hashes and the full desktop and phone check passed there before
+  anything live changed.
+- Only SPAN's own entries were swapped. The previous site is kept on the server
+  for rollback. STAND under `/parking/` was not touched: 27 requests to it
+  returned the same status, headers and content before and after, except that
+  its script is now compressed on request.
+- The same desktop and phone check then passed against the live address.
 
 ## Reproduce
 

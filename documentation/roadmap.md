@@ -20,7 +20,7 @@ Neither analysis is a calibrated forecast of intervention-induced cycling.
 | 2 | Broaden complete-route planning | Test contrasting inner-city, suburban and outer Auckland areas; disclose crop failures, search caps, runtime and memory; only then offer a citywide package workflow. | Four bounded area checks complete; citywide scaling and boundary sensitivity outstanding |
 | 3 | Buildable interventions | Checked existing/committed infrastructure, crossing movements and waits, street widths, facility alternatives and defensible cost ranges. AT evidence and engineering review are dependencies. | Paired connector, search-limit and hypothetical fixed-cost tests complete in four areas; tighter search bounds tested with little effect; crossing-cost evidence needs recorded; search convergence and engineering/cost evidence outstanding |
 | 4 | Tangible access outcomes | Checked place-based journey names, before/after routes and destination access. Reuse useful TEAM opportunities; connect CRANC only after scenario, graph, profile and weighting contracts are verified. | Planned |
-| 5 | Product reliability and practical use | Profile and reduce the 224 MiB uncompressed candidate payload without changing results; hash the journey report; saved alternatives, include/exclude controls and concise comparison exports. | Verified compact payload reduces raw JSON by 59%; the page opens on 1,846 of 12,580 links and needs about 1.6 MB before the first view, down from about 17 MB; brotli copies, retries and progress in place; report integrity and CLI fixes complete; the 8.8 MB full set still takes about 18 seconds on the current host; planning features outstanding |
+| 5 | Product reliability and practical use | Profile and reduce the 224 MiB uncompressed candidate payload without changing results; hash the journey report; saved alternatives, include/exclude controls and concise comparison exports. | Verified compact payload reduces raw JSON by 59%; the page opens on 1,846 of 12,580 links and needs about 1.6 MB before the first view, down from about 17 MB; brotli copies, retries and progress in place; report integrity and CLI fixes complete; deployed 1 October, with a first view in 3 to 4 seconds; the 8.8 MB full set takes 5 to 9 seconds, longer when the host is slow; planning features outstanding |
 | 6 | Benchmark and planner evaluation | Same inputs and budgets for SPAN, whole-route greedy and capable published methods; compare access, cost, robustness, runtime and planner task success. Report ties and losses as well as wins. | Paired methods compared across search caps and cost cases; mixed results, with explicit greedy fallback for worse solver incumbents; external benchmarks and planner study outstanding |
 
 Priority 6's evaluation design should inform priorities 1–3, not be added after
@@ -36,8 +36,8 @@ following [search limits and cost sensitivity](audit/span-search-and-cost-sensit
 [demand-support checks](audit/span-follow-up-progress-2026-09-24.md).
 Next: test a different way of generating routes, since tighter bounds did not
 help; obtain the [crossing-cost evidence](research/crossing-cost-evidence.md)
-from AT before pricing short links; put a content-delivery network in front of
-the host, which sends about 0.5 MB a second to Auckland. Broader sampling and graph buffers
+from AT before pricing short links; consider a content-delivery network in front of
+the host, which sent between 0.5 and 2 MB a second to Auckland during testing. Broader sampling and graph buffers
 remain necessary. Do not present unrestricted diagnostics as affordable
 programmes or connected sample records as new cyclists.
 

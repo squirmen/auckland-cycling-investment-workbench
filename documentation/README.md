@@ -81,8 +81,9 @@ documentation/
 The methodology documents are normative for interpretation. The white-paper
 files are editorial plans, not results. The Auckland research snapshot
 `run-313e0277521633d3` underpins the public SPAN research beta; commit
-`0937175` was deployed to [span.tfwelch.com](https://span.tfwelch.com) on
-24 September 2026. Public availability does not make its derived values
+`701fc6e` was deployed to [span.tfwelch.com](https://span.tfwelch.com) on
+1 October 2026, replacing `0937175` from 24 September. The model values are
+the same run. Public availability does not make its derived values
 decision-ready or its uptake estimates calibrated. New audit outputs are
 repository evidence, not changes to that deployed model.
 Release and validation gates are recorded in
