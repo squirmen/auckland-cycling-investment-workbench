@@ -4,7 +4,8 @@
 [staged loading and tighter search bounds](span-staged-loading-and-stress-bounds-2026-09-26.md).
 Model values, rankings and data files are unchanged; every data file keeps its
 SHA-256. Commit `701fc6e` was deployed to [span.tfwelch.com](https://span.tfwelch.com)
-on 1 October 2026 at 00:26 NZDT.
+on 1 October 2026 at 00:26 NZDT. Commit `2a97084` replaced it at 01:01 to fix a
+blank map in Safari that the first deployment exposed; see below.
 
 ## Result
 
@@ -139,6 +140,36 @@ without changing what the views show.
 - **Link previews.** The page has a title, description and image for messaging
   and social tools.
 
+## A blank map in Safari, exposed by the faster script
+
+After the first deployment the live site was checked in WebKit, the engine
+Safari uses. In 6 of 14 visits the panel worked but the map was blank.
+
+WebKit ran the page's script before the stylesheet was applied. Leaflet then
+found a container with no positioning, set `position: relative` on it, and the
+map kept a height of zero after the stylesheet arrived.
+
+The fault was already in the 24 September site: with the stylesheet delayed by
+1.5 seconds its map is blank in WebKit every time, and with no delay it is
+fine. There the script was 311 kB sent at full size and nearly always arrived
+after the 18 kB stylesheet. Cutting the script to 81 kB let it arrive first.
+For 35 minutes, from 00:26 to 01:01 NZDT, Safari visitors could get a blank map.
+
+Commit `2a97084` fixes it three ways:
+
+- the page sets the map's box itself, so it does not depend on the stylesheet;
+- the map is made only once the stylesheet is applied, while the data downloads;
+- the position Leaflet adds is removed and the map follows its container's size.
+
+WebKit drew the map in all 30 visits to the fixed build, 12 of them with the
+stylesheet delayed by 0.8 to 3 seconds: locally, on the host's staging copy and
+on the live site, at desktop and phone sizes. A browser test now removes the
+stylesheet and checks that the map still fills the window. Chrome was not
+affected: it holds the script until the stylesheet is in.
+
+The release check did not catch this because it runs in Chrome. Checking in
+WebKit before promotion is now part of the handoff notes.
+
 ## Verification
 
 - Python: 400 tests pass, coverage 81.42%; lint and format checks pass. New
@@ -147,9 +178,10 @@ without changing what the views show.
   dates.
 - Web: typecheck, lint and 64 unit tests pass. New tests cover retries, what is
   not retried, download progress and journey status.
-- Browser suite on the synthetic fixture: 61 pass, 9 platform-specific skips.
+- Browser suite on the synthetic fixture: 63 pass, 9 platform-specific skips.
   New cases cover a slow and a failed context layer, a dropped connection,
-  Try again, the print layout and the grouped journey list.
+  Try again, the print layout, the grouped journey list and a missing
+  stylesheet.
 - Release archive served by Apache 2.4 with the bundled `.htaccess`: brotli
   copies are sent with the right type and cache times; a client that accepts
   only gzip, or nothing, gets the original; a file without a copy is
@@ -171,6 +203,10 @@ without changing what the views show.
   returned the same status, headers and content before and after, except that
   its script is now compressed on request.
 - The same desktop and phone check then passed against the live address.
+- The second archive (`2a97084`, SHA-256
+  `7dc53063c63daa853b19899e3d49e24b9ac47cfbcd74fba167f0b35561045f80`) went through
+  the same steps, with the WebKit check added on the staging copy and on the
+  live site. It is the release now live.
 
 ## Reproduce
 

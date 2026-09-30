@@ -149,7 +149,10 @@ Extract the archive into a separate staging directory, preserve hidden files,
 and ensure files are web-readable. Check every file against the record. Test
 the main map, intersection toggle/popups, Connected journeys, route export and
 documentation from the staging copy; `SPAN_CHECK_BASE_URL=<staging URL> node
-web/scripts/check-span-release.mjs` runs the same checks against it.
+web/scripts/check-span-release.mjs` runs the same checks against it. That check
+runs in Chrome. Open the staging copy in Safari or WebKit as well, at a desktop
+and a phone size, and confirm the map is drawn: a fault on 1 October showed only
+there.
 
 The SPAN document root also holds other things: STAND under `parking/` and the
 certificate files under `.well-known/`. Do not replace the whole directory.
