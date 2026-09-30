@@ -313,15 +313,14 @@ input[type="range"] { width: 100%; margin: 2px 0 0; accent-color: var(--navy); }
 .chart-key i.key-budget { background: var(--build); }
 .pareto-chart { border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
 .pareto-chart svg { display: block; width: 100%; height: auto; }
-.axis-label { fill: var(--muted); font-size: 13px; }
-.axis-label.rotated { transform: rotate(-90deg); transform-origin: 16px 165px; }
+.axis-label { fill: var(--muted); font-size: 10.5px; }
 .grid-line { stroke: #e5e7e4; stroke-width: 1; }
-.tick-label { fill: var(--muted); font-size: 11px; }
-.frontier-line { fill: none; stroke: var(--navy); stroke-width: 1.5; stroke-opacity: 0.6; }
-.point { fill: #b3bec2; stroke: #fff; stroke-width: 1; cursor: pointer; }
+.tick-label { fill: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.frontier-line { fill: none; stroke: var(--navy); stroke-width: 1; stroke-opacity: 0.6; }
+.point { fill: #b3bec2; stroke: #fff; stroke-width: 0.6; cursor: pointer; }
 .point.budget { fill: var(--build); }
 .point.frontier { fill: var(--navy); }
-.point.selected { fill: var(--selected); stroke: #7c2d12; stroke-width: 1.5; }
+.point.selected { fill: var(--selected); stroke: #7c2d12; stroke-width: 1; }
 .compact-list { display: flex; flex-direction: column; gap: 4px; }
 .compact-row {
   display: flex;

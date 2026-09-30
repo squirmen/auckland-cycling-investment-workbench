@@ -369,11 +369,12 @@ export function renderPareto(ctx: ViewContext): void {
     front.has(candidate.properties.candidateId) || inBudget.has(candidate.properties.candidateId) ||
     candidate.properties.candidateId === ctx.state.selectedCandidateId);
   requiredElement("pareto-plot-status").textContent = plotted.length < eligible.length
-    ? `Showing ${String(plotted.length)} of ${String(eligible.length)} links: every best-value and build-order link, and an even sample of the rest.`
-    : `${String(eligible.length)} links.`;
-  const width = 620;
-  const height = 330;
-  const margin = { top: 20, right: 20, bottom: 46, left: 60 };
+    ? `Showing ${count(plotted.length)} of ${count(eligible.length)} links: every best-value and build-order link, and an even sample of the rest.`
+    : `${count(eligible.length)} links.`;
+  // Drawn close to the panel's own width, so the labels print at their stated size.
+  const width = 380;
+  const height = 270;
+  const margin = { top: 14, right: 16, bottom: 40, left: 46 };
   const cost = (candidate: CandidateFeature) => metricFor(candidate, scenario, purpose).lifecycleCostNzd;
   const value = (candidate: CandidateFeature) => goalValue(metricFor(candidate, scenario, purpose), purpose);
   const maxCost = Math.max(...eligible.map(cost));
@@ -390,13 +391,15 @@ export function renderPareto(ctx: ViewContext): void {
     svg.append(
       svgElement("line", { x1: x(maxCost * fraction), y1: margin.top, x2: x(maxCost * fraction), y2: height - margin.bottom, class: "grid-line" }),
       svgElement("line", { x1: margin.left, y1: y(maxValue * fraction), x2: width - margin.right, y2: y(maxValue * fraction), class: "grid-line" }),
-      svgText(x(maxCost * fraction), height - margin.bottom + 18, money(maxCost * fraction), "tick-label"),
-      svgText(margin.left - 8, y(maxValue * fraction) + 4, purpose === "appraisal" ? ratio(maxValue * fraction) : amount(maxValue * fraction), "tick-label", "end"),
+      svgText(x(maxCost * fraction), height - margin.bottom + 15, money(maxCost * fraction), "tick-label", tick === 4 ? "end" : "middle"),
+      svgText(margin.left - 6, y(maxValue * fraction) + 4, purpose === "appraisal" ? ratio(maxValue * fraction) : amount(maxValue * fraction), "tick-label", "end"),
     );
   }
+  const valueAxis = svgText(12, height / 2, label, "axis-label");
+  valueAxis.setAttribute("transform", `rotate(-90 12 ${String(height / 2)})`);
   svg.append(
-    svgText(width / 2, height - 8, "Whole-life cost (NZD, 40 years)", "axis-label"),
-    svgText(16, height / 2, label, "axis-label rotated"),
+    svgText((margin.left + width - margin.right) / 2, height - 8, "Whole-life cost (NZD, 40 years)", "axis-label"),
+    valueAxis,
   );
   const line = frontier.slice().sort((a, b) => cost(a) - cost(b)).map((candidate) => `${String(x(cost(candidate)))},${String(y(value(candidate)))}`);
   if (line.length > 1) svg.append(svgElement("polyline", { points: line.join(" "), class: "frontier-line" }));
@@ -409,7 +412,7 @@ export function renderPareto(ctx: ViewContext): void {
     const circle = svgElement("circle", {
       cx: x(cost(candidate)),
       cy: y(value(candidate)),
-      r: order(candidate) >= 2 ? 6 : order(candidate) === 1 ? 5 : 3.5,
+      r: order(candidate) >= 2 ? 3.8 : order(candidate) === 1 ? 3.2 : 2.2,
       class: kind,
       tabindex: order(candidate) ? "0" : "-1",
       role: "button",
@@ -440,6 +443,11 @@ export function renderPareto(ctx: ViewContext): void {
     row.addEventListener("click", () => ctx.select(id));
     return row;
   }));
+}
+
+const wholeNumber = new Intl.NumberFormat("en-NZ", { maximumFractionDigits: 0 });
+function count(value: number): string {
+  return wholeNumber.format(value);
 }
 
 function plotSample(eligible: CandidateFeature[], keep: (candidate: CandidateFeature) => boolean): CandidateFeature[] {

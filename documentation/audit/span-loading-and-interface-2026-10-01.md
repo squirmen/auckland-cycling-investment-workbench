@@ -139,6 +139,9 @@ without changing what the views show.
   sentence no longer changes once the data arrives. The About note on
   intersections says what the sites are. Status messages sit clear of the map
   key. The full name fits on a tablet.
+- **Value chart.** The chart was drawn 620 units wide and shrunk to the panel,
+  which left its labels about 6 pixels high. It is drawn at the panel's width,
+  so the labels are about 10 pixels, and link counts have thousands separators.
 - **Link previews.** The page has a title, description and image for messaging
   and social tools.
 
