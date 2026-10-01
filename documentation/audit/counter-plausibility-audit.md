@@ -3,16 +3,16 @@
 ## Decision
 
 The July 2026 AT counter workbook is now an exact, reproducible observation
-source. The resulting site-to-edge ledger is useful for checking whether known
-count locations fall near the routed graph. It is **not** predictive validation
-or calibration of CIW demand: AT reports daily all-purpose cycle movements,
-whereas the comparable CIW field is a census-derived count of people whose
-usual commute mode is bicycle. Error, regression, calibration, and null-model
-statistics across those incompatible units are intentionally not reported.
+source. The site-to-edge ledger shows whether known count locations fall near
+the routed graph. It is **not** predictive validation or calibration of CIW
+demand. AT reports daily all-purpose cycle movements, while the comparable CIW
+field is a census-derived count of people whose usual commute mode is bicycle.
+Error, regression, calibration, and null-model statistics across those
+incompatible units are not reported.
 
 The public counter layer uses project-maintained approximate locations audited
 by exact name and geometry. It has no AT publisher site identifier, direction,
-bearing or screenline identity. The map therefore presents neutral spatial
+bearing or screenline identity. The map therefore shows neutral spatial
 context and the exact July period, not a model-versus-observed ratio.
 
 ## Immutable evidence
@@ -39,11 +39,11 @@ uv run ciw data prepare-at-counters \
   --coordinate-registry /path/to/reviewed-coordinate-registry.json
 ```
 
-The command reads the publisher XLSX without a spreadsheet-library dependency,
-requires the reviewed coordinate-registry hash, requires one explicit mapping
-or exclusion for every publisher column, rejects one coordinate registry entry
-being reused for multiple counters, and records daily values, means, period,
-licence, source URL, hashes, and exclusions.
+The command reads the publisher XLSX without a spreadsheet-library dependency.
+It requires the reviewed coordinate-registry hash and one mapping or exclusion
+for every publisher column, and it rejects a coordinate registry entry reused
+for more than one counter. It records daily values, means, period, licence,
+source URL, hashes, and exclusions.
 
 ## Exclusions resolved during review
 
@@ -59,7 +59,7 @@ Ten workbook columns are excluded:
 - `SH20A Cyclist` and `SH20B Cyclist`: the registry gives both different
   counters the same coordinate without bearing or screenline identity.
 
-The last three decisions were found by the spatial audit; accepting a fuzzy
+The spatial audit found the last three exclusion decisions. Accepting a fuzzy
 name match would have created false evidence.
 
 ## Spatial ledger result
@@ -79,7 +79,7 @@ Ti Rakau near-180 point matched an OSM shared path at 56.67 m; Waterview Unitec
 matched a shared path at 41.83 m; Grafton Gully matched a shared path at
 17.36 m; New Lynn–Avondale matched a shared path at 14.82 m; Mahia Road matched
 an arterial mixed-traffic edge at 13.01 m; and Franklin Road matched a protected
-lane at 12.51 m. These remain distance-only associations—not audited direction
+lane at 12.51 m. These are distance-only associations, not audited direction
 or screenline matches.
 
 ## Release consequence

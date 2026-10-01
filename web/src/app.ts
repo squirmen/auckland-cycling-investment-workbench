@@ -262,7 +262,7 @@ function setPurpose(purpose: PurposeId): void {
   state.purpose = purpose;
   if (purpose === "appraisal" && state.scenario !== "commute_8pct") {
     state.scenario = "commute_8pct";
-    setStatus("Benefit–cost ratios are only worked out for the 8% scenario, so the scenario has changed to 8% of commutes.");
+    setStatus("Benefit–cost ratios are only worked out for the 8% scenario, so the scenario is now 8% of commutes.");
   }
   resetList();
   renderAll();
@@ -433,7 +433,7 @@ function renderEverything(): void {
   scenarioSelect.disabled = !goal.commute || state.purpose === "appraisal";
   requiredElement("budget-output").textContent = money(state.budgetNzd);
   requiredElement<HTMLInputElement>("budget-slider").setAttribute("aria-valuetext", money(state.budgetNzd));
-  requiredElement("lede").textContent = "Compare cycling upgrades: what to build, what they connect and what they could change.";
+  requiredElement("lede").textContent = "Pick a goal and a budget to see which cycling upgrades to build first.";
   renderHero(requiredElement("portfolio-summary"), ctx);
   renderNetworkGroups(ctx);
   renderBuildList(ctx, filter, limit);

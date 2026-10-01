@@ -3,15 +3,16 @@
 ## Scope and decision
 
 This 28 August 2026 audit checked the immutable analytical artifacts from
-`run-224e9baa3be4ef73`. It is a structural and extreme-case audit, not a claim
-that every route has been visually inspected or that the research snapshot is
+`run-224e9baa3be4ef73`. It checks structure and extreme cases. It does not
+show that every route was visually inspected or that the research snapshot is
 decision-ready.
 
-All declared artifact hashes remained valid. The checks below found no broken
+All declared artifact hashes remained valid. The checks found no broken
 exact-edge candidate, missing topology endpoint, invalid facility-match value,
 or disconnected path among the defined detour and snap extremes. The run's 156
-routing failures remain explicit. Full-network counterfactual rerouting,
-release-specific cost evidence, and stratified visual map review remain open.
+routing failures stay in the failure ledger. Full-network counterfactual
+rerouting, release-specific cost evidence and stratified visual map review
+remain open.
 
 ## Route and OD ledgers
 
@@ -33,14 +34,14 @@ release-specific cost evidence, and stratified visual map review remain open.
 The maximum observed detour ratio was 1.499999372, below the declared 1.5
 cap. The maximum selected-OD snap distance was 1,752.88 m, below the declared
 1,800 m gate. Five selected everyday ODs share that maximum because they use
-the same support point. Four failure reasons account exactly for the 156
-unassigned records: 68 without a shared reconciled component, 64 with no
-directed R5 path, 16 origins outside the reconciled snap radius, and eight with
-both ends outside it.
+the same support point. Four failure reasons account for all 156 unassigned
+records: 68 without a shared reconciled component, 64 with no directed R5
+path, 16 origins outside the reconciled snap radius, and eight with both ends
+outside it.
 
-The extreme set was deliberately exhaustive at the stated thresholds: every
-path at detour ratio ≥ 1.49 and every path belonging to an OD with a snap ≥
-1,500 m was reconciled against topology edge IDs and traversal directions.
+The extreme set covered every case at the stated thresholds. Every path at
+detour ratio ≥ 1.49, and every path belonging to an OD with a snap ≥ 1,500 m,
+was reconciled against topology edge IDs and traversal directions.
 
 ## Candidate ledgers
 
@@ -65,28 +66,27 @@ All edge endpoints resolve to declared nodes. It retains 5,261 bridge edges,
 607 tunnel edges, and 7,811 edges with a non-zero parsed layer.
 
 One pair of distinct OSM nodes has coordinates equal at six decimal places.
-The nodes remain separate identities and no edge joins them. This is direct
-artifact evidence that coincident coordinates were not merged into a false
-connection.
+The nodes remain separate identities and no edge joins them, so coincident
+coordinates were not merged into a false connection.
 
 All 56,780 protected-facility matches reference an existing topology edge.
 Every overlap ratio lies between 0.600003 and 1.0, every bearing difference is
 within the configured 30° limit, and no invalid value was found. These checks
-confirm the stored match contract; a future release review should still inspect
+confirm the stored match contract. A future release review should still check
 a geographic stratified sample against the source geometries.
 
 ## Counter-site audit
 
 The separate [`counter-plausibility-audit.md`](counter-plausibility-audit.md)
-records the exact AT workbook review, ten explicit exclusions, all 73 retained
+records the exact AT workbook review, ten exclusions, all 73 retained
 site-to-edge distances, and manual inspection of the farthest matches. The
 counter locations remain local because publisher-file lineage, direction, and
 screenline identity are unresolved.
 
 ## Release consequence
 
-This audit closes the machine-checkable artifact-integrity portion of the
-manual-audit gate. It does not close the visual route/facility/crossing review,
-the present-day predictive-validation design, or the full-network rerouting
-limitation. Those items remain visible in the release checklist and browser
-evidence profile.
+This audit closes the machine-checkable artifact-integrity part of the
+manual-audit gate. It does not close the visual route, facility and crossing
+review, the present-day predictive-validation design, or the full-network
+rerouting limitation. Those items stay open in the release checklist and
+browser evidence profile.

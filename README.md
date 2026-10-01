@@ -1,14 +1,13 @@
 # SPAN: Spending Priorities for Active Networks
 
-Where might a new cycling connection make the biggest difference, and in what
-order should the connections be built?
+SPAN ranks possible new cycling links in Auckland and puts them in a build order
+for a chosen goal and budget. It is an open research tool from the
+[Better Places Lab](https://betterplaces.blogs.auckland.ac.nz) that shows demand
+scenarios, street-network conditions, candidate routes and project sequencing on
+one interactive map.
 
-SPAN is an open research tool from the
-[Better Places Lab](https://betterplaces.blogs.auckland.ac.nz) for exploring
-that question in Auckland. It brings demand scenarios, street-network
-conditions, candidate routes and project sequencing into one interactive map.
-It was first released in 2026 as the Auckland Cycling Investment Workbench
-(CIW); the command-line tool and Python package keep the `ciw` name.
+SPAN was first released in 2026 as the Auckland Cycling Investment Workbench
+(CIW). The command-line tool and Python package keep the `ciw` name.
 
 [Open SPAN](https://span.tfwelch.com)
 · [Download v2.0.1](https://github.com/squirmen/spending-priorities-active-networks/releases/tag/v2.0.1)
@@ -23,78 +22,72 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
 - Build a portfolio to a chosen budget and see how each addition changes the
   result.
 - Compare the goals Cycling to work, Deprived areas, School trips, Everyday
-  trips, Stations and Benefit–cost when the required evidence is available.
+  trips, Stations and Benefit–cost where the evidence is available.
 - Compare candidates with Future Connect and RLTP context, July 2026 cycle
   counter sites and a disclosure-safe road-safety layer. Major scheduled transit
-  stops feed the Stations goal; they are not drawn as a layer.
-- Inspect the route and evidence behind a candidate rather than relying on a
-  single composite score.
+  stops feed the Stations goal but are not drawn as a layer.
+- Inspect the route and evidence behind each candidate.
 - See which upgrades a complete journey needs, for a local sample of journeys
   grouped by what a budget does for them.
-- Sketch a corridor on the routable graph and export the current selection as
-  GeoJSON, or the build order as a table (CSV) for a spreadsheet.
-- Switch between a clean analysis view and light or street basemaps without
-  changing the model results.
+- Sketch a corridor on the routable graph, and export the selection as GeoJSON
+  or the build order as CSV.
+- Switch the background between Plain (no basemap), Light and Streets. Model
+  results do not change.
 - Use the map on a desktop, tablet or phone, with keyboard-accessible controls.
 - Print a view or save it as a PDF, with the map fitted to the page.
 
-The current Auckland snapshot contains 12,580 candidate links derived from
-780,429 disaggregated trip-purpose records. Of the 42,708 records selected for
-routing, 42,551 were routed successfully. These numbers describe the scope of
-the run, not the accuracy of its forecasts.
+The current Auckland snapshot has 12,580 candidate links derived from 780,429
+disaggregated trip-purpose records. Of the 42,708 records selected for routing,
+42,551 were routed. These numbers describe the scope of the run, not the
+accuracy of its forecasts.
 
 ## How it works
 
-SPAN has one map workspace: **Build order**, **Value for money** and
-**Connected journeys**. Link details explain the treatment and connections first;
-journey equivalents, sampling diagnostics and sensitivity sit behind expandable
-method notes. Connected journeys currently covers a local 4 km-radius sample, not
-a citywide or calibrated forecast. Old `research.html` links redirect into SPAN.
-The page opens on the 1,846 links in a build order or on a best-value frontier
-and loads all 12,580 when a view needs them.
-See the
-[results, limitations and reproduction commands](documentation/research/span-access-first-experiment.md).
+SPAN has one map workspace with three views: **Build order**, **Value for
+money** and **Connected journeys**. The page opens on the 1,846 links in a build
+order or on a best-value frontier, and loads all 12,580 when a view needs them.
+Old `research.html` links redirect to SPAN.
 
-The [17 September methodology review](documentation/research/methodology-review-2026-09.md)
-records the expanded 169-OD experiment, preference-aware routing, conserved
-assignment and the limits of any novelty or planning-readiness claim. Connected
-journeys exports GIS packages with the selected route and funding status.
+Link details show the treatment and connections first. Journey equivalents,
+sampling diagnostics and sensitivity are in expandable method notes.
 
-The [effective-network beta](documentation/research/span-effective-network.md)
-adds an AT intersection inventory overlay and tests assumed waits on SPAN's
-native directed junctions in the research pilot. Unresolved matches are held
-out; actual signal timing still needs AT evidence. This does not change the
-main explorer's investment rankings.
+Connected journeys currently covers a local 4 km-radius sample. It is not a
+citywide or calibrated forecast. It exports GIS packages with the selected route
+and funding status. The [complete-route experiment](documentation/research/span-access-first-experiment.md)
+has the results, limitations and reproduction commands.
 
-## Where CRANC fits
+## Research notes
 
-CRANC belongs after selection of a complete investment package, as a future
-**Access to destinations** result within SPAN. **There is no live integration or
-public CRANC panel.** The versioned comparison schema, scope check and request
-builder in `web/src/cranc.ts` remain tested building blocks; nothing in the app
-calls them yet. The execution adapter, paired
-scenario graphs and fuller routing-scope contract still need implementation.
-Accessibility gains must remain separate from estimates of additional cycling.
+- The [17 September methodology review](documentation/research/methodology-review-2026-09.md)
+  covers the expanded 169-OD experiment, preference-aware routing, conserved
+  assignment and the limits on any claim of novelty or planning readiness.
+- The [effective-network beta](documentation/research/span-effective-network.md)
+  adds an AT intersection inventory overlay and, in the research pilot, tests
+  assumed waits on SPAN's own directed junctions. Unresolved matches are left
+  out, and real signal timing still needs AT evidence. The main investment
+  rankings do not change.
+- The [24 September improvement review](documentation/audit/span-improvement-review-2026-09-24.md)
+  lists prioritised follow-up work.
+- The [search-limit and cost-sensitivity tests](documentation/audit/span-search-and-cost-sensitivity-2026-09-25.md)
+  compare complete-route methods on paired samples. They do not replace public
+  results.
+- Later notes cover [staged loading and tighter search bounds](documentation/audit/span-staged-loading-and-stress-bounds-2026-09-26.md),
+  [loading speed and interface fixes](documentation/audit/span-loading-and-interface-2026-10-01.md)
+  and [a second way to generate routes](documentation/audit/span-priced-routes-2026-10-01.md).
 
-See the [exact code entry points and adapter checklist](documentation/research/cranc-integration.md#where-to-connect-cranc)
-and the [prioritised improvement review](documentation/audit/span-improvement-review-2026-09-24.md).
-The [search-limit and cost-sensitivity tests](documentation/audit/span-search-and-cost-sensitivity-2026-09-25.md)
-compare complete-route methods on paired samples without replacing public results.
-Later notes cover [staged loading and tighter search bounds](documentation/audit/span-staged-loading-and-stress-bounds-2026-09-26.md),
-[loading speed and interface fixes](documentation/audit/span-loading-and-interface-2026-10-01.md)
-and [a second way to generate routes](documentation/audit/span-priced-routes-2026-10-01.md).
-Collaborator source archives, source runs and deployment bundles are not committed.
+The [documentation map](documentation/README.md) lists more notes and what each
+documentation folder holds.
 
 ## Bike parking
 
 STAND (Secure Two-wheeler Access Network Design) is the University of Auckland
 Locky Dock tool. It suggests sites for secure public bike docks on the City,
-Grafton and Newmarket campuses, using SPAN's traffic-stress network. It keeps its
-own name and mark. The code is in [`parking/uoa`](parking/uoa/README.md) and the
-map is at [span.tfwelch.com/parking/uoa/](https://span.tfwelch.com/parking/uoa/).
+Grafton and Newmarket campuses, using SPAN's traffic-stress network, and keeps
+its own name and mark. The code is in [`parking/uoa`](parking/uoa/README.md) and
+the map is at [span.tfwelch.com/parking/uoa/](https://span.tfwelch.com/parking/uoa/).
 
-A general bike parking tool for SPAN is planned. It will be STAND's parent at
-`/parking/`. Until then, `/parking/` sends visitors to STAND.
+A general SPAN bike parking tool is planned for `/parking/`, with STAND under
+it. Until then, `/parking/` sends visitors to STAND.
 
 In `parking/uoa`, `make publish` writes the site's `/parking/` folder to
 `parking/build/site`. SPAN's web build copies that folder into `web/dist/parking`
@@ -105,26 +98,25 @@ See [`parking/README.md`](parking/README.md).
 ## Model foundations
 
 The analysis starts with census journey-to-work data and a cycling network built
-from OpenStreetMap node and way identities. It keeps direction, access,
-bridge, tunnel and layer information so that roads crossing at different
-levels do not become false junctions.
+from OpenStreetMap node and way identities. It keeps direction, access, bridge,
+tunnel and layer information, so roads that cross at different levels do not
+become false junctions.
 
-Demand is assigned across plausible paths rather than a single shortest path.
+Demand is assigned across plausible paths, not a single shortest path.
 Candidate projects are made from exact graph edges, then tested against the OD
-markets that could use them. Portfolios are presented as trade-offs and named
-planning views; the tool does not hide those choices inside a master score.
+markets that could use them. Portfolios are shown as trade-offs and named
+planning views, not folded into a master score.
 
-The methodology, equations and assumptions are documented in
+The methodology, equations and assumptions are in
 [`documentation/methodology`](documentation/methodology) and
-[`documentation/equations`](documentation/equations). The full OD/path ledger,
-failure records, source inventory, parameters and checksums are retained with
-each run.
+[`documentation/equations`](documentation/equations). Each run keeps its full
+OD/path ledger, failure records, source inventory, parameters and checksums.
 
 ## Try it locally
 
-The small demonstration dataset is included in the repository. It exercises
-the complete raw-to-web workflow without requiring the Auckland source files.
-You will need Python 3.11, [`uv`](https://docs.astral.sh/uv/) and Node.js 24.
+The repository includes a small demonstration dataset for running the full
+raw-to-web workflow without the Auckland source files. You need Python 3.11,
+[`uv`](https://docs.astral.sh/uv/) and Node.js 24.
 
 ```sh
 uv sync --locked --all-extras
@@ -133,13 +125,13 @@ npm --prefix web ci
 npm --prefix web run build
 ```
 
-`ciw demo --export-web` writes the demonstration data into `web/public/data`,
-replacing whatever is there. That folder is not in git, so copy the Auckland
-browser data somewhere safe before running the demo in a checkout that has it.
-If a journey report (`access-experiment.json`) from another run is left in the
-folder, the web build stops with a release mismatch; remove it for the demo.
+`ciw demo --export-web` writes the demonstration data into `web/public/data`
+and replaces whatever is there. That folder is not in git, so copy any Auckland
+browser data somewhere safe before running the demo. If a journey report
+(`access-experiment.json`) from another run is left in the folder, the web build
+stops with a release mismatch; remove it for the demo.
 
-To run the checks used for a release:
+Release checks:
 
 ```sh
 uv run pytest
@@ -148,7 +140,7 @@ npm --prefix web run lint
 npm --prefix web run typecheck
 ```
 
-The repository also includes a pinned Docker build for an isolated environment:
+A pinned Docker build is also included:
 
 ```sh
 docker build --tag auckland-cycling-investment-workbench:local .
@@ -157,8 +149,9 @@ docker run --rm auckland-cycling-investment-workbench:local --help
 
 ## Run an Auckland build
 
-Raw and licensed data stay outside the repository under a data root chosen by
-the user. [`DATA_SOURCES.md`](DATA_SOURCES.md) lists the required files and
+Raw and licensed data stay outside the repository, under a data root you
+choose. Source runs and deployment bundles are not committed either.
+[`DATA_SOURCES.md`](DATA_SOURCES.md) lists the required files and
 [`DATA_LICENSES.md`](DATA_LICENSES.md) records what may be redistributed.
 
 ```sh
@@ -170,61 +163,59 @@ uv run ciw export-web --config configs/auckland.yml --data-root /path/to/ciw-dat
 
 Each run writes a manifest with its inputs, versions, random seeds, stage
 fingerprints, timings, row counts, failures and output hashes. Interrupted
-stages can be resumed without rerunning unaffected work.
+stages resume without rerunning unaffected work.
 
 To add SPAN's existing-network context, physical groups and deduplicated commute
-route use to a completed Auckland run without changing that run:
+route use to a completed Auckland run, without changing that run:
 
 ```sh
 uv run python scripts/build_span_context.py --run runs/<run-id> --output web/public/data
 npm --prefix web run dev
 ```
 
-All source artifacts must be available locally. The enriched export is staged
-and checked before replacing browser data. See the
+All source artifacts must be available locally. The script stages and checks the
+enriched export before it replaces the browser data. The
 [network and demand review](documentation/audit/span-network-and-demand-review.md)
-for the implemented measures and remaining model questions.
+covers what is implemented and the open model questions.
 
 ## Reading the results
 
-SPAN is intended for research and early option development. It is not a list
-of approved projects and it is not a substitute for consultation, site work,
-detailed design, a safety audit or a business case.
+SPAN is for research and early option development. It is not a list of approved
+projects, and it does not replace consultation, site work, detailed design, a
+safety audit or a business case.
 
-A few current limitations matter in particular:
+Main limitations:
 
 - The 8% commute share is a modelling sensitivity, not an Auckland Transport
   target or a restatement of TERP.
-- The current Auckland snapshot exposes an indicative, research-only appraisal
+- The current Auckland snapshot includes an indicative, research-only appraisal
   and an NZDep high-deprivation-origin view. Neither is a business-case result
   or a causal equity estimate.
-- Auckland cycle counters provide a spatial plausibility check using
-  project-maintained approximate site locations. They are not like-for-like
-  predictive validation of census commute demand and cannot support directional
-  or screenline comparisons.
-- The safety overlay contains suppressed 500 m counts of police-reported,
+- Auckland cycle counters give a spatial plausibility check, using approximate
+  site locations kept by the project. They are not like-for-like predictive
+  validation of census commute demand and cannot support directional or
+  screenline comparisons.
+- The safety overlay holds suppressed 500 m counts of police-reported,
   cycle-involved crashes. It is not adjusted for cycling exposure.
-- Full-network low-stress connectivity is intentionally not reported in this
-  release. It is reserved for integration with Steve Gehrke's sabbatical
-  research.
-- Portfolio views show useful trade-offs, but they do not prove a globally
-  optimal investment programme.
+- Full-network low-stress connectivity is left out of this release.
+- Portfolio views show trade-offs. They do not prove a globally optimal
+  investment programme.
 
-The detailed limitations and validation record are in
+The full limitations and validation record are in
 [`documentation/methodology/limitations.md`](documentation/methodology/limitations.md)
 and [`documentation/methodology/validation.md`](documentation/methodology/validation.md).
 
 ## Release and citation
 
 The source code is released under the [MIT License](LICENSE). Data and
-publication rights remain with their providers; see [`NOTICE.md`](NOTICE.md)
-and [`DATA_LICENSES.md`](DATA_LICENSES.md).
+publication rights stay with their providers; see [`NOTICE.md`](NOTICE.md) and
+[`DATA_LICENSES.md`](DATA_LICENSES.md).
 
-If you use SPAN in research, cite the software using
-[`CITATION.cff`](CITATION.cff) and cite the underlying methods and datasets
-relevant to your analysis. Version 2.0.0 is the first release as SPAN.
-Version 1.0.0 was released as the Auckland Cycling Investment Workbench, with a
-GitHub Pages copy that has since been retired; span.tfwelch.com replaces it.
-The repository was renamed from `auckland-cycling-investment-workbench` to
-`spending-priorities-active-networks` on 1 October 2026, and old links to it
-redirect.
+If you use SPAN in research, cite it with [`CITATION.cff`](CITATION.cff), along
+with the methods and datasets your analysis relies on.
+
+Version 2.0.0 is the first release as SPAN. Version 1.0.0 was released as the
+Auckland Cycling Investment Workbench, with a GitHub Pages copy that has since
+been retired; span.tfwelch.com replaces it. The repository was renamed from
+`auckland-cycling-investment-workbench` to `spending-priorities-active-networks`
+on 1 October 2026, and old links redirect.

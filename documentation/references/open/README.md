@@ -1,11 +1,14 @@
 # Redistributable open references
 
-These unmodified PDFs are retained for research reproducibility under the
-licence shown on the article or repository copy. The licence applies to the
-publication, not to this project. Preserve author, source, and licence notices.
+These unmodified PDFs are kept so the research can be reproduced. Each is
+shared under the licence shown on the article or repository copy; that licence
+covers the publication, not this project. Keep the author, source, and licence
+notices.
+
 Licence statements, PDF readability, byte counts, and hashes were rechecked on
-20 August 2026. All five files are unencrypted; titles, authors, and page counts
-match their records, and first/last-page render checks found no visual defect.
+20 August 2026. All five files are unencrypted. Their titles, authors, and page
+counts match their records, and first- and last-page render checks found no
+visual defect.
 
 | File | DOI | Version and direct licence evidence | Source | Bytes | SHA-256 |
 | --- | --- | --- | --- | ---: | --- |
@@ -15,6 +18,7 @@ match their records, and first/last-page render checks found no visual defect.
 | `woodcock-et-al-2021-pct-impacts.pdf` | 10.1016/j.jth.2021.101066 | Published version; first page states [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | [White Rose Research Online](https://eprints.whiterose.ac.uk/id/eprint/172509/) | 2,776,030 | `9a1d1cbab302778f2600b3cd0d381e553960d4c2140832ef04aebfeedef18376` |
 | `mahfouz-et-al-2023-prioritisation.pdf` | 10.1016/j.jtrangeo.2023.103715 | Accepted manuscript; repository cover states [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) | [White Rose Research Online](https://eprints.whiterose.ac.uk/id/eprint/210192/) | 3,886,350 | `f44e20c97d80496b2e731940586f4b3da0808f8caec159a9743b38084d482e75` |
 
-The noncommercial and no-derivatives conditions on applicable copies must be
-respected. Replace a file only with a version whose redistribution terms are at
-least as clear, then update byte count, checksum, version, and source.
+Noncommercial and no-derivatives conditions apply where a copy's licence
+includes them. A file may be replaced only by a version whose redistribution
+terms are at least as clear; update its byte count, checksum, version, and
+source at the same time.

@@ -24,7 +24,7 @@ export const INCREMENT_NOTE =
   "It does not count everyone using the routes, daily journeys, or non-work cycling.";
 
 export const NETWORK_CONTEXT_NOTE =
-  "The map's network layer contains candidate streets only. The existing low-stress network " +
+  "The map's network layer shows candidate streets only. The existing low-stress network " +
   "is not included, so this view cannot show whether these links form a continuous low-stress route.";
 
 export function candidateOnlyNetwork(manifest: Manifest): boolean {
@@ -108,7 +108,7 @@ export const SCENARIOS: Record<ScenarioId, { label: string; note: string }> = {
   },
   commute_8pct: {
     label: "8% of commutes",
-    note: "An 8% commute-cycling sensitivity used to allocate additional demand. A test case, not an Auckland Transport target.",
+    note: "If 8% of Auckland commuters cycled, with the extra riders allocated across modelled commute trips. A test case, not an Auckland Transport target.",
   },
 };
 

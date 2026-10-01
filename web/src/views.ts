@@ -165,12 +165,12 @@ export function renderHero(root: HTMLElement, ctx: ViewContext): void {
     notes.append(renderJourneyEquivalents(undefined, last.cumulativeObjective, ctx), create("p", { text: INCREMENT_NOTE }));
     if (last.cumulativeObjective >= 1) notes.append(create("p", {
       text: `Build cost per modelled extra commuter: ${money(last.cumulativeCostNzd / last.cumulativeObjective)}. ` +
-        "This divides the capital cost by additional commuters; it is not a benefit–cost ratio or a cost per journey.",
+        "This is not a benefit–cost ratio or a cost per journey.",
     }));
     if (candidateOnlyNetwork(ctx.manifest)) notes.append(create("p", {
-      text: "The model tests improvements against up to five retained routes per origin–destination pair. " +
-        "It can change the balance between those routes, but cannot discover new routes outside that set. " +
-        "A small increase therefore does not measure all the benefits of a connected network.",
+      text: "The model tests each upgrade against up to five retained routes per origin–destination pair. " +
+        "It can shift trips between those routes but cannot find new ones, " +
+        "so a small increase does not measure all the benefits of a connected network.",
     }));
     notes.append(create("p", { text: "School, everyday and station access are reported separately under their own goals." }));
     details.append(notes);
@@ -218,9 +218,9 @@ function renderNetworkHero(root: HTMLElement, ctx: ViewContext, last: PortfolioS
   const note = create("div", { className: "context-note" });
   note.append(renderJourneyEquivalents(last.routeUsersAfter, last.cumulativeObjective, ctx));
   note.append(create("p", { text: "Route use includes existing and additional commuters allocated to any upgraded link. Each person is counted at most once across the programme, even if their route uses several links." }));
-  note.append(create("p", { text: "The additional figure estimates uptake across affected commute markets. Changes in route use also include people changing routes, so they are not the same measure. These are usual commuters, not daily journeys or all-purpose cycling." }));
-  note.append(create("p", { text: "Both use the retained route alternatives. New routes outside that set and full-network low-stress OD access are not evaluated here." }));
-  if (last.cumulativeObjective >= 1) note.append(create("p", { text: `Capital cost per modelled extra commuter: ${money(last.cumulativeCostNzd / last.cumulativeObjective)}. This is not a cost per journey or a benefit–cost ratio.` }));
+  note.append(create("p", { text: "The additional figure estimates new cycling in the affected commute markets. Route use also counts people who switch routes, so the two figures measure different things. Both count usual commuters, not daily journeys or cycling for all purposes." }));
+  note.append(create("p", { text: "Both use each trip's retained routes. New routes outside that set, and low-stress origin–destination access across the whole network, are not tested here." }));
+  if (last.cumulativeObjective >= 1) note.append(create("p", { text: `Build cost per modelled extra commuter: ${money(last.cumulativeCostNzd / last.cumulativeObjective)}. This is not a cost per journey or a benefit–cost ratio.` }));
   explanation.append(note);
   root.replaceChildren(
     create("p", { className: "eyebrow", text: "Your proposed programme" }),
@@ -505,7 +505,7 @@ export function renderLinkCard(ctx: ViewContext): void {
   const evidence = create("details", { className: "method-note", id: "candidate-evidence", "data-keep": "card-evidence" });
   evidence.append(create("summary", { text: "How this was estimated" }));
   const notes = create("div", { className: "context-note" });
-  notes.append(create("h3", { text: "From street data to an investment estimate" }));
+  notes.append(create("h3", { text: "Steps in the model" }));
   const steps = create("ol", { className: "model-steps" });
   for (const text of [
     "Map existing streets, cycle facilities, hills and traffic stress.",
@@ -525,7 +525,7 @@ export function renderLinkCard(ctx: ViewContext): void {
       create("p", { text: `${percent(matchedDiagnostic.largestOdContributionShare)} of the gain comes from one weighted journey record, among ${matchedDiagnostic.affectedOdRecords} affected records. The sample contains ${ctx.demandDiagnostics?.commuteRecordsPerStratum} commute record per source origin–destination cell. These are model records, not observed riders.` }));
     const table = create("dl", { className: "facts" });
     for (const sensitivity of matchedDiagnostic.elasticitySensitivity) table.append(create("dt", { text: `Response elasticity ${sensitivity.elasticity}` }), create("dd", { text: `+${amount(sensitivity.additionalUsualCommuters)} commuters` }));
-    notes.append(table, create("p", { text: "These response settings have not been locally calibrated. Repeating the analysis with different sampled journeys is still needed." }));
+    notes.append(table, create("p", { text: "These response settings are not calibrated to local data. The analysis still needs repeating with other samples of journeys." }));
   }
   if (candidate.properties.commuteRouteUse?.baseline.before === 0 && usage && usage.after > 0) notes.append(create("p", { text: "No commuters are assigned here in the census baseline. Suppressed counts and incomplete coverage mean this is not evidence of an unused street." }));
   notes.append(create("h3", { text: "Costs and effects" }));
@@ -570,9 +570,9 @@ function connectionDetails(candidate: CandidateFeature, ctx: ViewContext): HTMLE
   parts.push(endpoints);
   if (!context.endpoints.some(endpoint => endpoint.componentId) && context.componentIds.length) parts.push(create("p", { className: "help", text: "The low-stress connection is part-way along this section, at a blue dot on the map, not at either end." }));
   const direction = context.direction === "mixed"
-    ? "Conflicting one-way directions prevent riding this whole chain end to end under the current access rules."
-    : context.direction === "both" ? "The candidate chain permits travel in both directions."
-    : `The candidate chain permits travel ${context.direction === "forward" ? "A to B" : "B to A"} only.`;
+    ? "One-way sections run in opposite directions, so this whole chain cannot be ridden end to end under the current access rules."
+    : context.direction === "both" ? "The candidate chain can be ridden in both directions."
+    : `The candidate chain can be ridden ${context.direction === "forward" ? "A to B" : "B to A"} only.`;
   const connectionNotes = create("details", { className: "method-note", "data-keep": "card-connections" });
   connectionNotes.append(create("summary", { text: "Connection checks" }), create("p", { text: `${direction} Connections are based on shared street junctions, not a checked end-to-end route.` }));
   if (context.componentIds.length > 1) connectionNotes.append(create("p", { text: `Touches ${context.componentIds.length} separate low-stress areas, including contacts along its length.` }));
@@ -582,12 +582,12 @@ function connectionDetails(candidate: CandidateFeature, ctx: ViewContext): HTMLE
     const packageCard = create("section", { className: "package-card", "aria-label": "Connected package" });
     packageCard.append(create("h3", { text: `A package of ${String(group.length)} links` }));
     const cost = group.reduce((total, item) => total + metricFor(item, ctx.state.scenario, ctx.state.purpose).capitalCostNzd, 0);
-    packageCard.append(create("p", { text: `${money(cost)} · ${group.reduce((total, item) => total + candidateLengthKm(item), 0).toFixed(1)} km of upgrades connected physically through the current network.` }));
+    packageCard.append(create("p", { text: `${money(cost)} · ${group.reduce((total, item) => total + candidateLengthKm(item), 0).toFixed(1)} km of upgrades that physically join up through the current network.` }));
     const evaluation = ctx.packageEvaluation(ids);
     if (evaluation) {
       const grid = create("div", { className: "outcome-grid" });
       grid.append(outcome(evaluation.after, "cycle commuters using the package"), outcome(evaluation.additional, "additional cycle commuters"));
-      connectionNotes.append(grid, renderJourneyEquivalents(evaluation.after, evaluation.additional, ctx), create("p", { className: "help", text: "Evaluated together against the scenario baseline. Travellers are counted once. Separate package estimates must not be added together." }));
+      connectionNotes.append(grid, renderJourneyEquivalents(evaluation.after, evaluation.additional, ctx), create("p", { className: "help", text: "Worked out together against the scenario baseline, counting each traveller once. Do not add separate package estimates together." }));
     }
     const focus = create("button", { type: "button", className: "secondary", text: "Show this package on the map" });
     focus.addEventListener("click", () => ctx.focusGroup(ids));

@@ -11,12 +11,9 @@ trademarks.
 
 ## Methodological attribution
 
-The scenario-demand approach independently implements equations and methods
-described in the published Propensity to Cycle Tool literature and manual. No
-PCT source code or user-interface assets are included in this repository. The
-licences of the PCT applications and packages therefore do not replace or
-extend the licence of this independently implemented software. Users should
-cite both SPAN and the relevant PCT publications:
+The scenario-demand approach is an independent implementation of equations and
+methods from the published Propensity to Cycle Tool (PCT) literature and manual.
+Cite both SPAN and the relevant PCT publications:
 
 - Lovelace et al. (2017), *The Propensity to Cycle Tool: An open source online
   system for sustainable transport planning*, DOI: 10.5198/jtlu.2016.862.
@@ -29,23 +26,24 @@ The official PCT application is distributed under GNU Affero General Public
 License v3.0; its project description and licence statement are at
 [`pct.bike/about`](https://www.pct.bike/about.html). The separate official
 [`pct` R package](https://github.com/ITSLeeds/pct) is distributed under GNU
-General Public License v3.0. These projects were used as attributed method and
-behavioural comparison references, not as SPAN software dependencies. Their
-licences govern their own code and assets; they neither apply to SPAN data nor
-replace the licence of independently written SPAN source. The project-specific
-comparison and release conditions are recorded in
+General Public License v3.0. Both were used as attributed references for method
+and behaviour comparison, not as SPAN software dependencies. No PCT source code
+or user-interface assets are included in this repository. The licences of the
+PCT applications and packages govern their own code and assets; they do not
+apply to SPAN data, and they do not replace or extend the licence of SPAN's
+independently written source. The comparison and release conditions for this
+project are recorded in
 [`documentation/audit/pct-provenance-review.md`](documentation/audit/pct-provenance-review.md).
 
-Low-stress connectivity draws on the lineage established by Mekuria, Furth and
-Nixon (2012), Lowry et al. (2012), Furth, Mekuria and Nixon (2016), and Lowry,
-Furth and Hadden-Loh (2016). Full references are in
-`documentation/references/library.bib`.
+Low-stress connectivity builds on Mekuria, Furth and Nixon (2012), Lowry et al.
+(2012), Furth, Mekuria and Nixon (2016), and Lowry, Furth and Hadden-Loh (2016).
+Full references are in `documentation/references/library.bib`.
 
 The interpretation of 2023 Census suppression and fixed random rounding follows
 Stats NZ (2024), *Applying Confidentiality Rules to 2023 Census Data and
 Summary of Changes since 2018 and 2013 Censuses*, ISBN
 978-1-99-104974-2. This citation does not grant rights to redistribute a Census
-product; the terms attached to the exact downloaded product control.
+product; the terms attached to the exact downloaded product govern its use.
 
 No claim is made that Auckland Council, Auckland Transport, Waka Kotahi NZ
 Transport Agency, Stats NZ, Land Information New Zealand, OpenStreetMap
@@ -53,8 +51,8 @@ contributors, or the cited authors endorse this software or its findings.
 
 ## Data and map attribution
 
-Every published result must retain the attribution required by its input data
-and basemap providers. At minimum, applicable builds should acknowledge:
+Every published result must keep the attribution its input data and basemap
+providers require. At minimum, applicable builds should acknowledge:
 
 - © OpenStreetMap contributors; data available under the Open Database
   License 1.0;
@@ -72,21 +70,21 @@ and basemap providers. At minimum, applicable builds should acknowledge:
   CAS open data; and
 - any third-party basemap provider exactly as required by that provider.
 
-The Light and Streets choices request vector styles and tiles from
-OpenFreeMap's public service; Analysis makes no hosted basemap request. CARTO
-hosted tiles remain disabled because no applicable enterprise licence or
-qualifying grant is recorded. See `DATA_LICENSES.md` and
-`documentation/audit/public-layer-rights.csv` for the release checklist and
+The Light and Streets basemaps request vector styles and tiles from
+OpenFreeMap's public service; Plain (the `analysis` mode) makes no hosted
+basemap request. CARTO hosted tiles stay disabled because no applicable
+enterprise licence or qualifying grant is recorded. `DATA_LICENSES.md` has the
+release checklist and `documentation/audit/public-layer-rights.csv` the
 per-layer decisions. A derived output does not automatically inherit the
 software licence.
 
-For the curated Auckland browser snapshot, `cells.geojson` is distributed
-subject to its Stats NZ CC BY 4.0 source terms. `network.geojson` and
-`candidates.geojson` contain an OSM-derived database and must be distributed
-under ODbL 1.0 with OpenStreetMap attribution, while their Stats NZ, Ministry
-of Education, Auckland Transport, and LINZ components retain their own CC BY
-4.0 attribution requirements. The exact permitted hashes, disclosure controls
-and deliberately omitted full-network low-stress result are recorded in
+In the curated Auckland browser snapshot, `cells.geojson` is distributed under
+its Stats NZ CC BY 4.0 source terms. `network.geojson` and `candidates.geojson`
+contain an OSM-derived database and must be distributed under ODbL 1.0 with
+OpenStreetMap attribution; their Stats NZ, Ministry of Education, Auckland
+Transport and LINZ components keep their own CC BY 4.0 attribution
+requirements. The permitted hashes, disclosure controls and the omitted
+full-network low-stress result are recorded in
 `documentation/audit/public-layer-rights.csv`.
 
 STAND, the University of Auckland bike parking map in `parking/uoa`, carries its
@@ -96,7 +94,7 @@ Esri Community Maps contributors), with Overture places under CDLA-Permissive
 under CC BY 4.0; and Auckland Transport cycle counts and facilities under CC BY
 4.0. Its hosted basemaps are its own: Plain, drawn from Overture data, and
 Aerial, a LINZ mosaic. An optional Streets view shows OpenStreetMap's standard
-tiles with the credit “© OpenStreetMap contributors”, and asks for them only
+tiles with the credit “© OpenStreetMap contributors”, and requests them only
 while that view is shown. STAND uses no CARTO or Esri tiles. The map ships Noto
 Sans glyphs under the SIL Open Font License 1.1 (licence in
 `parking/uoa/web/assets/font/OFL.txt`) and loads MapLibre GL JS 4.7.1 under the
@@ -108,15 +106,15 @@ its offline one-file map embeds both. Its sources are listed in
 
 The optional hosted basemap view uses MapLibre GL JS 6.6.0 under the
 BSD-3-Clause licence and `@maplibre/maplibre-gl-leaflet` 0.1.4 under the ISC
-licence. These packages are installed from the locked npm manifest and remain
-subject to their own notices and licence terms.
+licence. Both are installed from the locked npm manifest and remain subject to
+their own notices and licence terms.
 
 ## Container runtime components
 
 The optional reproducibility container installs third-party command-line
 programs from the Debian snapshot dated 3 August 2026. They are separate
-runtime components, and their own licences govern their binaries and source;
-the root MIT licence applies to SPAN source and does not replace those terms.
+runtime components, and their own licences govern their binaries and source.
+The root MIT licence applies to SPAN source and does not replace those terms.
 
 - `osmium-tool` 1.15.0 is distributed under GNU General Public License v3.0.
   Upstream source and licence: [tag
@@ -128,12 +126,12 @@ the root MIT licence applies to SPAN source and does not replace those terms.
   [GDAL licence](https://gdal.org/en/stable/license.html).
 - r5py 1.1.7 is dual-licensed under GPL-3.0-or-later or MIT; this distribution
   uses the MIT option. The embedded R5 7.5.1-r5py engine is MIT-licensed. Exact
-  licence texts, upstream tags, and the JAR checksum are retained in
+  licence texts, upstream tags, and the JAR checksum are kept in
   [`third_party/`](third_party/README.md) and copied into the container.
 
 The Debian package copyright files remain the authoritative notices for the
 exact installed binaries and their bundled libraries. Before publishing a
-container image, preserve those files and complete the corresponding-source
-and notice obligations for `osmium-tool` and every other redistributed
-dependency. These runtime notices do not imply endorsement or change the
-licence of SPAN's own source files.
+container image, keep those files and complete the corresponding-source and
+notice obligations for `osmium-tool` and every other redistributed dependency.
+These runtime notices do not imply endorsement or change the licence of SPAN's
+own source files.

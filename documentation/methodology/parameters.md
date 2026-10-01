@@ -1,8 +1,8 @@
 # Parameter register
 
-This file records version 0.1 analytical defaults. The executed configuration
-and release manifest take precedence. Any changed value must be accompanied by
-a rationale and sensitivity comparison.
+These are the version 0.1 analytical defaults. The executed configuration and
+release manifest take precedence. A changed value needs a stated reason and a
+sensitivity comparison.
 
 ## Demand
 
@@ -17,15 +17,13 @@ a rationale and sensitivity comparison.
 | `distance_decay_scale_km` | 5 | km | Exponential scale beyond the full-weight threshold |
 
 An unsuppressed numeric release \(r\) uses
-\([\max(0,r-2),r+2]\); therefore numeric zero uses \([0,2]\). This rule
-applies separately to the total-stated and bicycle releases, after which a
-joint selector or draw enforces bicycle \(\le\) total stated. These bounds
-follow Stats NZ's published error guarantee but do not reverse the
-confidentiality transformation. Full-origin SA2 margins are soft validation
-diagnostics, not balancing controls, unless their universe is reconciled to the
-OD table exactly. These cell bounds do not apply to OD rows structurally absent
-from table 121988; missing-row and unlocated-workplace mass remains unresolved
-coverage rather than a zero or fabricated 0–5 cell.
+\([\max(0,r-2),r+2]\), so a numeric zero uses \([0,2]\). The rule applies
+separately to the total-stated and bicycle releases; a joint selector or draw
+then enforces bicycle \(\le\) total stated. The bounds follow Stats NZ's
+published error guarantee but do not reverse the confidentiality
+transformation. They do not apply to OD rows structurally absent from table
+121988: missing-row and unlocated-workplace mass stays as unresolved coverage,
+not a zero or an invented 0–5 cell.
 
 For \(d>12\), distance decay is \(\exp[-(d-12)/5]\).
 
@@ -42,8 +40,8 @@ in kilometres and gradient in percent.
 | Go Dutch 2020 | -1.468 | -0.71726 | 1.988 | 0.008775 | -0.2555 | 0.78 | 0.02006 | -0.1234 |
 | E-bike 2020 | -1.468 | -0.66217 | 1.988 | 0.008480 | -0.0743 | 0.78 | 0.02006 | -0.1234 |
 
-The coefficient provenance must be checked against the versioned PCT source
-before release. Do not round these values further in computation.
+Before release, these values must be checked against the versioned PCT source.
+Computation must use them as printed, with no further rounding.
 
 ## Stress and routing
 
@@ -92,10 +90,10 @@ These are imputation conventions, not observed Auckland road attributes.
 | `response_odds_elasticity` | 1.0 | elasticity in \(\operatorname{logit}(p_1)=\operatorname{logit}(p_0)+\eta\log(C_0/C_1)\) | triangular 0.5, 1.0, 2.0 plus evidence-led alternatives |
 | `minimum_probability` | 0.00001 | probability floor for a disclosure-controlled zero baseline | vary by confidentiality convention and report attributable increment against the published baseline |
 
-Candidate-generation rules beyond these defaults must be supplied and recorded
-by the executed configuration. Duplicate-facility buffers, connector limits,
-and gap-priority thresholds require threshold sweeps and manual review of both
-retained and excluded cases.
+Other candidate-generation rules must be set and recorded in the executed
+configuration. Duplicate-facility buffers, connector limits and gap-priority
+thresholds need threshold sweeps and manual review of both retained and
+excluded cases.
 
 ## Connectivity, presets, and portfolios
 
@@ -113,17 +111,17 @@ methodology §9.
 | `priority_presets.transit` | demand .15; connectivity .20; transit .55; value .10 | normalised weights | Requires an independently prepared bicycle-to-transit surface |
 | `priority_presets.appraisal` | demand .15; connectivity .10; equity .05; value .70 | normalised weights | Uses indicative lifecycle value only |
 
-The weights describe the version 0.1 implementation and are transparent value
-judgements, not empirically estimated social-welfare weights. Purpose presets
-must not be populated by merely relabelling commute demand.
+The weights are stated value judgements in the version 0.1 implementation,
+not empirically estimated social-welfare weights. A purpose preset must not be
+filled by relabelling commute demand.
 
 ## Screening economics
 
-These defaults implement an indicative lifecycle screening calculation. They
-do not establish formal MBCM compliance; each release must verify the manual,
-input definitions, price base, and worksheets applicable when analysis starts.
+These defaults are for an indicative lifecycle screening calculation and do
+not establish formal MBCM compliance. Each release must check the manual, input
+definitions, price base and worksheets that apply when analysis starts.
 
-The public-export capability is fail-closed. `reviewed` may expose values cleared
+The public-export capability fails closed. `reviewed` may expose values cleared
 for their declared use. `research_only` may expose indicative values and
 uncertainty intervals with the research-only warning and declared evidence
 scenario. A missing or `withheld` capability causes the release packager to
@@ -148,17 +146,17 @@ and record the unresolved-input warning. The Auckland research snapshot uses
 | `carbon_value_per_kg` | 0 | NZD per kg CO₂e | Remains zero until the compatible appraisal value/profile is sourced |
 | `other_benefit_per_avoided_vehicle_km` | 0 | NZD per avoided vehicle-km | Add only with non-overlapping, compatible evidence |
 
-Capital cost, maintenance, renewal timing, residual value, and any other annual
-benefit are explicit candidate inputs rather than undocumented unit-rate
-defaults. The release must state inclusions, exclusions, update factor, base
-year, risk allowance, property, structures, utilities, and maintenance.
+Capital cost, maintenance, renewal timing, residual value and any other annual
+benefit are candidate inputs, not undocumented unit-rate defaults. The release
+must state inclusions, exclusions, update factor, base year, risk allowance,
+property, structures, utilities and maintenance.
 
-MBCM v1.7.5 applies to benefit–cost calculations commencing on or after 29 May
-2026; General Circular 26/01 records that update. The separate General Circular
-25/01, effective 6 January 2025, sets the stepped public-sector non-commercial
-discount schedule and 8% sensitivity. Verify all three at the
-[MBCM release page](https://www.nzta.govt.nz/resources/monetised-benefits-and-costs-manual)
-and [General Circular 26/01](https://www.nzta.govt.nz/assets/resources/general-circulars/docs/26-01.pdf),
+MBCM v1.7.5 applies to benefit–cost calculations starting on or after 29 May
+2026; General Circular 26/01 records that update. General Circular 25/01,
+effective 6 January 2025, sets the stepped public-sector non-commercial
+discount schedule and 8% sensitivity. Check all three before use: the
+[MBCM release page](https://www.nzta.govt.nz/resources/monetised-benefits-and-costs-manual),
+[General Circular 26/01](https://www.nzta.govt.nz/assets/resources/general-circulars/docs/26-01.pdf)
 and [General Circular 25/01](https://www.nzta.govt.nz/assets/resources/general-circulars/docs/25-01.pdf).
 
 ## Uncertainty and computation

@@ -1,19 +1,20 @@
 # Restricted-reference acquisition notes
 
-This directory is metadata-only in the public repository. Subscription,
-official-but-not-cleared, or otherwise licence-unclear PDFs must not be
-committed. The ignore rules exclude all other contents.
+This directory holds metadata only in the public repository. Subscription PDFs,
+official PDFs not yet cleared, and any PDF with unclear licence terms are not
+committed. The ignore rules exclude everything here except this README and
+`manifest.csv`.
 
-An authorised reader may use `manifest.csv` to locate an article through a
+An authorised reader can use `manifest.csv` to find an article through a
 publisher, institutional library, interlibrary loan, or author repository. A
-download obtained through institutional sign-in remains subject to its licence
-and must stay outside the repository unless the copyright holder explicitly
-permits redistribution.
+copy downloaded through institutional sign-in stays under its licence and must
+be kept outside the repository unless the copyright holder explicitly permits
+redistribution.
 
-After reading a restricted source, record notes in the white-paper evidence
-matrix as paraphrase and citation. Do not copy substantial text, figures, or
-tables without permission.
+Notes on a restricted source go in the white-paper evidence matrix as
+paraphrase and citation. Substantial text, figures, or tables are not copied
+without permission.
 
-Do not record usernames, passwords, session identifiers, download links that
-contain access tokens, or library-account details. Institutional authentication
-is performed by the authorised reader outside the project.
+No usernames, passwords, session identifiers, download links containing access
+tokens, or library-account details are recorded. The reader signs in to their
+institution outside the project.

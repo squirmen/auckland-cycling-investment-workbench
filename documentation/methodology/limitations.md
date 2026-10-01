@@ -4,7 +4,7 @@
 
 SPAN is suitable for:
 
-- finding network gaps worthy of investigation;
+- finding network gaps worth investigating;
 - comparing candidate packages under common, visible assumptions;
 - testing how a cumulative network programme changes access and connectivity;
 - identifying evidence gaps and sensitivity drivers; and
@@ -30,22 +30,21 @@ or claiming causal health, safety, emissions, or equity outcomes.
   and includes only people with workplace address available at SA2. Those
   structurally absent pairs have no published cell: they are not numeric zero
   and do not automatically receive a 0–5 interval. Their locations and total
-  mass may be unknown, so the internal scenario denominator undercovers all
-  commuters and the missing mass cannot be routed or spatially imputed without
+  mass may be unknown, so the internal scenario denominator does not cover all
+  commuters, and the missing mass cannot be routed or spatially imputed without
   separate evidence.
 - The full-origin SA2 transport margin (`VAR_2_786`, published total 874,065)
-  and the internal-Auckland journey-to-work OD table (approximately 610,101
-  published total trips plus suppressed and structurally omitted cells) do not
-  share a demonstrated
-  universe. The margin can provide bounded, soft validation only until exact
-  categories, geography, direction, exclusions, and disclosure treatment are
-  reconciled.
+  and the internal-Auckland journey-to-work OD table (about 610,101 published
+  total trips plus suppressed and structurally omitted cells) have not been
+  shown to share a universe. The margin can give only bounded, soft validation
+  until categories, geography, direction, exclusions and disclosure treatment
+  are reconciled exactly.
 - Outbound and other out-of-scope movements may be absent from an internal OD
   extract; unsnapped and unreachable internal movements also receive no routed
   allocation. They must remain visible in source/route ledgers and coverage
   denominators, not disappear through filtering or margin balancing.
-- England-derived PCT coefficients have not, by themselves, established local
-  Auckland behavioural validity.
+- The PCT coefficients were estimated for England. On their own they do not
+  show that they hold for Auckland travel behaviour.
 - The 8% commute-cycling share is a configurable modelling sensitivity. TERP's
   adopted 17% target covers cycling and micromobility across all trips, with no
   direct equivalence to the Census commute denominator.
@@ -59,13 +58,13 @@ or claiming causal health, safety, emissions, or equity outcomes.
 - The configured LINZ layer 51768 is a contour-interpolated 8 m DEM whose
   publisher describes it as suitable for cartographic visualisation but not
   terrain analysis. It cannot support publication-grade gradient estimates
-  without replacement or a documented validation showing fitness for this
-  use. Hashing its VRT alone is also insufficient; every referenced raster tile
-  must appear in the run manifest.
+  without replacement or a documented validation showing it is fit for this
+  use. Hashing its VRT alone is not enough; every referenced raster tile must
+  appear in the run manifest.
 - Legal access, temporary closures, crossing delay, surface condition,
   lighting, personal security, wayfinding, and perceived comfort may be absent.
-- Conservative imputation is transparent but can still systematically
-  misclassify stress.
+- Conservative imputation is recorded per edge but can still misclassify
+  stress systematically.
 - A shortest generalized-cost path is a simplification of heterogeneous route
   choice; a finite plausible path set remains an approximation.
 - Zone representative points and snapping can create artificial access links or
@@ -95,9 +94,8 @@ or claiming causal health, safety, emissions, or equity outcomes.
 The SPAN OD low-stress connectivity share is conditional on its OD set, demand
 weights, routing coverage, stress threshold, and detour threshold. It is not a
 universal city index and cannot be compared with differently constructed
-connectivity measures without harmonisation. The Auckland full-network result
-is intentionally reserved for integration with Steve Gehrke's sabbatical
-research; this release reports no point estimate.
+connectivity measures without harmonisation. This release reports no Auckland
+full-network point estimate.
 
 ## Benefits and costs
 
@@ -150,16 +148,16 @@ research; this release reports no point estimate.
 
 ## Responsible release
 
-Do not publish a map without source and basemap attribution, data licence
-review, source dates, configuration, warnings, and a release manifest. Restricted
-microdata, credentials, cached tiles, and non-redistributable publications stay
-outside version control. Avoid interpreting candidate rankings beyond the
-geography, scenario, data vintage, and uncertainty stated in the release.
+A published map needs source and basemap attribution, a data licence review,
+source dates, configuration, warnings and a release manifest. Restricted
+microdata, credentials, cached tiles and non-redistributable publications stay
+out of version control. Candidate rankings should not be read beyond the
+geography, scenario, data vintage and uncertainty stated in the release.
 
-The current Auckland rights review is deliberately fail-closed. Several
-configured inputs have accessible publisher pages but do not yet have an exact
-source-to-file chain or dataset-specific redistribution evidence. Dependent
-layers remain blocked or omitted as recorded in
+The current Auckland rights review fails closed. Several configured inputs have
+accessible publisher pages but no exact source-to-file chain or
+dataset-specific redistribution evidence yet. Layers that depend on them stay
+blocked or omitted, as recorded in
 [`../audit/public-layer-rights.csv`](../audit/public-layer-rights.csv). Hosted
 CARTO tiles are disabled and must not appear in screenshots unless a separate
 licence or qualifying grant is documented.

@@ -118,7 +118,7 @@ export class ConnectedJourneys {
       [`${solution.served_journeys} / ${report.sample.selected}`, `sample journeys connected (${report.baseline.journeys} before)`],
       [money(solution.capital_cost), `${solution.selected.length} upgrades in the package`],
     ] as const).map(([value, label]) => { const card = create("div"); card.append(create("strong", { text: value }), create("span", { text: label })); return card; }));
-    requiredElement("connected-weight").textContent = `With the source population weights, connected journeys represent ${amount(solution.served_weight)} eligible commuters (${amount(report.baseline.weight)} before). These are not forecasts of new cyclists.`;
+    requiredElement("connected-weight").textContent = `Weighted to the source population, the connected journeys represent ${amount(solution.served_weight)} eligible commuters (${amount(report.baseline.weight)} before).`;
     const fundedProjects = report.projects.filter(project => solution.selected.includes(project.id));
     if (!fundedProjects.length) this.mapExtent = "route";
     const fundedKm = fundedProjects.reduce((sum, project) => sum + project.lengthM, 0) / 1000;

@@ -1,12 +1,12 @@
 # Data and publication licence checklist
 
-The MIT License applies to this software, not automatically to datasets, map
-tiles, screenshots, derived databases, or article PDFs. The release manager
+The MIT License covers this software. It does not automatically cover datasets,
+map tiles, screenshots, derived databases or article PDFs. The release manager
 must complete this checklist for each tagged release.
 
-The auditable decision register is
+The rights register is
 [`documentation/audit/public-layer-rights.csv`](documentation/audit/public-layer-rights.csv).
-Its decisions have the following release meaning:
+For a release, its decisions mean:
 
 - `permit` + `include`: authoritative terms support the stated use, subject to
   the listed attribution and conditions;
@@ -16,13 +16,13 @@ Its decisions have the following release meaning:
   source, licence, snapshot, and attribution are reviewed and the register is
   updated.
 
-The exporter must fail closed. An included layer that cites a source marked
-`unknown` or `restricted`, a missing source decision, or a decision that
-disagrees with the configuration is an error. An optional unresolved source may
-remain in the registry only when no exported layer references it and every
-dependent public control is omitted or disabled. A layer deliberately recorded
-as `exclude` may be omitted without blocking an otherwise cleared export, but
-its public control must also be disabled.
+The exporter must fail closed. Each of these is an error: an included layer that
+cites a source marked `unknown` or `restricted`, a missing source decision, and a
+decision that disagrees with the configuration. An optional unresolved source
+may stay in the registry only when no exported layer references it and every
+dependent public control is omitted or disabled. A layer recorded as `exclude`
+may be omitted without blocking an otherwise cleared export, but its public
+control must also be disabled.
 
 | Material | Typical rights position | Public-repository action |
 | --- | --- | --- |
@@ -40,9 +40,8 @@ its public control must also be disabled.
 
 ## Verified Auckland source position
 
-Primary publisher records were reviewed between 20 August and 1 September
-2026. This is a scoped
-release decision, not a general legal opinion.
+Primary publisher records were reviewed between 20 August and 1 September 2026.
+This is a scoped release decision, not a general legal opinion.
 
 - Stats NZ Datafinder table 121988, API version 410594, is the exact
   journey-to-work source and states CC BY 4.0; the retained local file is
@@ -67,21 +66,20 @@ release decision, not a general legal opinion.
 - Auckland Transport's open-data page states that its open data are available
   under CC BY 4.0. The exact Cycle Facility Network, Future Connect and RLTP
   service snapshots are hash-pinned. Future Connect remains strategic context;
-  RLTP `committed` and `planned` values are retained without calling them
-  funded.
+  RLTP `committed` and `planned` values are kept without calling them funded.
 - Auckland Transport's monthly cycle-monitoring page states CC BY 4.0. The
   exact July 2026 workbook, 31-day period, workbook hash, deterministic
-  transformation, and derived-observation hash are now recorded. Those
+  transformation and derived-observation hash are recorded, and those
   observations are cleared. The separately maintained 73-site registry is
   published only as approximate spatial context: it has no direction, bearing
   or screenline identity and is unsuitable for predictive validation.
 - Raw CAS rows, identifiers, exact coordinates and narratives remain restricted
-  and excluded. A separate public layer retains only cycle-involved crash and
+  and excluded. A separate public layer keeps only cycle-involved crash and
   severity totals in 500 m cells, suppresses cells below three crashes, and
   warns that police-reported counts are not exposure-adjusted.
 - The exact LINZ 8 m DEM page is CC BY 4.0 and requires LINZ Data Service
-  attribution. The external schema-1 tile manifest now pins byte counts and
-  SHA-256 hashes for all 32 TIFFs referenced by the VRT. LINZ also describes this
+  attribution. The external schema-1 tile manifest pins byte counts and SHA-256
+  hashes for all 32 TIFFs referenced by the VRT. LINZ also describes this
   contour-interpolated product as unsuitable for terrain analysis; a
   publication build must replace it or justify and test that use.
 - The official AT GTFS page states CC BY 4.0. The 1 September 2026 feed,
@@ -90,10 +88,10 @@ release decision, not a general legal opinion.
   opportunities, not patronage.
 - OpenFreeMap's public vector-tile service is permitted for live contextual
   display under its public-instance terms. The Light and Streets choices must
-  retain visible OpenFreeMap, OpenMapTiles, and OpenStreetMap attribution. No
+  keep visible OpenFreeMap, OpenMapTiles, and OpenStreetMap attribution. No
   tiles may be cached, prefetched, bundled, or treated as part of the release
-  data. Analysis remains the tile-free fallback and the required mode for
-  deterministic release captures.
+  data. Plain (the `analysis` mode) remains the tile-free fallback and the
+  required mode for deterministic release captures.
 - CARTO hosted basemaps remain disabled. CARTO's current terms require an
   enterprise licence for commercial use or an approved grant for qualifying
   non-commercial use; neither is recorded for this project.
@@ -104,17 +102,18 @@ STAND, in `parking/uoa`, lists its sources and licences in
 [`parking/uoa/README.md`](parking/uoa/README.md): Overture Maps data under ODbL
 1.0, crediting OpenStreetMap contributors and Esri Community Maps contributors,
 with Overture places under CDLA-Permissive 2.0; LINZ aerial imagery, LiDAR and
-(through Overture) addresses under CC BY 4.0; and Auckland Transport cycle counts and facilities under CC BY
-4.0. SPAN's rights register does not cover these files. When a SPAN site package
-includes `parking/`, its release record lists STAND under `components`.
+(through Overture) addresses under CC BY 4.0; and Auckland Transport cycle
+counts and facilities under CC BY 4.0. SPAN's rights register does not cover
+these files. When a SPAN site package includes `parking/`, its release record
+lists STAND under `components`.
 
-- STAND's hosted basemaps are its own Plain map, drawn from Overture data, and
-  its own LINZ aerial mosaic, both served with the map. An optional Streets
-  view uses OpenStreetMap's standard tiles from tile.openstreetmap.org under
-  OpenStreetMap's tile usage policy: it shows “© OpenStreetMap contributors”,
-  requests tiles only while Streets is shown, and does not prefetch or bundle
-  them, so they are not part of the release data. STAND uses no CARTO or Esri
-  tiles, in line with the CARTO decision above.
+STAND's hosted basemaps are its own Plain map, drawn from Overture data, and its
+own LINZ aerial mosaic, both served with the map. An optional Streets view uses
+OpenStreetMap's standard tiles from tile.openstreetmap.org under OpenStreetMap's
+tile usage policy. It shows “© OpenStreetMap contributors”, requests tiles only
+while Streets is shown, and does not prefetch or bundle them, so they are not
+part of the release data. STAND uses no CARTO or Esri tiles, in line with the
+CARTO decision above.
 
 ## Release gate
 
@@ -140,7 +139,7 @@ includes `parking/`, its release record lists STAND under `components`.
 - [ ] Screenshots have seven populated metadata/checksum records and display
       attribution for every visible map/data provider.
 
-An entry marked `redistribution: permitted` in configuration is not sufficient
-evidence by itself. The release dossier retains the provider's licence text or
-authoritative licence URL, snapshot date, attribution wording, and a reviewer
-decision for the exact file distributed.
+A `redistribution: permitted` entry in configuration is not enough evidence on
+its own. The release dossier keeps the provider's licence text or authoritative
+licence URL, snapshot date, attribution wording and a reviewer decision for the
+exact file distributed.

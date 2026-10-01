@@ -2,10 +2,10 @@
 
 The versioned contract is
 [`schemas/run-manifest.schema.json`](../../schemas/run-manifest.schema.json).
-Local synthetic demonstration runs may be used during development, and the
-`runs/` directory is deliberately excluded from public source control. A
-complete local Auckland raw-to-web research snapshot has now succeeded; its
-evidence, predecessors, and remaining blockers are recorded in
+Local synthetic demonstration runs may be used during development. The
+`runs/` directory is kept out of public source control. A complete local
+Auckland raw-to-web research snapshot has now succeeded; its evidence,
+predecessors, and remaining blockers are in
 [`auckland-real-stage-evidence.md`](auckland-real-stage-evidence.md). It is not
 yet the manifest of an approved public tag.
 
@@ -56,4 +56,4 @@ approved release commit, and the root runtime field does not duplicate the R5
 release stored in the route artifact. Geographic visual audits, local cost
 evidence, uncertainty-prior review, clean-checkout CI/amd64 reproduction and
 remaining ODbL/corresponding-source duties remain open. These are decision-use
-or publication gates; they are not hidden or substituted results.
+or publication gates, not hidden or substituted results.

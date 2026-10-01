@@ -2,11 +2,11 @@
 
 24 September 2026. Follow-up to the [priorities](../roadmap.md) and
 [source-cell influence audit](span-source-cell-influence-2026-09-24.md).
-These are research checks, not a replacement for the deployed recommendations.
+These are research checks. They do not replace the deployed recommendations.
 
 Follow-up on 25 September: [candidate coverage tracing and short-connector tests](span-candidate-coverage-2026-09-25.md)
-resolve the missing-candidate diagnostic below. The original results in this
-note remain the paired reference.
+resolve the missing-candidate diagnostic below. The original results here
+remain the paired reference.
 
 ## 1. Fresh routing through the stored demand support
 
@@ -20,11 +20,11 @@ by the preceding audit: 291 pairs, routed afresh on the full bounded Auckland
 network with the pinned R5 adapter and unchanged parameters. There was no local
 network crop. All 12 original sampled pairs reproduced their published directed
 edge paths, costs and probabilities. Of the 291 attempts, 286 assigned; five
-could not find a compatible snap pair and remain explicit unknowns.
+could not find a compatible snap pair and are recorded as unknown.
 
-For each project below, this table concerns **only its influential source cell**,
-not the project's whole market. It measures the source-weighted probability
-that a retained baseline route uses any part of the project.
+For each project, the table covers only its influential source cell, not the
+project's whole market. It gives the source-weighted probability that a
+retained baseline route uses any part of the project.
 
 | Project | Original sampled pair | All stored locations in that cell |
 | --- | ---: | ---: |
@@ -41,9 +41,9 @@ project performance across Auckland.
 The pilot also compares one- and five-record draws using three independent
 seeds: 20260924, 20260925 and 20260926. All methods use the same enumerated
 support, not newly generated addresses. Existing inverse-inclusion weights
-are retained. The source support totals stay fixed, but Horvitz–Thompson
+are kept. The source support totals stay fixed, but Horvitz–Thompson
 estimates of those totals can vary between draws because some stored pairs
-have unequal mass; the reports disclose this rather than silently renormalise.
+have unequal mass. The reports show this variation instead of renormalising.
 
 No uptake model or investment ranking was rerun. These route-use percentages
 must not be used as multipliers on published additional-cyclist estimates.
@@ -62,9 +62,9 @@ forecast. Private record-level caches remain ignored under `build/stability/`.
 
 The experiment now accepts a source candidate as its area anchor, records crop
 coverage and search limits, and defaults to an ignored build output instead of
-the browser data directory. Candidate IDs and centroid coordinates disambiguate
-repeated street names. In particular, the tested Shelly Beach Road is centred at
-174.3533, −36.5752; it must not be labelled as central Auckland.
+the browser data directory. Candidate IDs and centroid coordinates separate
+streets that share a name. The tested Shelly Beach Road is centred at
+174.3533, −36.5752, which is not central Auckland.
 
 All four tests use a 4 km radius, a requested 24-record sample, seed 20260924,
 a NZ$20m cap, default assumed intersection delays, and 15,000 labels per search.
@@ -81,20 +81,20 @@ and a 30-minute travel-time limit.
 These are sampled eligible journeys, not extra cyclists. The sample weights
 are not expanded again to represent the whole area. Journeys crossing the crop
 boundary are excluded; the report records those counts. Prior routing failures
-are also disclosed rather than treated as covered by the area sample.
+are also reported, not treated as covered by the area sample.
 
 The package optimiser and whole-route greedy method tie on served weight,
 journey counts and cost in all four tests. Single-project greedy misses the
-multi-project gains at Ponsonby Road and Grand Drive. This supports the usefulness
-of evaluating complete routes but does not demonstrate superiority over a strong
-greedy method. Solver optimality applies only to the generated route columns.
+multi-project gains at Ponsonby Road and Grand Drive. This supports evaluating
+complete routes, but does not show that the optimiser beats a strong greedy
+method. Solver optimality applies only to the generated route columns.
 
 ### What prevents the other journeys being connected?
 
 A new diagnostic funds every modelled project in the crop, without relaxing the
 route standards. It then optionally allows high-stress streets to test whether
-a route exists under the same time/detour limits. That second route is strictly
-a diagnostic witness, never an acceptable cycling recommendation.
+a route exists under the same time/detour limits. That second route is only a
+diagnostic witness, never an acceptable cycling recommendation.
 
 - Hospital Road: none of the 24 sampled journeys becomes acceptable even with
   every in-crop project funded. Nineteen have a route when the stress restriction
@@ -108,7 +108,7 @@ a diagnostic witness, never an acceptable cycling recommendation.
   diagnostic, but not under the NZ$20m cap.
 
 Every found stress-relaxed witness traverses a high-stress physical edge with
-no eligible project in that crop. This does **not yet distinguish** an omitted
+no eligible project in that crop. This does not yet distinguish an omitted
 citywide candidate from a partial project excluded at the crop boundary.
 Nor does it prove that a specific junction or street treatment is buildable.
 Tracing those edges to candidate-generation rules and boundary exclusions is
@@ -173,4 +173,4 @@ PYTHONPATH=src .venv/bin/python scripts/run_access_experiment.py \
 
 Use the other anchor IDs from the area summary to reproduce those runs.
 `scripts/summarise_span_pilots.py` verifies shared settings and source hashes
-before producing the aggregate area report. Runtime fields naturally vary.
+before producing the aggregate area report. Runtime fields vary between runs.

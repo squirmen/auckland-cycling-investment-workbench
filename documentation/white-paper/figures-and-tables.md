@@ -1,19 +1,19 @@
 # Figures and tables plan
 
-Every figure is generated from the tagged analytical outputs, not transcribed
-from the interface. Captions include release ID, scenario, denominator, units,
-data year, and uncertainty type. Maps retain source/basemap attribution.
+Every figure is generated from the tagged analytical outputs, not copied from
+the interface. Captions give release ID, scenario, denominator, units, data
+year, and uncertainty type. Maps keep source and basemap attribution.
 
 ## Main-text figures
 
 | ID | Figure | Minimum content | Claim supported |
 | --- | --- | --- | --- |
-| F1 | Reproducible pipeline and inferential boundary | Sources → validation → demand → topology/routing → treatments → response/connectivity → sequence/economics → uncertainty/export; distinguish observation, assumption, and derived result | Transparent integration and auditability |
+| F1 | Reproducible pipeline and inferential boundary | Sources → validation → demand → topology/routing → treatments → response/connectivity → sequence/economics → uncertainty/export; distinguish observation, assumption, and derived result | Integration and auditability |
 | F2 | Study area, source coverage, and exclusions | Existing low-stress network, OD origins, counter sites, unsnapped/unreachable demand, source vintages | Geographic/data coverage before results |
-| F3 | Demand model, universe, and confidentiality sensitivity | Distance/hilliness propensity curves; total-stated and bicycle joint intervals; distinguish numeric zero, explicit suppression, structurally removed rows, and unavailable workplace SA2; internal/outbound/unrouteable and source-coverage ledgers; soft margin comparison; constrained total | Scenario is bounded and explicit, not a forecast or hard reconciliation of unlike universes |
+| F3 | Demand model, universe, and confidentiality sensitivity | Distance/hilliness propensity curves; total-stated and bicycle joint intervals; distinguish numeric zero, explicit suppression, structurally removed rows, and unavailable workplace SA2; internal/outbound/unrouteable and source-coverage ledgers; soft margin comparison; constrained total | Scenario is bounded and declared, not a forecast or hard reconciliation of unlike universes |
 | F4 | Exact-edge candidate counterfactual | Baseline and treated routes, changed edges, generalized-cost change, continuous probability response | Corridor-specific network mechanism |
 | F5 | Connectivity and cumulative portfolios | Weighted low-stress connectivity by cumulative cost; alternative orders/budgets; parameter-scenario envelope | Network complementarity and path dependence |
-| F6 | Candidate cost–outcome frontier | Lifecycle cost versus incremental cycling/connectivity; dominance; rank-stability encoding | Trade-offs rather than one brittle rank |
+| F6 | Candidate cost–outcome frontier | Lifecycle cost versus incremental cycling/connectivity; dominance; rank-stability encoding | Trade-offs, not a single fragile rank |
 | F7 | External validation | Observed versus present-day model, 1:1 line, residual map, coverage/exclusion inset | Scale and spatial validity with adverse results visible |
 | F8 | Global sensitivity and decision stability | Parameter influence plus top-k rank acceptability | Which assumptions drive decisions |
 | F9 | Distributional context | Demand/opportunity by deprivation group and geography with missingness | Descriptive distribution, not individual benefit |
@@ -59,9 +59,9 @@ data year, and uncertainty type. Maps retain source/basemap attribution.
 
 ## README/documentation screenshots
 
-After the screenshot gate closes, the README uses the verified hero WebP in
-`../screenshots/web`; seven lossless masters are retained in
-`../screenshots/full`, and previews are in `../screenshots/thumbnails`. These
-communicate the product; they are not substitutes for analytical paper figures.
-Capture requirements and metadata are in `../screenshots/README.md` and
-`../screenshots/manifest.csv`.
+The root README uses `../screenshots/span/span-link-detail.webp`. The seven
+v1.0.0 release captures are in `../screenshots/full` (lossless masters),
+`../screenshots/web` (WebP copies) and `../screenshots/thumbnails` (previews).
+Screenshots show the interface; they do not replace the paper's analytical
+figures. Capture requirements and metadata are in `../screenshots/README.md`
+and `../screenshots/manifest.csv`.
