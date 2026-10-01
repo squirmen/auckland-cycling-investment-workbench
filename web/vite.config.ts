@@ -1,4 +1,5 @@
 import { chmodSync, copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, normalize, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { defineConfig } from "vite";
@@ -12,6 +13,14 @@ const documents = {
   "methodology.md": methodologySource,
   "effective-network.md": fileURLToPath(new URL("../documentation/research/span-effective-network.md", import.meta.url)),
 };
+// The site serves these notes on their own, so a relative link in them would point at a file
+// the site does not have. Such links are sent to the file in the repository instead.
+const repositoryRoot = fileURLToPath(new URL("..", import.meta.url));
+const repositoryFiles = "https://github.com/squirmen/spending-priorities-active-networks/blob/main/";
+function withRepositoryLinks(markdown: string, source: string): string {
+  const folder = dirname(relative(repositoryRoot, source)).split("\\").join("/");
+  return markdown.replace(/\]\((?!https?:|mailto:|#)([^)\s]+)\)/g, (_link, target: string) => `](${repositoryFiles}${normalize(`${folder}/${target}`).split("\\").join("/")})`);
+}
 // STAND's `make publish` writes the site's /parking/ folder here: index.html, and STAND itself in uoa/.
 const parkingSite = fileURLToPath(new URL("../parking/build/site", import.meta.url));
 const standPage = fileURLToPath(new URL("../parking/build/site/uoa/index.html", import.meta.url));
@@ -51,7 +60,8 @@ export default defineConfig({
           const name = request.url?.split("?")[0]?.replace(/^\/documentation\//, "");
           if (!name || !(name in documents) || !request.url?.startsWith("/documentation/")) return next();
           response.setHeader("Content-Type", "text/plain; charset=utf-8");
-          response.end(readFileSync(documents[name as keyof typeof documents]));
+          const source = documents[name as keyof typeof documents];
+          response.end(withRepositoryLinks(readFileSync(source, "utf8"), source));
         });
       },
       closeBundle() {
@@ -59,7 +69,7 @@ export default defineConfig({
           writeFileSync("dist/data/manifest.json", manifestWithCompactCandidates("dist/data", manifestWithJourneyReport("dist/data")));
         }
         mkdirSync("dist/documentation", { recursive: true });
-        for (const [name, source] of Object.entries(documents)) copyFileSync(source, `dist/documentation/${name}`);
+        for (const [name, source] of Object.entries(documents)) writeFileSync(`dist/documentation/${name}`, withRepositoryLinks(readFileSync(source, "utf8"), source));
         // Vite leaves dotfiles in public/ behind; the Apache settings travel with the site.
         copyFileSync("public/.htaccess", "dist/.htaccess");
         // The pipeline writes its data files readable by their owner only. A web server

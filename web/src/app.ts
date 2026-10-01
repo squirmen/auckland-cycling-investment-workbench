@@ -6,7 +6,7 @@ import { candidateFeatures, loadInitialCandidates, loadLayer, loadManifest } fro
 import { create, requiredElement } from "./dom";
 import { loadDemandDiagnostics, type DemandDiagnostics } from "./diagnostics";
 import { DEFAULT_JOURNEY_ASSUMPTIONS, journeyAssumptionsFromQuery } from "./journeys";
-import { BASEMAP_IDS, SpanMap, type BasemapId, type MapPadding } from "./map";
+import { BASEMAP_IDS, MAX_SKETCH_POINTS, SpanMap, type BasemapId, type MapPadding } from "./map";
 import { buildOrderCsv, connectedGroups, metricFor, packageKey, paretoFront, portfolioAtBudget, portfolioGeoJson, type SketchResult } from "./model";
 import { purposeIds, type AppState, type CandidateFeature, type LoadedLayers, type Manifest, type PortfolioStep, type PurposeId, type ScenarioId } from "./types";
 import {
@@ -49,6 +49,9 @@ let viewRequest = 0;
 let connected: ConnectedJourneys;
 let journeyAssumptions = { ...DEFAULT_JOURNEY_ASSUMPTIONS };
 let demandDiagnostics: DemandDiagnostics | undefined;
+let firstViewDrawn = false;
+/** The list row or chart point that opened the link card, for focus to return to. */
+let cardOpener: string | null = null;
 const offlineMode = new URLSearchParams(window.location.search).get("offline") === "1";
 
 let mapController: SpanMap;
@@ -110,6 +113,7 @@ async function initialise(): Promise<void> {
     mapController.setData(layers, candidates);
     mapController.setSketchNodes(desiredSketchNodeIds);
     renderAll();
+    firstViewDrawn = true;
     // A shared link to one upgrade opens on that upgrade, not on the whole region.
     if (state.selectedCandidateId && state.activeTab !== "connected") mapController.focusCandidate(state.selectedCandidateId, false);
     loadingPanel.hidden = true;
@@ -227,7 +231,7 @@ function bindEvents(): void {
   requiredElement("programme-zoom").addEventListener("click", () => mapController.fitBuildOrder());
   requiredElement("link-close").addEventListener("click", closeCard);
   document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !state.selectedCandidateId) return;
+    if (event.key !== "Escape" || !state.selectedCandidateId || requiredElement("link-card").hidden) return;
     if (requiredElement<HTMLDialogElement>("map-info-dialog").open) return;
     if (event.target instanceof HTMLInputElement && event.target.type === "search" && event.target.value) return;
     closeCard();
@@ -326,6 +330,8 @@ function loadContextLayer(layerId: string): Promise<void> {
     pending = loadLayer(manifest, layerId).then((collection) => {
       layers[layerId as keyof LoadedLayers] = collection;
       mapController.setData(layers, candidates);
+      // The key describes what is drawn, so it follows a layer that arrives late.
+      if (firstViewDrawn) renderAll();
     }).finally(() => layerLoads.delete(layerId));
     layerLoads.set(layerId, pending);
   }
@@ -366,7 +372,6 @@ function context(steps = selectedSteps()): ViewContext {
       try { await ensureAllCandidates(); }
       catch (error) {
         setStatus(error instanceof Error ? error.message : "The links could not be loaded.", true);
-        return;
       }
       renderAll();
     },
@@ -377,7 +382,40 @@ function context(steps = selectedSteps()): ViewContext {
   };
 }
 
+/** A selector for a rebuilt list row, chart point or group row, so focus can find it again. */
+function placeOf(element: Element | null): string | null {
+  // Chart points are SVG elements; both kinds carry data attributes and take focus.
+  if (!(element instanceof HTMLElement || element instanceof SVGElement)) return null;
+  const host = element.closest("#candidate-list, #pareto-list, #pareto-chart, #network-groups");
+  if (!host) return null;
+  if (element.dataset.candidateId) return `#${host.id} [data-candidate-id="${CSS.escape(element.dataset.candidateId)}"]`;
+  if (element.dataset.groupKey) return `#${host.id} [data-group-key="${CSS.escape(element.dataset.groupKey)}"]`;
+  return null;
+}
+
+function focusFirst(selectors: Array<string | null>): void {
+  for (const selector of selectors) {
+    const element = selector ? document.querySelector<HTMLElement | SVGElement>(selector) : null;
+    element?.focus({ preventScroll: true });
+    if (element && document.activeElement === element) return;
+  }
+}
+
 function renderAll(): void {
+  // Lists, the chart and the card are rebuilt below. Keep the reader's place in them: the
+  // control they were on and the sections they opened or closed.
+  const place = placeOf(document.activeElement);
+  const disclosures = new Map(Array.from(document.querySelectorAll<HTMLDetailsElement>("details[data-keep]"), (details) => [details.dataset.keep, details.open]));
+  renderEverything();
+  for (const details of document.querySelectorAll<HTMLDetailsElement>("details[data-keep]")) {
+    const open = disclosures.get(details.dataset.keep);
+    if (open !== undefined) details.open = open;
+  }
+  const active = document.activeElement;
+  if (place && (!active || active === document.body || !active.isConnected)) focusFirst([place]);
+}
+
+function renderEverything(): void {
   requiredElement("journey-controls").hidden = !GOALS[state.purpose].commute;
   const steps = selectedSteps();
   state.portfolioIds = new Set(steps.map((step) => step.candidateId));
@@ -413,9 +451,11 @@ function renderAll(): void {
   requiredElement<HTMLButtonElement>("download-button").disabled = steps.length === 0 && currentSketch === null;
   requiredElement<HTMLButtonElement>("download-table-button").disabled = steps.length === 0;
   syncQueryState();
-  requiredElement("view-announcement").textContent =
-    `${goal.chip}, ${SCENARIOS[state.scenario].label}, ${money(state.budgetNzd)} budget: ` +
+  // Screen readers hear this only when it changes, not on every redraw.
+  const announcement = `${goal.chip}, ${SCENARIOS[state.scenario].label}, ${money(state.budgetNzd)} budget: ` +
     `${String(steps.length)} ${steps.length === 1 ? "link" : "links"} in the build order.`;
+  const live = requiredElement("view-announcement");
+  if (live.textContent !== announcement) live.textContent = announcement;
   renderTabs();
 }
 
@@ -431,9 +471,11 @@ function renderFooter(steps: PortfolioStep[]): void {
   );
   requiredElement<HTMLAnchorElement>("methodology-link").href = manifest.methodologyUrl;
   const last = steps.at(-1);
-  requiredElement("mobile-map-status").textContent = last
+  const mobileStatus = requiredElement("mobile-map-status");
+  const mobileText = last
     ? `${GOALS[state.purpose].chip} · ${String(steps.length)} links · ${money(last.cumulativeCostNzd)}`
     : `${GOALS[state.purpose].chip} · no links within ${money(state.budgetNzd)}`;
+  if (mobileStatus.textContent !== mobileText) mobileStatus.textContent = mobileText;
 }
 
 function currentFront(): Set<string> {
@@ -447,18 +489,26 @@ function currentFront(): Set<string> {
 
 function selectCandidate(candidateId: string, focusMap: boolean): void {
   if (!byId.has(candidateId)) return;
+  // Moving between links inside the card keeps the first opener.
+  cardOpener = placeOf(document.activeElement) ?? (document.activeElement?.closest("#link-card") ? cardOpener : null);
+  const fromKeyboard = cardOpener !== null || document.activeElement?.closest("#link-card") !== null;
   state.selectedCandidateId = candidateId;
   state.focusedGroupIds.clear();
   renderAll();
+  // The card comes after the panel in reading order, so take keyboard and screen-reader users to it.
+  if (fromKeyboard && !requiredElement("link-card").hidden) requiredElement("candidate-title").focus({ preventScroll: true });
   if (focusMap) window.requestAnimationFrame(() => mapController.focusCandidate(candidateId));
 }
 
 function closeCard(): void {
   const id = state.selectedCandidateId;
+  const active = document.activeElement;
+  const focusInCard = !active || active === document.body || active.closest("#link-card") !== null;
   state.selectedCandidateId = null;
   state.focusedGroupIds.clear();
   renderAll();
-  if (id) document.querySelector<HTMLButtonElement>(`#candidate-list [data-candidate-id="${CSS.escape(id)}"]`)?.focus();
+  if (focusInCard) focusFirst([cardOpener, id ? `#candidate-list [data-candidate-id="${CSS.escape(id)}"]` : null, `button.tab[data-tab="${state.activeTab}"]`]);
+  cardOpener = null;
 }
 
 function renderTabs(): void {
@@ -719,9 +769,9 @@ async function applyQueryState(render = true): Promise<void> {
     const valid = new Set<string>(manifest.layers.map((layer) => layer.id));
     state.visibleLayerIds = new Set((params.get("layers") ?? "").split(",").map((value) => value.trim()).filter((value) => valid.has(value)));
   }
-  desiredSketchNodeIds = (params.get("sketch") ?? "").split(",").map((value) => value.trim()).filter(Boolean).slice(0, 20);
+  desiredSketchNodeIds = (params.get("sketch") ?? "").split(",").map((value) => value.trim()).filter(Boolean).slice(0, MAX_SKETCH_POINTS);
   const candidate = params.get("candidate");
-  if (state.activeTab === "pareto" || state.visibleLayerIds.has("candidates") || (candidate && !byId.has(candidate))) {
+  if (state.activeTab === "pareto" || state.visibleLayerIds.has("candidates")) {
     try { await ensureAllCandidates(); }
     catch (error) {
       // The build order still works without the full set.
@@ -740,12 +790,34 @@ async function applyQueryState(render = true): Promise<void> {
     }
   }
   if (candidate && byId.has(candidate)) state.selectedCandidateId = candidate;
+  else if (candidate) findSharedLink(candidate);
   syncControlsFromState();
   if (render) {
     mapController.setData(layers, candidates);
     mapController.setSketchNodes(desiredSketchNodeIds);
     renderAll();
   }
+}
+
+/**
+ * A shared address can name a link outside the set SPAN opens with. Draw the build order first,
+ * then open the link once the full set is in, or say that this release does not have it.
+ */
+function findSharedLink(candidateId: string): void {
+  const request = viewRequest;
+  ensureAllCandidates().then(() => {
+    if (request !== viewRequest || state.selectedCandidateId) return;
+    if (!byId.has(candidateId)) {
+      setStatus("The link in this address is not in this release of SPAN.", true);
+      return;
+    }
+    state.selectedCandidateId = candidateId;
+    if (!firstViewDrawn) return;
+    renderAll();
+    if (state.activeTab !== "connected") mapController.focusCandidate(candidateId);
+  }).catch((error: unknown) => {
+    if (request === viewRequest) setStatus(error instanceof Error ? error.message : "The link in this address could not be loaded.", true);
+  });
 }
 
 /** Context layers are drawn as they arrive, so a slow one never holds up the build order. */

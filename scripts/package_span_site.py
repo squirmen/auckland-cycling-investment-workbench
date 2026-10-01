@@ -47,6 +47,8 @@ def brotli_copy(data: bytes) -> bytes:
 
 
 STAND_URL = "https://span.tfwelch.com/parking/uoa/"
+# The web package's version is the release version (2.0.0 and later).
+WEB_PACKAGE = Path(__file__).resolve().parents[1] / "web" / "package.json"
 
 
 def on_stand_host(url: str) -> bool:
@@ -108,6 +110,10 @@ def main() -> None:
         "--no-brotli",
         action="store_true",
         help="Leave the brotli copies out; the server then compresses every request itself.",
+    )
+    parser.add_argument(
+        "--source-commit",
+        help="The git commit the site was built from, recorded in the release record.",
     )
     args = parser.parse_args()
     site = args.site.resolve()
@@ -241,12 +247,12 @@ def main() -> None:
         # A copy left in the site could be older than the file it stands in for.
         if path.suffix == ".br":
             raise ValueError(f"brotli copy already in the built site: {relative}")
-        # STAND's only hidden file is its Apache settings; a .DS_Store or .git folder would leak.
-        if relative.parts[0] == "parking" and (
-            any(part.startswith(".") for part in relative.parts[:-1])
-            or (relative.name.startswith(".") and relative.name != ".htaccess")
+        # The only hidden files a site needs are its Apache settings (SPAN's at the root,
+        # STAND's in parking/uoa); a .DS_Store or .git folder would leak.
+        if any(part.startswith(".") for part in relative.parts[:-1]) or (
+            relative.name.startswith(".") and relative.name != ".htaccess"
         ):
-            raise ValueError(f"hidden file in the parking site: {relative}")
+            raise ValueError(f"hidden file in the site: {relative}")
     # The browser reads the compact candidates when they exist, never the canonical file,
     # so that file gets no copy.
     unread = {"data/candidates.geojson"} if compact is not None else set()
@@ -266,7 +272,9 @@ def main() -> None:
             source_bytes += size
     release = {
         "product": "SPAN — Spending Priorities for Active Networks",
-        "status": "research_beta_not_deployed",
+        "status": manifest["dataStatus"],
+        "version": json.loads(WEB_PACKAGE.read_text())["version"],
+        "sourceCommit": args.source_commit,
         "builtAtUtc": datetime.now(UTC).isoformat(),
         "runId": manifest["runId"],
         "intendedHost": "span.tfwelch.com",

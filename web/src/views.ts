@@ -70,6 +70,7 @@ export function goalValue(metric: CandidateMetric, purpose: PurposeId): number {
 
 function goalValueText(metric: CandidateMetric, purpose: PurposeId): string {
   if (purpose === "appraisal") return `benefit–cost ${ratio(goalValue(metric, purpose))}`;
+  if (purpose === "equity") return `+${amount(goalValue(metric, purpose))} usual cycle commuters from deprived areas`;
   if (GOALS[purpose].commute) return `+${amount(goalValue(metric, purpose))} usual cycle commuters`;
   return `access gain ${amount(goalValue(metric, purpose))}`;
 }
@@ -158,7 +159,7 @@ export function renderHero(root: HTMLElement, ctx: ViewContext): void {
     create("p", { className: "hero-sub", text: sub }),
   );
   if (last && GOALS[purpose].commute) {
-    const details = create("details", { className: "method-note" });
+    const details = create("details", { className: "method-note", "data-keep": "hero-read" });
     details.append(create("summary", { text: "How to read this estimate" }));
     const notes = create("div", { className: "context-note" });
     notes.append(renderJourneyEquivalents(undefined, last.cumulativeObjective, ctx), create("p", { text: INCREMENT_NOTE }));
@@ -196,7 +197,11 @@ function renderJourneyEquivalents(users: number | undefined, additional: number,
   const grid = create("div", { className: "outcome-grid" });
   if (users !== undefined) grid.append(outcome(journeyEquivalent(users, assumptions), "by people using the upgrades"));
   grid.append(outcome(journeyEquivalent(additional, assumptions), "additional journey equivalents"));
-  block.append(grid, create("p", { className: "help", text: `Illustrative · ${assumptions.daysPerYear} cycling days/year × ${assumptions.legsPerDay} one-way ${assumptions.legsPerDay === 1 ? "journey" : "journeys"}/day${assumptions.period === "month" ? " ÷ 12 months" : ""}. ${assumptions.legsPerDay === 2 ? "Return routes are assumed, not separately assigned. " : ""}Commuting only; not measured traffic. Change the calendar in “Journeys over time”.` }));
+  const journeys = `${assumptions.legsPerDay} one-way ${assumptions.legsPerDay === 1 ? "journey" : "journeys"}`;
+  const basis = assumptions.period === "day"
+    ? `${journeys} per person on a cycling commute day`
+    : `${assumptions.daysPerYear} cycling days/year × ${journeys}/day${assumptions.period === "month" ? " ÷ 12 months" : ""}`;
+  block.append(grid, create("p", { className: "help", text: `Illustrative · ${basis}. ${assumptions.legsPerDay === 2 ? "Return routes are assumed, not separately assigned. " : ""}Commuting only; not measured traffic. Change the calendar in “Journeys over time”.` }));
   return block;
 }
 
@@ -208,7 +213,7 @@ function renderNetworkHero(root: HTMLElement, ctx: ViewContext, last: PortfolioS
     outcome(last.routeUsersAfter ?? 0, "cycle commuters using the upgrades", `Before upgrades: ${amount(last.routeUsersBefore ?? 0)}`),
     outcome(last.cumulativeObjective, "additional cycle commuters", "Above the scenario's starting level"),
   );
-  const explanation = create("details", { className: "method-note" });
+  const explanation = create("details", { className: "method-note", "data-keep": "hero-estimated" });
   explanation.append(create("summary", { text: "How these outcomes are estimated" }));
   const note = create("div", { className: "context-note" });
   note.append(renderJourneyEquivalents(last.routeUsersAfter, last.cumulativeObjective, ctx));
@@ -240,7 +245,7 @@ export function renderNetworkGroups(ctx: ViewContext): void {
   for (const [index, group] of groups.entries()) {
     const ids = group.map((candidate) => candidate.properties.candidateId);
     const cost = group.reduce((total, candidate) => total + metricFor(candidate, ctx.state.scenario, ctx.state.purpose).capitalCostNzd, 0);
-    const button = create("button", { type: "button", className: "compact-row group-row" });
+    const button = create("button", { type: "button", className: "compact-row group-row", "data-group-key": ids[0] ?? String(index) });
     button.append(
       create("strong", { text: `${linkName(group[0]!.properties.name)}${group.length > 1 ? " and nearby links" : ""}` }),
       create("span", { text: `Group ${index + 1} · ${group.length} ${group.length === 1 ? "upgrade" : "upgrades"} · ${money(cost)}` }),
@@ -248,7 +253,7 @@ export function renderNetworkGroups(ctx: ViewContext): void {
     button.addEventListener("click", () => ctx.focusGroup(ids));
     list.append(button);
   }
-  const details = create("details", { className: "network-group-list" });
+  const details = create("details", { className: "network-group-list", "data-keep": "network-groups" });
   details.open = groups.length <= 4;
   details.append(create("summary", { text: `Explore ${String(groups.length)} connected ${groups.length === 1 ? "group" : "groups"}` }), list);
   root.replaceChildren(
@@ -383,7 +388,8 @@ export function renderPareto(ctx: ViewContext): void {
   const y = (v: number) => height - margin.bottom - (v / maxValue) * (height - margin.top - margin.bottom);
   const svg = svgElement("svg", {
     viewBox: `0 0 ${String(width)} ${String(height)}`,
-    role: "img",
+    // A group, not an image: its points are buttons, and an image's children are hidden from screen readers.
+    role: "group",
     "aria-label": `Whole-life cost against ${label.toLowerCase()} for each link`,
   });
   for (let tick = 0; tick <= 4; tick += 1) {
@@ -496,7 +502,7 @@ export function renderLinkCard(ctx: ViewContext): void {
       ? "Preliminary estimate. Most of the gain depends on one sampled journey."
       : "Preliminary estimate, not a measured or calibrated forecast." }));
 
-  const evidence = create("details", { className: "method-note", id: "candidate-evidence" });
+  const evidence = create("details", { className: "method-note", id: "candidate-evidence", "data-keep": "card-evidence" });
   evidence.append(create("summary", { text: "How this was estimated" }));
   const notes = create("div", { className: "context-note" });
   notes.append(create("h3", { text: "From street data to an investment estimate" }));
@@ -527,15 +533,16 @@ export function renderLinkCard(ctx: ViewContext): void {
   const rows: Array<[string, string]> = [["Whole-life cost, 40 years", money(metric.lifecycleCostNzd)]];
   if (metric.annualBikeKmDelta !== null) rows.push(["Extra km cycled a year", amount(metric.annualBikeKmDelta)]);
   const appraisal = candidate.properties.metrics.commute_8pct.appraisal;
-  if (ctx.manifest.capabilities.appraisal !== "withheld" && appraisal.bcrP50 !== null && scenario === "commute_8pct") rows.push(["Indicative benefit–cost ratio", ratio(appraisal.bcrP50)]);
+  if (ctx.manifest.capabilities.appraisal !== "withheld" && appraisal.bcrP50 !== null && scenario === "commute_8pct") rows.push(["Indicative benefit–cost ratio", appraisal.bcrP5 !== null && appraisal.bcrP95 !== null ? `${ratio(appraisal.bcrP50)} (range ${ratio(appraisal.bcrP5)} to ${ratio(appraisal.bcrP95)})` : ratio(appraisal.bcrP50)]);
   rows.push(["Best value for its cost", ctx.front().has(id) ? "Yes" : "No"]);
   for (const [label, value] of rows) moreFacts.append(create("dt", { text: label }), create("dd", { text: value }));
-  notes.append(moreFacts, create("h3", { text: "Parameter sensitivity" }));
-  if (metric.frontierProbability !== null || metric.topKProbability !== null) {
-    if (metric.frontierProbability !== null) notes.append(create("p", { text: `Best value for its cost in ${percent(metric.frontierProbability)} of the parameter tests.` }));
-    if (metric.topKProbability !== null) notes.append(create("p", { text: `In the top 50 by benefit–cost in ${percent(metric.topKProbability)} of the parameter tests.` }));
-    notes.append(create("p", { text: "These 1,000 tests vary costs, response and route-choice settings, but keep the journey sample fixed. The percentages are not forecast confidence." }));
-  } else notes.append(create("p", { text: "Parameter tests are available only for the 8% scenario's cycling and benefit–cost goals." }));
+  notes.append(moreFacts, create("h3", { text: "Parameter tests" }));
+  // Each test scales every link by the same factors, so best-value membership and top-50 rank
+  // cannot change between tests; showing their shares would read as robustness they do not test.
+  if (scenario === "commute_8pct" && appraisal.bcrP50 !== null) {
+    notes.append(create("p", { text: "In the 8% scenario, 1,000 tests vary costs, response, a route-choice factor and the discount rate (1.5% to 8%). Each test applies the same factors to every link, so the tests give a range for the benefit–cost ratio but cannot change which links are best value." }));
+    notes.append(create("p", { text: "The ratio shown is the middle of those tests. At the principal 2% discount rate it is about a fifth higher." }));
+  } else notes.append(create("p", { text: "Parameter tests are available only for the 8% scenario." }));
   const warnings = linkWarnings(metric.warnings);
   if (warnings.length) {
     const list = create("ul");
@@ -566,7 +573,7 @@ function connectionDetails(candidate: CandidateFeature, ctx: ViewContext): HTMLE
     ? "Conflicting one-way directions prevent riding this whole chain end to end under the current access rules."
     : context.direction === "both" ? "The candidate chain permits travel in both directions."
     : `The candidate chain permits travel ${context.direction === "forward" ? "A to B" : "B to A"} only.`;
-  const connectionNotes = create("details", { className: "method-note" });
+  const connectionNotes = create("details", { className: "method-note", "data-keep": "card-connections" });
   connectionNotes.append(create("summary", { text: "Connection checks" }), create("p", { text: `${direction} Connections are based on shared street junctions, not a checked end-to-end route.` }));
   if (context.componentIds.length > 1) connectionNotes.append(create("p", { text: `Touches ${context.componentIds.length} separate low-stress areas, including contacts along its length.` }));
   const group = groupsInBudget(ctx).find((items) => items.some((item) => item.properties.candidateId === candidate.properties.candidateId));
@@ -705,7 +712,9 @@ export function renderLegend(
     rows.push({
       swatch: rampSwatch(COLOURS.demand),
       title: "Where these trips start",
-      note: demand.empty ? "No start points for this goal and scenario." : "Lighter to darker: fewer to more.",
+      note: demand.empty
+        ? state.purpose === "equity" ? "Start points for this goal are not mapped in this release." : "No start points for this goal and scenario."
+        : "Lighter to darker: fewer to more.",
     });
   }
   if (state.visibleLayerIds.has("candidates")) {
@@ -765,7 +774,7 @@ export function renderLegend(
   }));
   const notes = rows.filter(row => row.note);
   if (notes.length) {
-    const details = create("details", { className: "key-notes" });
+    const details = create("details", { className: "key-notes", "data-keep": "key-notes" });
     details.append(create("summary", { text: "Layer details" }));
     for (const row of notes) details.append(create("p", { text: `${row.title}: ${row.note}` }));
     root.append(details);

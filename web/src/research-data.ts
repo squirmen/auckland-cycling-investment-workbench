@@ -3,7 +3,7 @@ import { fetchVerifiedJson } from "./data";
 import { journeyReportDescriptorSchema, type Manifest } from "./types";
 
 const point = z.tuple([z.number(), z.number()]);
-export const routeSchema = z.object({ projectIds: z.array(z.string()), distanceM: z.number().positive(), timeS: z.number().positive(), intersectionDelayS: z.number().nonnegative().optional(), capitalCost: z.number().nonnegative(), existingCyclewayM: z.number().nonnegative(), segments: z.array(z.object({ projectId: z.string().nullable(), existingCycleway: z.boolean(), coordinates: z.array(point).min(2) })) });
+export const routeSchema = z.object({ projectIds: z.array(z.string()), distanceM: z.number().positive(), timeS: z.number().positive(), intersectionDelayS: z.number().nonnegative().optional(), capitalCost: z.number().nonnegative(), existingCyclewayM: z.number().nonnegative(), segments: z.array(z.object({ edgeId: z.string().min(1).optional(), projectId: z.string().nullable(), existingCycleway: z.boolean(), coordinates: z.array(point).min(2) })) });
 export const reportSchema = z.object({
   schemaVersion: z.literal("1.0.0"), status: z.literal("local_research_pilot"), runId: z.string(), centre: point, radiusM: z.number().positive(), seed: z.number(), elapsedS: z.number(), searchComplete: z.boolean(),
   graph: z.object({ nodes: z.number(), directedArcs: z.number(), projects: z.number() }),
@@ -51,8 +51,9 @@ export function portfolioGeoJson(report: ResearchReport, solution: ResearchSolut
   const features: object[] = report.projects.filter(p => solution.selected.includes(p.id)).map(p => ({
     type: "Feature", properties: { role: "proposed_project", id: p.id, name: p.name, capitalCostNzd: p.cost, lengthM: p.lengthM, treatment: "protected_lane", costStatus: "provisional" }, geometry: { type: "LineString", coordinates: p.coordinates },
   }));
+  // sourceEdgeId is the run's own street edge: the identity a project-to-CRANC-edge crosswalk needs.
   for (const [index, segment] of (route?.segments ?? []).entries()) features.push({
-    type: "Feature", properties: { role: "inspected_route_segment", sequence: index, projectId: segment.projectId, existingCycleway: segment.existingCycleway, projectFunded: segment.projectId ? solution.selected.includes(segment.projectId) : null }, geometry: { type: "LineString", coordinates: segment.coordinates },
+    type: "Feature", properties: { role: "inspected_route_segment", sequence: index, sourceEdgeId: segment.edgeId ?? null, projectId: segment.projectId, existingCycleway: segment.existingCycleway, projectFunded: segment.projectId ? solution.selected.includes(segment.projectId) : null }, geometry: { type: "LineString", coordinates: segment.coordinates },
   });
   return {
     type: "FeatureCollection", features, reportSha256: reportSha256 ?? null,

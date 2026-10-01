@@ -2,7 +2,7 @@ import { expect, it } from "vitest";
 import { portfolioGeoJson, reportSchema, routeSchema } from "./research-data";
 
 it("exports actual funded projects and identifies unfunded inspected route segments", () => {
-  const route = { projectIds: ["Q"], distanceM: 100, timeS: 30, intersectionDelayS: 10, capitalCost: 7, existingCyclewayM: 0, segments: [{ projectId: "Q", existingCycleway: false, coordinates: [[174, -36], [174.001, -36]] }] };
+  const route = { projectIds: ["Q"], distanceM: 100, timeS: 30, intersectionDelayS: 10, capitalCost: 7, existingCyclewayM: 0, segments: [{ edgeId: "osm-way-1-segment-0", projectId: "Q", existingCycleway: false, coordinates: [[174, -36], [174.001, -36]] }] };
   const report = reportSchema.parse({
     schemaVersion: "1.0.0", status: "local_research_pilot", runId: "test", centre: [174, -36], radiusM: 4000, seed: 1, elapsedS: 1, searchComplete: true,
     intersectionContext: { scenario: "default", matchedSitesCitywide: 1, sitesInCrop: 1, directedMovementsInCrop: 1, evidenceSha256: "test", note: "Illustrative only" },
@@ -24,7 +24,7 @@ it("exports actual funded projects and identifies unfunded inspected route segme
     reportSha256: "b".repeat(64),
     features: [
       { properties: { id: "P", role: "proposed_project", capitalCostNzd: 5 } },
-      { properties: { projectId: "Q", role: "inspected_route_segment", projectFunded: false } },
+      { properties: { projectId: "Q", sourceEdgeId: "osm-way-1-segment-0", role: "inspected_route_segment", projectFunded: false } },
     ],
     span: { capitalCostNzd: 5, baselineEligibleAccessWeight: 2, additionalEligibleAccessWeight: 8, additionalCyclists: null, inspectedRouteTimeS: 30, inspectedRouteIntersectionDelayS: 10, intersectionContext: { scenario: "default" }, limitations: ["Test only"] },
   });

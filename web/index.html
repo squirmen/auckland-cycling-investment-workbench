@@ -106,7 +106,7 @@
           </div>
 
           <section id="tab-portfolio" class="tab-panel" role="tabpanel" aria-labelledby="control-portfolio">
-            <div id="portfolio-summary" class="hero" aria-live="polite"></div>
+            <div id="portfolio-summary" class="hero"></div>
             <button id="programme-zoom" type="button" class="secondary">Show all upgrades on the map</button>
             <section id="network-groups" class="network-groups" aria-label="Network groups" hidden></section>
             <div class="section-title-row">
@@ -207,7 +207,7 @@
         <header class="place-head">
           <div>
             <p id="candidate-eyebrow" class="eyebrow">Selected link</p>
-            <h2 id="candidate-title">Choose a link</h2>
+            <h2 id="candidate-title" tabindex="-1">Choose a link</h2>
             <p id="candidate-sub" class="place-sub"></p>
           </div>
           <button id="link-close" class="icon-button" type="button" aria-label="Close link details">
@@ -291,7 +291,7 @@
         <section>
           <h3>Scenarios</h3>
           <ul>
-            <li>Today: cycling to work as it is now, from the 2023 Census.</li>
+            <li>Census baseline: cycling to work on the modelled trips, from the 2023 Census. It counts about 820 cycle commuters against about 8,180 in the Census, because small suppressed counts are taken as zero and some trips are not modelled.</li>
             <li>Government target, Go Dutch and E-bikes: scenarios from England's Propensity to Cycle Tool, applied to Auckland trips by distance and hilliness.</li>
             <li>8% of commutes: what 8% of Auckland commuters cycling would look like. A test case, not an Auckland Transport target.</li>
           </ul>
@@ -303,7 +303,7 @@
             <li>Trips to work come from the 2023 Census. School, everyday and station trips link homes to school rolls, OpenStreetMap destinations and the Auckland Transport timetable. Each trip keeps up to five plausible routes, rated for traffic stress and hills.</li>
             <li>A link's value is the extra cycling the model expects once its streets are low-stress. The build order re-runs the model at each step with the earlier links in place, so shared routes are not counted twice.</li>
             <li>Whole-life cost adds 40 years of maintenance and renewal to the build cost, discounted.</li>
-            <li>For the 8% scenario, 1,000 test runs vary costs, how many people respond, route choice and other inputs, to show how firm each result is.</li>
+            <li>For the 8% scenario, 1,000 test runs vary costs, how many people respond, a route-choice factor and the discount rate. Each run applies the same factors to every link, so the runs give a range for each benefit–cost ratio but do not test which links rank first.</li>
           </ul>
         </section>
         <section>

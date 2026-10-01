@@ -112,6 +112,19 @@ for (const query of ["view=pareto", "layers=candidates", "candidate=extra"]) {
   });
 }
 
+test("opens a shared link to a missing upgrade on the build order, then says it is not in this release", async ({ page }) => {
+  let release!: () => void;
+  const counts = await stagedFixture(page, { holdFull: new Promise<void>((resolve) => { release = resolve; }) });
+  await page.goto("/?offline=1&candidate=no-such-link");
+  // The first view does not wait for the full link set.
+  await expect(page.locator("#loading-panel")).toBeHidden();
+  await expect(page.locator("#candidate-list button").first()).toBeVisible();
+  release();
+  await expect(page.locator("#status-message")).toContainText("not in this release");
+  await expect(page.locator("#link-card")).toBeHidden();
+  expect(counts.full).toBe(1);
+});
+
 test("rejects corrupt initial data without downloading a replacement", async ({ page }) => {
   const counts = await stagedFixture(page, { corruptInitial: true });
   await page.goto("/?offline=1");

@@ -59,7 +59,7 @@ before release. Do not round these values further in computation.
 | `od_snap_max_distance_m` | 1,800 | m | tighter thresholds plus retained-demand coverage |
 | `honour_oneway` | true | boolean | mandatory; no undirected headline run |
 | `plausible_paths` | 5 | paths per OD | 1, 3, 5, 8 where computationally feasible |
-| `route_records_per_zonal_od` | 1 | spatial disaggregation records sampled without replacement per supported zonal OD | 1, 3, 5, complete; report inclusion weights and rank stability |
+| `route_records_per_zonal_od` | 1 (commute); 3 (school, everyday, transit) in the Auckland run | spatial disaggregation records sampled without replacement per supported zonal OD | 1, 3, 5, complete; report inclusion weights and rank stability |
 | `route_sample_seed` | 20260301 | deterministic integer seed | independent registered seeds for sampling sensitivity |
 | `maximum_cost_ratio` | 1.5 | ratio to minimum generalized cost | 1.25, 1.5, 2.0 |
 | `maximum_detour_ratio` | 1.5 | ratio to shortest physical route | 1.25, 1.5, 2.0 |
@@ -98,6 +98,10 @@ and gap-priority thresholds require threshold sweeps and manual review of both
 retained and excluded cases.
 
 ## Connectivity, presets, and portfolios
+
+The weighted presets below belong to the reference and demo implementation.
+The Auckland build orders rank each goal on a single objective; see
+methodology §9.
 
 | Key | Default | Unit | Reporting requirement |
 | --- | ---: | --- | --- |

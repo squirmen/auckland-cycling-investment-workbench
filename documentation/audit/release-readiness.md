@@ -138,6 +138,10 @@ snapshot.
   current run records these fields and its nested route manifest records R5.
   The eventual tagged run must still record a non-null source revision and
   duplicate the nested R5 release in the root runtime summary.
+- Status on 2 October 2026: GitHub Pages is retired. SPAN v2.0.0 was tagged,
+  released (code only) and deployed to span.tfwelch.com over HTTPS with a
+  rollback copy on 1 October 2026. The replacement web-data asset has not been
+  published as a release asset, so this gate stays open for that part.
 - [ ] Publish the deterministic replacement web-data asset and produce a Pages
   preview, then complete the separately authorised commit, push, review, merge,
   tag, release, deployment, domain, HTTPS, download, and rollback gates. The

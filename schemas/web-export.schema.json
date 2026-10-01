@@ -61,7 +61,21 @@
         "url": {"const": "./data/candidates.compact.json"},
         "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
         "sourceSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "featureCount": {"type": "integer", "minimum": 0}
+        "featureCount": {"type": "integer", "minimum": 0},
+        "bytes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "initialCandidates": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "scope", "url", "sha256", "sourceSha256", "featureCount"],
+      "properties": {
+        "format": {"const": "span-candidates-v1"},
+        "scope": {"const": "portfolios_and_frontiers_v1"},
+        "url": {"const": "./data/candidates.initial.json"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sourceSha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "featureCount": {"type": "integer", "minimum": 0},
+        "bytes": {"type": "integer", "minimum": 0}
       }
     },
     "effectiveNetwork": {

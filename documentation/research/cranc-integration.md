@@ -14,10 +14,13 @@ specified investment. A planner should see these results beside SPAN's measures,
 with the provider, profile, time cutoff, population weights and opportunity
 dataset visible. An opportunity gain is never relabelled as extra cyclists.
 
-The request and comparison validators exist in `web/src/cranc.ts`, with unit
-tests for scope matching and invalid results. The earlier public file-exchange
-panel was removed on 24 September to keep one understandable SPAN workspace.
-There are no CRANC results or integration controls in the public interface.
+`web/src/cranc.ts` holds a request builder (`crancRequest`, no schema), the
+comparison schema (`crancComparisonSchema`) and a scope check
+(`checkCrancScope`), with unit tests for scope matching and invalid results.
+Nothing in the app calls them: the public file-exchange panel that did was
+removed on 24 September (commit `7b8685a`) to keep one understandable SPAN
+workspace. There are no CRANC results or integration controls in the public
+interface, and SPAN cannot currently export a request or import a comparison.
 
 This is an integration boundary, not a live API connection or a claim that CRANC
 natively emits the SPAN envelope. Steve retains ownership of profiles, coefficient
@@ -85,7 +88,7 @@ of cyclist counts.
 | Planner interface | `web/index.html`, section `#tab-connected` | Future “Access to destinations” result. Do not expose unfinished integration machinery or collaborator biographies in the planning interface. |
 | Request and result boundary | `web/src/cranc.ts`: `crancRequest`, `crancComparisonSchema`, `checkCrancScope` | Implemented: run/network/origin/weight/project matching, units and attribution. Keep transport code separate from these validators. |
 | Active investment context | `web/src/connected.ts`: `ConnectedJourneys`, `report`, `solution`, `render` | Selected package and source report are available here. Future adapter results must pass the existing validators plus an extended routing-scope check before display. No provider request runs here today. |
-| Investment geometry and provenance | `web/src/research-data.ts`: `portfolioGeoJson`; source candidate ledger `ordered_edge_ids` | Implemented SPAN side. Use exact source edge identities for the crosswalk; map lines alone do not identify CRANC edges. |
+| Investment geometry and provenance | `web/src/research-data.ts`: `portfolioGeoJson`; source candidate ledger `ordered_edge_ids` | Implemented SPAN side. The Connected journeys download gives each inspected route segment its `sourceEdgeId` (since 2 October; earlier downloads dropped it). A project's full edge list is the candidate ledger's `ordered_edge_ids`, which is in the source run, not in the browser report. Use exact source edge identities for the crosswalk; map lines alone do not identify CRANC edges. |
 | CRANC execution adapter | Proposed `src/cycling_investment_workbench/integrations/cranc.py` and `scripts/run_cranc_comparison.py` | **Not implemented.** Run locally/server-side, with an explicitly configured endpoint and approved data sharing. Prepare paired scenarios, call CRANC and wrap validated aggregate outputs. Do not embed credentials or silently upload origins from the browser. |
 | CRANC graph/scenario support | Collaborator-owned graph import/scenario mechanism | **Not implemented in SPAN.** Agree with Steve how project treatments and crossing assumptions map onto CRANC's directed graph, then verify that investment actually changes the graph. |
 | Accessibility measurement | CRANC isochrones plus agreed opportunity inventory and origin weights | Provider-owned computation. Count opportunities consistently; polygons alone are not counts. Return one attributed profile/category/cutoff comparison per file. |
@@ -132,7 +135,7 @@ excludes mixed units, raw polygon imports and unqualified aggregate totals.
 | `provider` | `name: CRANC`, version, human-readable attribution |
 | `scope.runId` | The active SPAN source run |
 | `scope.baseNetworkHash` | SHA-256 of the same SPAN source topology |
-| `scope.originsHash` | Fingerprint of the exact origin population definition |
+| `scope.originsHash` | Fingerprint of the origins of the Connected journeys sample (see below) |
 | `scope.weightingHash` | Fingerprint of the matching eligible-commuter weights |
 | `scope.opportunitiesHash` | Fingerprint of one opportunity inventory used for both results |
 | `scope.profile`, `profileHash` | CRANC ID (`ibc`, `eac`, `saf`) and versioned profile/coefficient content |
@@ -143,9 +146,32 @@ excludes mixed units, raw polygon imports and unqualified aggregate totals.
 | `baseline` | Scenario ID, network-scenario hash, empty proposed project IDs and non-negative finite value |
 | `investment` | Scenario ID, network-scenario hash, exactly the selected project IDs, value and project/edge crosswalk hash |
 
-The origins hash is SPAN's canonical `content_hash` of sorted source origin-node
-IDs, retaining repeated origins. The weighting hash covers sorted `(origin ID,
-eligible weight)` pairs for the same local records. Compute accessible opportunities
+### Where the scope values come from
+
+The values to match are in the published journey report,
+`data/access-experiment.json` (`sourceHashes`), written by
+`scripts/run_access_experiment.py`:
+
+| Contract field | Report field | What it fingerprints |
+| --- | --- | --- |
+| `scope.runId` | `runId` | The SPAN source run, `run-313e0277521633d3` |
+| `scope.baseNetworkHash` | `sourceHashes.topology` | SHA-256 of the run's native topology file |
+| `scope.originsHash` | `sourceHashes.origins` | The sorted origin-node IDs of the sampled records, repeats kept |
+| `scope.weightingHash` | `sourceHashes.originWeights` | The sorted `(origin-node ID, eligible weight)` pairs of the same records |
+
+The sample is not a population definition. It is the first `--sample-size`
+commute records (169 in the published report) whose origin and destination both
+lie inside the 4 km crop, after sorting by SHA-256 of `"<seed>:<od_id>"`. A
+different seed, crop or sample size gives different hashes.
+
+Both hashes are `content_hash` in `src/cycling_investment_workbench/provenance.py`:
+SHA-256 of the UTF-8 bytes of `canonical_json(value)`, which is Python's
+`json.dumps(value, ensure_ascii=False, allow_nan=False, sort_keys=True,
+separators=(",", ":"))`. A list of IDs is therefore hashed as
+`["id1","id2",…]` with no spaces, and a pair as a two-item array. Weights are
+Python floats and print in Python's shortest round-trip form (for example
+`1.5`, `12.0`, `0.1`); a producer in another language must print them the same
+way, or copy the hashes from the report rather than recomputing them. Compute accessible opportunities
 once per distinct origin, then apply the recorded weights; repeated records must
 not duplicate destinations within a single origin's catchment. These fingerprints
 are identifiers, not enough information to run CRANC. A local collaboration still

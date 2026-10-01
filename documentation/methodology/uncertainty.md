@@ -14,8 +14,12 @@ has a different interpretation and mitigation.
 
 ## Confidentiality-bound scenarios
 
+**Status for `run-313e0277521633d3`:** not yet run. The routing stage uses one
+interpretation, with suppressed bicycle cells at their lower bound. The design
+below is what the paired runs must do.
+
 The lower, point, and upper interpretations of disclosure-controlled counts are
-run end to end. Eligible-total and bicycle-subset values are selected or drawn
+to be run end to end. Eligible-total and bicycle-subset values are selected or drawn
 jointly so bicycle never exceeds total stated. The resulting range is not a
 frequentist confidence interval; it answers how results change across declared
 interpretations compatible with the published table. Spatial correlation

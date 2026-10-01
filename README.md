@@ -11,7 +11,7 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
 (CIW); the command-line tool and Python package keep the `ciw` name.
 
 [Open SPAN](https://span.tfwelch.com)
-· [Download v2.0.0](https://github.com/squirmen/spending-priorities-active-networks/releases/tag/v2.0.0)
+· [Download v2.0.1](https://github.com/squirmen/spending-priorities-active-networks/releases/tag/v2.0.1)
 · [Read the method](documentation/methodology/methodology.md)
 
 ![SPAN showing a NZ$100m build order of 12 cycling upgrades under the 8% commute sensitivity, with Beach Road selected: its cost, its connection points and the low-stress streets it joins.](documentation/screenshots/span/span-link-detail.webp)
@@ -22,11 +22,11 @@ It was first released in 2026 as the Auckland Cycling Investment Workbench
 - Explore candidate links by likely demand, network contribution and purpose.
 - Build a portfolio to a chosen budget and see how each addition changes the
   result.
-- Compare Network, School, Everyday, Transit, Equity and Appraisal views when
-  the required evidence is available.
+- Compare the goals Cycling to work, Deprived areas, School trips, Everyday
+  trips, Stations and Benefit–cost when the required evidence is available.
 - Compare candidates with Future Connect and RLTP context, July 2026 cycle
-  counter sites, major scheduled transit nodes and a disclosure-safe road-safety
-  layer.
+  counter sites and a disclosure-safe road-safety layer. Major scheduled transit
+  stops feed the Stations goal; they are not drawn as a layer.
 - Inspect the route and evidence behind a candidate rather than relying on a
   single composite score.
 - See which upgrades a complete journey needs, for a local sample of journeys
@@ -70,8 +70,9 @@ main explorer's investment rankings.
 
 CRANC belongs after selection of a complete investment package, as a future
 **Access to destinations** result within SPAN. **There is no live integration or
-public CRANC panel.** The versioned request, comparison and scope validators in
-`web/src/cranc.ts` remain tested building blocks. The execution adapter, paired
+public CRANC panel.** The versioned comparison schema, scope check and request
+builder in `web/src/cranc.ts` remain tested building blocks; nothing in the app
+calls them yet. The execution adapter, paired
 scenario graphs and fuller routing-scope contract still need implementation.
 Accessibility gains must remain separate from estimates of additional cycling.
 
@@ -131,6 +132,12 @@ uv run ciw demo --export-web
 npm --prefix web ci
 npm --prefix web run build
 ```
+
+`ciw demo --export-web` writes the demonstration data into `web/public/data`,
+replacing whatever is there. That folder is not in git, so copy the Auckland
+browser data somewhere safe before running the demo in a checkout that has it.
+If a journey report (`access-experiment.json`) from another run is left in the
+folder, the web build stops with a release mismatch; remove it for the demo.
 
 To run the checks used for a release:
 

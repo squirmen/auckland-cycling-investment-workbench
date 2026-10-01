@@ -79,6 +79,12 @@ def test_complete_site_contains_hidden_settings_and_sha256_record(tmp_path, monk
         assert release["intendedHost"] == "span.tfwelch.com"
         assert release["files"]["index.html"] == sha256_file(site / "index.html")
         assert "components" not in release
+        assert release["status"] == "research_snapshot"
+        assert (
+            release["version"]
+            == json.loads((SCRIPT.parents[1] / "web/package.json").read_text())["version"]
+        )
+        assert release["sourceCommit"] is None
         assert archive.getinfo("span-release.json").external_attr >> 16 & 0o777 == 0o644
     assert json.loads(output.with_suffix(".json").read_text())["archive"]["sha256"] == sha256_file(
         output
@@ -368,8 +374,8 @@ def test_stand_files_get_no_brotli_copies(tmp_path, monkeypatch):
         ("symlink", "parking must be a folder"),
         ("private", "source/private"),
         ("secret", "source/private"),
-        ("hidden_file", "hidden file in the parking site"),
-        ("hidden_folder", "hidden file in the parking site"),
+        ("hidden_file", "hidden file in the site"),
+        ("hidden_folder", "hidden file in the site"),
     ],
 )
 def test_parking_gate_refuses_an_incomplete_or_misdirected_stand(
@@ -441,3 +447,23 @@ def test_a_stray_root_is_still_refused(tmp_path, monkeypatch, stray, with_parkin
     with pytest.raises(ValueError, match="unexpected public release file"):
         package.main()
     assert not output.exists()
+
+
+@pytest.mark.parametrize(
+    "name", ["data/.DS_Store", "assets/.git/config", "documentation/.notes.md"]
+)
+def test_hidden_files_anywhere_in_the_site_are_refused(tmp_path, monkeypatch, name):
+    site, output = fixture(tmp_path, monkeypatch)
+    (site / name).parent.mkdir(parents=True, exist_ok=True)
+    (site / name).write_text("private")
+    with pytest.raises(ValueError, match="hidden file in the site"):
+        package.main()
+    assert not output.exists()
+
+
+def test_the_release_record_names_the_source_commit(tmp_path, monkeypatch):
+    site, output = fixture(tmp_path, monkeypatch)
+    monkeypatch.setattr("sys.argv", [*package.sys.argv, "--source-commit", "a" * 40])
+    package.main()
+    with ZipFile(output) as archive:
+        assert json.loads(archive.read("span-release.json"))["sourceCommit"] == "a" * 40

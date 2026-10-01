@@ -77,7 +77,8 @@ full-origin margin field `VAR_2_786`, versus approximately 610,101 published
 internal-Auckland OD total trips plus suppressed and structurally omitted
 cells. The margin is therefore
 a bounded, soft validation diagnostic unless a release documents exact universe
-and category reconciliation; it is not a hard allocation constraint. All
+and category reconciliation; it is not a hard allocation constraint. (The
+September 2026 Auckland run does use it to size the 8% target; see §3.3.) All
 source OD records, including outbound records when supplied, and every
 unsnapped or unreachable internal record remain in a ledger with a scope or
 route status. A missing outbound universe is reported rather than fabricated.
@@ -127,6 +128,15 @@ relations receive path allocation, so routing failures appear as unallocated
 demand and explicit coverage rather than silently shrinking the denominator.
 This separates the aggregate scenario constraint from the behavioural
 propensity used to distribute it.
+
+**As run for `run-313e0277521633d3`.** The routing stage sizes the target from
+the full-origin margin, not from the routed universe: \(0.08\times874{,}096 -
+8{,}179.5 = 61{,}748\) additional commuters. All of it is allocated to the
+routed market, which has 619,441 eligible commuters and 817 routed baseline
+cyclists. The 8% scenario therefore models about 62,565 cyclists, 10.1% of the
+modelled market, and about 27% more additional cycling than the same-universe
+formula above (about 48,740). Read it as "8% of all Auckland commuters, placed
+on the modelled trips".
 
 ## 4. Network construction
 
@@ -195,9 +205,10 @@ generator, not an implementation of Yen's algorithm and not a claim that all
 behaviourally perceived routes have been enumerated.
 
 Demand-support records are selected by deterministic, seeded simple random
-sampling without replacement within each published zonal OD. The default
-routes one of the up to 25 spatial disaggregation records in every supported
-stratum, retains every selected and unselected record in the OD ledger, and
+sampling without replacement within each published zonal OD. The Auckland
+configuration (`records_per_stratum_by_purpose`) routes one of the up to 25
+spatial disaggregation records in every supported commute stratum and three in
+every school, everyday and transit stratum, retains every selected and unselected record in the OD ledger, and
 uses the exact inverse inclusion probability as a Horvitz--Thompson analysis
 weight. This is declared probability sampling, not silent truncation. Retained
 paths receive path-size-logit probabilities, which reduce independent-
@@ -285,16 +296,24 @@ coverage, stress threshold, and detour threshold are harmonised.
 
 ## 9. Portfolio comparison and cumulative evaluation
 
-Candidate comparison has two transparent views. The Network, Equity, School,
-Everyday, Transit, and Appraisal presets apply published weights to
-min–max-normalised indicators relevant to the named purpose. A Pareto frontier
-separately identifies candidates for which no other candidate is at least as
-good on every declared objective and strictly better on one. The interface
-shows every component and weight used by a preset.
+Each goal's build order is a greedy sequence on a single objective, not a
+weighted composite. At each step, Cycling to work (`network`) adds the link with
+the largest marginal gain in modelled usual cycle commuters. Deprived areas
+(`equity`), School trips, Everyday trips and Stations (`transit`) add the
+largest marginal gain in their own objective per dollar of capital cost.
+Benefit–cost (`appraisal`) adds the most commuters per dollar and then reports
+each link's indicative benefit–cost ratio. Sequences are computed once up to
+NZ$500m, and a budget takes the part of the sequence that fits. The weighted
+min–max presets in `parameters.md` belong to the reference and demo
+implementation (`connectivity.py`); the Auckland results do not use them and
+the interface shows no weights. A Pareto frontier separately identifies
+candidates for which no other candidate is at least as good on every declared
+objective and strictly better on one.
 
 For the current Auckland snapshot, every cumulative step reapplies all selected
-exact-edge treatments and recomputes costs, path probabilities, demand response,
-and appraisal over the affected retained path market. This captures overlap and
+exact-edge treatments and recomputes costs, path probabilities and demand
+response over the affected retained path market. Benefit–cost ratios stay per
+link; they are not recomputed for the package. This captures overlap and
 some complementarity without repeatedly crediting static candidate totals, but
 it is not full-network rerouting and cannot reveal paths absent from the retained
 choice set. The reference full-network algorithm is separately tested, but the
@@ -310,7 +329,11 @@ Screening benefits are annualised from incremental quantities on a documented
 ramp and discounted over a 40-year default horizon. For a non-commercial
 public-sector activity, the principal real discount schedule follows NZTA
 General Circular 25/01: 2% in years 1–30 and 1.5% in years 31–40, with the
-required constant 8% sensitivity also reported. Capital, operations,
+required constant 8% sensitivity. In the published Auckland snapshot the browser
+shows a different figure: the median of the 1,000 parameter draws, in which the
+discount rate varies between 1.5% and 8%. That median is about 0.84 times the
+principal-schedule ratio. The principal and 8% ratios are computed in the run's
+evidence profile but are not yet published. Capital, operations,
 maintenance, renewals, treatment life, and residual value are separate
 cash-flow fields in a common real price base. Benefit categories are not
 double-counted. A research snapshot may report an indicative lifecycle
@@ -338,9 +361,13 @@ a global ratio as automatic calibration unless that transformation is
 pre-registered and out-of-sample performance improves.
 
 Parameter, structural, data, scenario, and spatial uncertainty are different
-objects. Principal results are accompanied by confidentiality-bound,
+objects. Principal results should be accompanied by confidentiality-bound,
 target-share, PCT scenario, stress, response, cost, and discount-rate
-sensitivities. Seeded Latin-hypercube parameter designs and rank stability
+sensitivities. For `run-313e0277521633d3` only the PCT scenarios and the
+Latin-hypercube draws were run; confidentiality-bound and target-share reruns
+are still outstanding. Each draw scales every candidate by the same factors, so
+the draws give a range for each candidate's ratio but cannot change rankings or
+frontier membership. Seeded Latin-hypercube parameter designs and rank stability
 summarise the declared model space; they do not claim to span every possible
 future. See `validation.md`, `uncertainty.md`, and `limitations.md`.
 
