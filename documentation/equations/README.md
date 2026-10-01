@@ -1,11 +1,11 @@
 # Equation index
 
-The files in this directory are publication-ready LaTeX fragments. They contain
-no document preamble so they can be included in a journal template with
-`\input{}`. Symbols are defined in `notation.tex`; units and executed parameter
-values remain authoritative in `../methodology/parameters.md` and the release
-configuration. The fragments require `amsmath`; `confidentiality.tex` also uses
-`\mathbb` from `amssymb`.
+These files are LaTeX fragments with no document preamble, so a journal
+template can include them with `\input{}`. Symbols are defined in
+`notation.tex`. For units and executed parameter values,
+`../methodology/parameters.md` and the release configuration take precedence.
+The fragments need `amsmath`; `confidentiality.tex` also uses `\mathbb` from
+`amssymb`.
 
 | File | Equation labels | Symbols and units | Source / assumption | Code and tests |
 | --- | --- | --- | --- | --- |
@@ -15,17 +15,16 @@ configuration. The fragments require `amsmath`; `confidentiality.tex` also uses
 | `purpose-demand.tex` | `eq:purpose-disaggregation`, `eq:purpose-edge-flow` | purpose trips and edge flows | Purpose-specific sources/weights; intrazonal conservation | Synthetic contract in `demo.py`; production adapters and reference fixtures remain a release gate |
 | `routing-impedance.tex` | `eq:routing-cost`–`eq:sampled-edge-flow` | length/generalized metres; rise/run; probability share; inverse-probability weight; trips | LTS and revealed-route-choice lineage; parameters and the route sample are declared sensitivities | `stress.py`, `r5_routing.py`, `production_routing_stage.py`; `test_stress.py`, `test_r5_routing.py`, `test_routing.py` |
 | `counterfactual.tex` | `eq:treated-cost`–`eq:incremental-trips` | generalized metres; trips | Exact-edge treatment and bounded continuous response | `candidates.py`; `test_candidates.py` |
-| `connectivity.tex` | `eq:connectivity-pass`–`eq:portfolio-change` | length ratio and CIW OD low-stress share | Complete declared OD denominator; full-network calculation required; Auckland point estimate reserved for the separate sabbatical research integration | `connectivity.py`; `test_connectivity.py` |
+| `connectivity.tex` | `eq:connectivity-pass`–`eq:portfolio-change` | length ratio and SPAN OD low-stress share | Complete declared OD denominator; full-network calculation required; no Auckland point estimate reported | `connectivity.py`; `test_connectivity.py` |
 | `equity.tex` | `eq:equity-stratum-total`–`eq:equity-representation-ratio` | outcome and reference shares | Descriptive area context only; no individual inference | Synthetic export contract in `demo.py`; production distribution tests remain a release gate |
 | `economics.tex` | `eq:annual-benefit`–`eq:discount-schedule` | real NZD in one price base | MBCM v1.7.5 and update Circular 26/01; discount Circular 25/01; separate conventional/e-bike caps; indicative screening only | `appraisal.py`; `test_appraisal.py` |
 | `uncertainty.tex` | `eq:confidentiality-envelope`–`eq:rank-acceptability` | parameter-specific units and rank shares | Declared Latin-hypercube/scenario ensemble, not universal probability | `uncertainty.py`; `test_uncertainty.py` |
 | `validation.tex` | `eq:validation-bias`–`eq:validation-null-r2` | cycles per aligned period | Present-day comparable target and spatial holdout | `validation.py`; `test_validation.py` |
 
 Paths in the final column are relative to `src/cycling_investment_workbench/`
-and `tests/`. A missing production mapping is stated explicitly rather than
-implied by a synthetic fixture.
+and `tests/`. Where a production mapping is missing, the table says so; a
+synthetic fixture is not presented as one.
 
-The aggregate cycling target should be described as the “8% commute-cycling
-modelling sensitivity,” not the “TERP cycling target.” TERP's adopted target is
-17% of all trips by cycling and micromobility combined; the denominators are not
-directly interchangeable.
+The aggregate target is the “8% commute-cycling modelling sensitivity”, not
+the “TERP cycling target”. See `../methodology/methodology.md` §3.3 for why the
+denominators differ.

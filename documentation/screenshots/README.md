@@ -1,13 +1,13 @@
 # Release screenshot specification
 
 Screenshots are generated locally from the exact web export proposed for
-release. Desktop masters are lossless 1800 × 1100 PNGs at device scale 1 with
-browser chrome excluded. The approved current state uses Analysis with only
-local, rights-cleared layers. OpenFreeMap is cleared for live contextual use,
-but its hosted tiles are excluded from deterministic captures; CARTO remains
-disabled. Keep attribution, legend, scenario, units, data status, and run
-identifier visible. Do not expose local paths, tokens, developer panels,
-personal details, or restricted data.
+release. Desktop masters are lossless 1800 × 1100 PNGs at device scale 1,
+without browser chrome. The approved capture state is Analysis with local,
+rights-cleared layers only. OpenFreeMap is cleared for live contextual use, but
+its hosted tiles are not used in the deterministic captures; CARTO remains
+disabled. Attribution, legend, scenario, units, data status, and run
+identifier stay visible. Local paths, tokens, developer panels, personal
+details, and restricted data must not appear.
 
 OpenStreetMap attribution remains on the map itself. The Auckland analysis
 shown in these images includes Stats NZ data licensed for reuse under CC BY
@@ -19,19 +19,19 @@ reused.
 The checked-in set was captured from the completed source-resolution research
 snapshot, run `run-313e0277521633d3`. It shows research-only appraisal,
 aggregate equity, programme, approximate counter and disclosure-safe safety
-context without presenting any of them as decision-ready. Full-network
-low-stress connectivity remains deliberately unreported.
+context; none of it is presented as decision-ready. Full-network low-stress
+connectivity is not reported.
 
 The seven captures below are the v1.0.0 release record and show the interface
 as it was then. The root README now shows the current SPAN interface from
 `span/span-link-detail.webp`, captured on 1 October 2026 from the same run at
 1440 × 900 with the Plain background, so it contains no hosted map tiles.
 
-Store each capture under the same basename in three subdirectories:
+Each capture is stored under the same basename in three subdirectories:
 
-- `full/`: lossless 1800 × 1100 PNG master;
-- `web/`: optimised WebP copy for the README and documentation; and
-- `thumbnails/`: aspect-preserving WebP preview for documentation indexes.
+- `full/`: lossless 1800 × 1100 PNG master
+- `web/`: optimised WebP copy for documentation
+- `thumbnails/`: aspect-preserving WebP preview for documentation indexes
 
 `manifest.csv` records basename, caption, alt text, pixel dimensions, CSS
 viewport, device scale, scenario, purpose, budget, selected candidate, run ID,
@@ -52,16 +52,15 @@ Required basenames:
 | `custom-corridor` | Graph-snapped Beach Road path, edge-level status, and the selection/export controls | “Auckland workbench showing a 1.57 kilometre graph-snapped Beach Road corridor, its edge-level screening summary, and controls for exporting the declared portfolio and exact edge identifiers.” |
 | `responsive-mobile` | Narrow responsive map and selected-candidate evidence with attribution and run context still usable | “Narrow responsive Auckland workbench showing the regional map, persistent run context, compact attribution, analysis tabs, and Beach Road candidate evidence within a 390 by 844 CSS-pixel viewport.” |
 
-The responsive capture uses its documented narrow CSS viewport and is centred
-on a plain neutral 1800 × 1100 master canvas. The recorded CSS viewport and
-canvas dimensions remain separate; no device chrome or page-content alteration
-is introduced.
+The responsive capture is centred on the plain neutral 1800 × 1100 master
+canvas, with no device frame and no change to page content.
 
-Before publication, verify every value against the checksummed export, all
-three directories contain all seven basenames in the declared formats, every
-checksum is populated and WebP copies remain legible. These file-integrity checks are complete for
-the Auckland research snapshot. Public use still depends on the remaining
-method, validation, manual-audit, asset-rights, and Git approval gates.
+Before publication, check that every value matches the checksummed export,
+that all three directories hold all seven basenames in the declared formats,
+that every checksum is filled in, and that the WebP copies are legible. These
+file checks are complete for the Auckland research snapshot. Public use still
+depends on the remaining method, validation, manual-audit, and asset-rights
+gates.
 
 The captures are reproducible from a local server hosting the built frontend
 with the curated Auckland asset extracted over its `data/` directory:
@@ -72,6 +71,6 @@ CIW_EXPECTED_RUN_ID=run-313e0277521633d3 \
 npm --prefix web run capture:screenshots
 ```
 
-The capture script verifies the run identity, rejects runtime or console
-errors, rejects external requests, resets the viewport deterministically, and
-uses the versioned states in `web/screenshot-states.json`.
+The capture script checks the run identity, fails on runtime or console errors
+and on external requests, resets the viewport the same way each time, and uses
+the versioned states in `web/screenshot-states.json`.

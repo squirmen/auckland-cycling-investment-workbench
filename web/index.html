@@ -73,7 +73,7 @@
         </header>
 
         <div id="panel-body" class="panel-body">
-          <p id="lede" class="lede">Compare cycling upgrades: what to build, what they connect and what they could change.</p>
+          <p id="lede" class="lede">Pick a goal and a budget to see which cycling upgrades to build first.</p>
           <div class="tabs" role="tablist" aria-label="Views">
             <button id="control-portfolio" class="tab active" role="tab" type="button" data-tab="portfolio" aria-controls="tab-portfolio" aria-selected="true">Build order</button>
             <button id="control-pareto" class="tab" role="tab" type="button" data-tab="pareto" aria-controls="tab-pareto" aria-selected="false" tabindex="-1">Value for money</button>
@@ -133,7 +133,7 @@
                 <label for="journey-days">Cycling commute days / year<input id="journey-days" type="number" min="0" max="366" step="1" value="220" /></label>
                 <label for="journey-legs">One-way journeys / day<select id="journey-legs"><option value="2">2 · there and back</option><option value="1">1 · one leg only</option></select></label>
               </div>
-              <p class="help">Assumed frequency for each usual cycle commuter. Annual ÷ 12 gives an average month, without seasonality. Changing this display does not change demand, rankings or benefit–cost ratios.</p>
+              <p class="help">Assumed frequency for each usual cycle commuter. Annual ÷ 12 gives an average month, without seasonality. These settings change only the journey figures, not demand, rankings or benefit–cost ratios.</p>
             </div>
           </details>
             </details>
@@ -168,7 +168,7 @@
               <button id="connected-zoom" type="button" class="secondary">Show this journey on the map</button>
               <details class="method-note"><summary>Compare ways to choose upgrades</summary><div class="context-note"><label for="connected-method">Selection method</label><select id="connected-method"><option value="route_packages_milp">Choose whole packages together</option><option value="package_greedy">Add the best package at each step</option><option value="single_project_greedy">Add the best single link at each step</option></select><p class="help">All methods use the same budget and sample. A package includes every upgrade needed to complete a route.</p></div></details>
               <details class="method-note"><summary>Route preferences</summary><div class="context-note"><label for="connected-preference">Compare route choices</label><select id="connected-preference"><option value="access">Any route within the limits</option></select><p id="connected-assignment-summary"></p><details><summary>Calculation settings</summary><p id="connected-preference-assumptions"></p></details><p class="help">These are illustrative preferences, not measured groups of cyclists. Each uses the same travel demand; do not add their results together.</p></div></details>
-              <details class="method-note"><summary>What these results can tell you</summary><div class="context-note"><p>Use this to check how links work together and identify routes for closer inspection. Costs and intersection waits are estimates, not designs or observed signal timings.</p><p id="connected-coverage"></p><p id="connected-standard"></p><p id="connected-weight"></p><p id="connected-provenance"></p><p><a href="./documentation/effective-network.md">Data and calculation notes</a></p></div></details>
+              <details class="method-note"><summary>What these results can tell you</summary><div class="context-note"><p>Use this to check how links work together and to find routes worth a closer look. Costs and intersection waits are estimates, not designs or observed signal timings.</p><p id="connected-coverage"></p><p id="connected-standard"></p><p id="connected-weight"></p><p id="connected-provenance"></p><p><a href="./documentation/effective-network.md">Data and calculation notes</a></p></div></details>
             </div>
           </section>
 
@@ -268,9 +268,9 @@
             <li>Green numbered lines are the build order: the links that fit in the budget, numbered in the order to build them.</li>
             <li>Orange is the link you have selected. Click a line or a list row to see its details.</li>
             <li>Blue squares show where the trips behind the chosen goal start. Darker means more.</li>
-            <li>Layers adds existing low-stress streets and paths where available, other candidates, Auckland Transport's plans, cycle counters and crashes. Selecting a link shows its connection points; network groups join proposals through shared junctions or existing low-stress areas.</li>
+            <li>Layers adds existing low-stress streets and paths where available, other candidates, Auckland Transport's plans, cycle counters and crashes. A selected link shows its connection points. Network groups are sets of proposals joined by shared junctions or existing low-stress areas.</li>
           </ul>
-          <p>Cycle counters: July 2026. Cycle crashes: 2016–2025. These layers provide context; they do not establish the effect of a proposed upgrade.</p>
+          <p>Cycle counters: July 2026. Cycle crashes: 2016–2025. These layers give context. They do not show the effect of a proposed upgrade.</p>
           <p id="intersection-source-note"></p>
         </section>
         <section>
@@ -299,7 +299,7 @@
         <section>
           <h3>How it is built</h3>
           <ul>
-            <li>Candidate links upgrade connected stretches of streets that are stressful to ride today. Each is costed as a protected cycleway. Their connection to existing low-stress areas is assessed separately using source junctions.</li>
+            <li>Candidate links upgrade connected stretches of streets that are stressful to ride today. Each is costed as a protected cycleway. How each one connects to existing low-stress areas is checked separately, using source junctions.</li>
             <li>Trips to work come from the 2023 Census. School, everyday and station trips link homes to school rolls, OpenStreetMap destinations and the Auckland Transport timetable. Each trip keeps up to five plausible routes, rated for traffic stress and hills.</li>
             <li>A link's value is the extra cycling the model expects once its streets are low-stress. The build order re-runs the model at each step with the earlier links in place, so shared routes are not counted twice.</li>
             <li>Whole-life cost adds 40 years of maintenance and renewal to the build cost, discounted.</li>
@@ -319,7 +319,7 @@
           <h3>Data and credits</h3>
           <p id="map-provenance-text"></p>
           <ul id="attribution" class="credit-list"></ul>
-          <p>Light and Streets use OpenFreeMap tiles and OpenStreetMap data. Plain shows no background map, as used for reproducible captures.</p>
+          <p>Light and Streets use OpenFreeMap tiles and OpenStreetMap data. Plain shows no background map and is used for reproducible captures.</p>
           <p class="about-links">
             <a id="methodology-link" href="./documentation/methodology.md">Method</a> ·
             <a href="https://github.com/squirmen/spending-priorities-active-networks" rel="noopener">Code</a> ·

@@ -4,16 +4,15 @@
 
 The next Auckland research snapshot includes every prepared public context and
 result listed below. Full-network CIW OD low-stress connectivity is the only
-deliberately deferred result. It is reserved for integration with Steve
-Gehrke's sabbatical research; the web application reports no Auckland
-low-stress point estimate in the meantime.
+deferred result; the web application reports no Auckland low-stress point
+estimate.
 
 “Available” does not mean “decision-ready.” Each layer retains its stated
 scope, provenance and limitations.
 
 ## Resolution matrix
 
-| Gap | Resolution | Public status | Important boundary |
+| Gap | Resolution | Public status | Boundary |
 | --- | --- | --- | --- |
 | Transit | Dated AT GTFS feed converted to 199 consolidated major nodes for the 2 September 2026 service day | available | Scheduled stop visits are opportunity weights, not patronage |
 | Equity | NZDep2023 joined to commute origins; aggregate decile 8–10 origin objective added | available | Distributional subgroup view, not a causal equity effect or welfare weight; raw polygons are not exported |
@@ -23,7 +22,7 @@ scope, provenance and limitations.
 | Appraisal | MBCM v1.7.5-aligned lifecycle and uncertainty outputs exposed for the declared evidence scenario | research-only | Indicative BCR, not a business-case BCR; local costs, maintenance, renewals and benefit inputs require review before decision use |
 | Terrain integrity | Every VRT-referenced LINZ raster pinned by byte count and SHA-256 | available | The 8 m contour-interpolated DEM is a coarse hilliness input and is not treated as precision terrain evidence |
 | Source provenance | Twenty configured sources mapped to explicit include, omit or restricted decisions | available | Restricted CAS microdata remains outside all public assets |
-| Low-stress connectivity | No Auckland full-network value exported | intentionally deferred | Reserved for the separate sabbatical research integration |
+| Low-stress connectivity | No Auckland full-network value exported | deferred | The OD share is defined; no full-network calculation is reported |
 
 ## Immutable prepared inputs
 

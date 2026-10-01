@@ -18,8 +18,8 @@
   docker build --tag ciw:staged-clean .
   ```
 
-- Result: the isolated staged-tree image completed successfully using a partly
-  warm local layer cache. Exact elapsed and cold-build times were not captured.
+- Result: the isolated staged-tree image built with a partly warm local layer
+  cache. Exact elapsed and cold-build times were not captured.
 - Local image ID:
   `sha256:e0c162a146e32e7517a8c015667d76b3f2ff1038aec8835b1d4af3c25316f5dd`.
 - Local image size: 566,049,220 bytes (539.83 MiB), reported by
@@ -49,16 +49,16 @@ Lock and build-file hashes used by the validation image:
 | `third_party/r5/LICENSE` | `50ceabea3b9979201c7e4e888ccce89e03a788fa9d6a546cf106c49d0f896bba` |
 | `third_party/r5py/LICENSE-MIT` | `303afa022b401801dee726af477fdca2a589c7678998fbc1de538922a5e07d2e` |
 
-The Python environment is installed with `uv sync --locked`; the frontend is
-installed with `npm ci`. The Docker build ran frontend linting, type checking,
-all 15 unit tests, and the production build before assembling the image.
-The isolated host and installed container package both reported implementation
-digest `d2730c1e232b2c1c6b26c47f0bf260ec64657eb1f5b394c0f975225a384e54d3`.
+The Python environment is installed with `uv sync --locked` and the frontend
+with `npm ci`. The Docker build ran frontend linting, type checking, all 15
+unit tests, and the production build before assembling the image. The isolated
+host and installed container package both reported implementation digest
+`d2730c1e232b2c1c6b26c47f0bf260ec64657eb1f5b394c0f975225a384e54d3`.
 
 ## Runtime checks
 
-The following checks ran successfully against `ciw:staged-clean` with
-container networking disabled:
+These checks passed against `ciw:staged-clean` with container networking
+disabled:
 
 | Check | Observed result |
 |---|---|
@@ -75,13 +75,13 @@ container networking disabled:
 | Staged/container implementation digest | Identical SHA-256 content digest `d2730c1e232b2c1c6b26c47f0bf260ec64657eb1f5b394c0f975225a384e54d3` |
 | `npm run build` in `/opt/ciw-web` | production client rebuilt successfully; 246.27 kB JavaScript bundle (69.93 kB gzip) |
 
-The first final-stage runtime check found that the complete-toolchain image did
-not preserve the methodology source used by the frontend bundler. The
-Dockerfile now copies that source into `/opt/documentation`; the image above is
-the post-fix rebuild, and its independent in-image frontend rebuild passed.
-The same audit found that the pinned r5py package would otherwise download its
-R5 JAR at first import. The final image instead embeds and checksum-verifies R5
-7.5.1 during the build and directs r5py to that fixed local path. Both runtime
+The first final-stage runtime check found that the complete-toolchain image
+did not keep the methodology source used by the frontend bundler. The
+Dockerfile now copies that source into `/opt/documentation`. The image above
+is the rebuild after that fix, and its in-image frontend rebuild passed. The
+same check found that the pinned r5py package would otherwise download its R5
+JAR at first import. The final image instead embeds and checksum-verifies R5
+7.5.1 during the build and points r5py to that fixed local path. Both runtime
 checks above were repeated with container networking disabled.
 
 ## Toolchain targets and bounds
@@ -97,16 +97,16 @@ docker build --target analysis-runtime \
   -t auckland-cycling-investment-workbench:runtime .
 ```
 
-Chromium is intentionally not embedded in either image. Browser installation
-and Playwright accessibility/end-to-end tests run in the locked GitHub Actions
-job; this avoids shipping a browser in the analysis runtime.
+Neither image includes Chromium. Browser installation and Playwright
+accessibility and end-to-end tests run in the locked GitHub Actions job, so the
+analysis runtime does not ship a browser.
 
-No process-level peak-memory telemetry was captured, so no peak is claimed.
-The build ran inside a Colima VM hard-limited to 8 GiB, establishing an 8 GiB
-upper bound for the whole VM during this run, not a measured build peak. This is
-below the 20 GB acceptance ceiling.
+No process-level peak memory was captured, so no peak is claimed. The build
+ran inside a Colima VM hard-limited to 8 GiB. That is an upper bound for the
+whole VM during this run, not a measured build peak, and it is below the 20 GB
+acceptance ceiling.
 
-Only the Linux arm64 image was built and exercised locally. The base-image pins
-are multi-platform indexes and the Dockerfile is architecture-neutral, but an
-independent Linux amd64 build and runtime check remain required before claiming
-verified multi-architecture reproduction.
+Only the Linux arm64 image was built and run locally. The base-image pins are
+multi-platform indexes and the Dockerfile is architecture-neutral, but an
+independent Linux amd64 build and runtime check are still needed before
+multi-architecture reproduction can be called verified.

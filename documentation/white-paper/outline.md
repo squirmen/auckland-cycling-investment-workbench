@@ -1,15 +1,15 @@
 # White-paper outline
 
-Use a layered document: an eight-page decision brief that stands alone,
-followed by a technical paper/annex that supports peer review and reproduction.
-Bullets below are drafting prompts, not finished claims.
+The paper has two parts: an eight-page decision brief that stands alone, then a
+technical paper or annex for peer review and reproduction. The bullets are
+drafting prompts, not finished claims.
 
 ## Front matter
 
-- Title focused on transparent network investment screening, not software.
+- Title about network investment screening, not the software.
 - Named version, Auckland study boundary, data vintage, and analysis date.
 - Authors, affiliations, contributions, funding, conflicts, data/code statement.
-- One-sentence posture: early option screening, not detailed design or formal
+- One-sentence scope: early option screening, not detailed design or a formal
   business case.
 - Plain-language glossary: OD, PCT, LTS, generalized cost, connectivity,
   counterfactual, lifecycle BCR, uncertainty.
@@ -20,7 +20,7 @@ Bullets below are drafting prompts, not finished claims.
 
 - Which connected investments warrant the next stage of investigation?
 - Why isolated project scoring misses network complementarity.
-- What evidence a decision-maker can and cannot obtain from the workbench.
+- What evidence a decision-maker can and cannot get from SPAN.
 
 ### 2. Auckland context
 
@@ -32,20 +32,20 @@ Bullets below are drafting prompts, not finished claims.
   activities.
 - Adopted TERP target: 17% all trips cycling plus micromobility by 2030; 13% by
   distance.
-- Explicitly separate that target from the 8% commute-cycling modelling
+- Keep that target separate from the 8% commute-cycling modelling
   sensitivity.
 - Data constraints: commute focus, disclosure control, sparse counters,
   incomplete network attributes, unavailable workplace SA2, structurally
   removed low-count OD rows, and non-interchangeable OD/margin universes.
 
-### 3. How to read the workbench
+### 3. How to read SPAN
 
 - Map layers: modelled demand, low-stress network, gaps, context, uncertainty.
 - Candidate card: treatment, route change, incremental demand, connectivity,
   lifecycle ratio, data completeness, routing coverage, rank/frontier
   stability, sensitivity, and warnings.
-- Presets and Pareto frontier: visible value judgements and trade-offs, not one
-  supposedly authoritative rank.
+- Presets and Pareto frontier: visible value judgements and trade-offs, not a
+  single authoritative rank.
 - Portfolios: marginal value after cumulative rerouting, not static addition.
 - User-drawn corridor: consistent assumptions, exploratory only.
 
@@ -63,8 +63,8 @@ Bullets below are drafting prompts, not finished claims.
 
 ### 5. Decision implications
 
-- Robust candidates: stable across plausible assumptions and useful in multiple
-  sequences.
+- Stable candidates: hold up across plausible assumptions and are useful in
+  several sequences.
 - Contingent candidates: depend on preceding links, cost, or response.
 - Evidence-first candidates: potentially important but blocked by missing
   topology, counts, design, or cost evidence.
@@ -89,8 +89,8 @@ Bullets below are drafting prompts, not finished claims.
   response, weighted connectivity, cumulative re-routing, lifecycle appraisal,
   and uncertainty.
 - Results: four or five manifest-derived quantities with intervals.
-- Contribution: methodological integration and auditability; do not claim each
-  component is individually novel.
+- Contribution: integration of the methods and auditability; do not claim each
+  component is new.
 - Limitations and transferability.
 
 ### 1. Introduction
@@ -105,7 +105,7 @@ Bullets below are drafting prompts, not finished claims.
     connectivity?
   - How does cumulative re-routing alter project sequence and rank stability?
   - Which uncertainties drive decision class?
-- Contributions and explicit non-contributions.
+- Contributions, and what the paper does not claim.
 
 ### 2. Literature and method lineage
 
@@ -145,8 +145,8 @@ Bullets below are drafting prompts, not finished claims.
 
 - Independent PCT equation implementation and coefficient verification.
 - Target-constrained capped allocation over a declared source-compatible OD
-  universe; joint lower/point/upper total-and-bicycle runs; explicit unallocated
-  target from route failures.
+  universe; joint lower/point/upper total-and-bicycle runs; target left
+  unallocated by route failures, reported as its own value.
 - Separate commute, school, everyday, and transit demand surfaces with
   purpose-specific origin/destination weights and intrazonal conservation.
 - Source-ID, direction-, access-, and layer-aware graph construction.
@@ -156,8 +156,7 @@ Bullets below are drafting prompts, not finished claims.
   distinguish the current production choice set from the tested full-network
   reference algorithm.
 - Demand-weighted OD low-stress connectivity definition with detour cap; state
-  that the Auckland point estimate is reserved for the separate sabbatical
-  research integration.
+  that this release reports no Auckland point estimate.
 - Named priority presets, Pareto dominance, and cumulative retained-path
   portfolio recomputation.
 - Lifecycle benefits/costs in common real prices, with the current stepped
@@ -183,7 +182,7 @@ Bullets below are drafting prompts, not finished claims.
 - Where transferable propensity helps and where local behavioural estimation is
   still needed.
 - Meaning of connectivity and why it is not a universal city score.
-- Planning value of reproducibility, adverse diagnostics, and explicit
+- Planning value of reproducibility, adverse diagnostics, and stated
   uncertainty.
 - Comparison with PCT and LTS literature without claiming equivalence.
 - Generalisability requirements for another New Zealand region.
@@ -200,7 +199,7 @@ Bullets below are drafting prompts, not finished claims.
 
 ### 8. Conclusion
 
-- One paragraph on transparent, conditional screening.
+- One paragraph on conditional screening and what it can show.
 - One paragraph on what must happen before investment decisions.
 - Reproducibility and release archive statement.
 

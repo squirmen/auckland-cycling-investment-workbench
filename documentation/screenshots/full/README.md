@@ -1,6 +1,7 @@
 # Full release captures
 
-Lossless 1800 × 1100 PNG masters from the verified web export belong here.
-The responsive-mobile exception retains the native page pixels on an 1800 ×
-1100 neutral canvas and records both dimensions. Required basenames and
-metadata are defined one directory above. No placeholder image is permitted.
+Lossless 1800 × 1100 PNG masters from the verified web export. The
+responsive-mobile capture keeps its native page pixels on an 1800 × 1100
+neutral canvas, and both sizes are recorded. Basenames are listed in
+`../README.md` and metadata in `../manifest.csv`. Placeholder images are not
+allowed.

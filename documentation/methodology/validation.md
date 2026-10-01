@@ -1,9 +1,8 @@
 # Validation protocol
 
-Validation is a release gate, not a decorative summary. A build may be
-reproducible and still invalid for a proposed use. The release report must show
-coverage, errors, exclusions, and adverse results as prominently as favourable
-ones.
+Validation is a release gate. A build can be reproducible and still unfit for
+a proposed use. The release report must show coverage, errors, exclusions and
+adverse results as prominently as favourable ones.
 
 ## 1. Stage-level integrity checks
 
@@ -76,11 +75,11 @@ ones.
 
 ### Comparable target
 
-Cycle counters observe use at a site and period. They do not directly observe
+Cycle counters record use at a particular site and time. They do not observe
 census commute OD flows or a future policy scenario. The validation target must
-therefore be a present-day, purpose- and period-compatible model output. A
-future scenario may be plotted for context but must not be used to assert
-present-day predictive accuracy.
+therefore be a present-day model output that matches the counter's purpose and
+period. A future scenario may be plotted for context but must not be used to
+claim present-day predictive accuracy.
 
 ### Site eligibility
 
@@ -93,9 +92,8 @@ For every counter, record:
   ambiguous; and
 - a pre-declared inclusion or exclusion reason.
 
-Prefer a strict match tolerance appropriate to network accuracy; wider search
-radii are diagnostic only. Do not discard zero model predictions merely to
-improve fit.
+Use a strict match tolerance suited to network accuracy; wider search radii are
+diagnostic only. Do not discard zero model predictions to improve fit.
 
 ### Metrics
 
@@ -110,8 +108,8 @@ For all eligible sites and pre-declared strata, report:
   and
 - sensitivity to matching tolerance and temporal aggregation.
 
-An \(R^2\) below zero means the predictions perform worse than the observed
-mean under that definition. It must not be reframed as agreement. A median
+An \(R^2\) below zero means the predictions do worse than the observed mean
+under that definition, and must not be reported as agreement. A median
 observed/modelled ratio is a scale diagnostic, not validation of spatial rank
 or candidate benefits.
 
@@ -136,8 +134,8 @@ routes exist:
 - stratify by trip purpose and bicycle type; and
 - keep calibration evidence geographically distinct from final evaluation.
 
-Absent local route-choice evidence, the generalized-cost parameters remain
-structural sensitivities rather than calibrated behavioural coefficients.
+Without local route-choice evidence, the generalized-cost parameters remain
+structural sensitivities, not calibrated behavioural coefficients.
 
 ## 4. Network and candidate face validation
 
@@ -152,9 +150,10 @@ A preregistered expert-review sample should include:
 
 Reviewers record, without seeing the model rank where practical: physical
 feasibility, missing crossings, duplicate provision, demand plausibility,
-deliverability, omitted projects, and data errors. Review is evidence about
-construct validity, not permission to alter individual scores after seeing the
-result. Corrections to source data or general rules trigger a complete rerun.
+deliverability, omitted projects, and data errors. Review is evidence of
+construct validity; it does not permit changing individual scores after seeing
+the result. Corrections to source data or general rules trigger a complete
+rerun.
 
 ## 5. Sensitivity and falsification tests
 
@@ -172,7 +171,7 @@ The release report includes at least:
 
 Report rank correlation, top-k overlap, sign changes, and threshold-crossing
 probability for key decisions. A candidate whose decision class is unstable is
-labelled accordingly rather than assigned a precise rank.
+labelled unstable, not given a precise rank.
 
 ## 6. Release acceptance criteria
 

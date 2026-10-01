@@ -1,8 +1,9 @@
 # Data dictionary
 
-Names describe the canonical analytical schema. Importers may map publisher
+Field names follow the canonical analytical schema. Importers may map publisher
 fields to these names, but the mapping and units must appear in the provenance
-manifest. Identifiers are strings to prevent truncation and preserve prefixes.
+manifest. Identifiers are strings so they are not truncated and keep their
+prefixes.
 
 ## Network nodes
 
@@ -64,9 +65,9 @@ manifest. Identifiers are strings to prevent truncation and preserve prefixes.
 
 ## OD source coverage
 
-This ledger describes source-universe omissions that cannot be represented as
-ordinary OD rows. It is kept separately so an absent pair is never confused
-with an explicit suppression marker or numeric zero.
+This ledger records source-universe omissions that cannot be represented as
+ordinary OD rows. It is kept separate so an absent pair is never confused with
+a suppression marker or a numeric zero.
 
 | Field | Type | Unit | Constraint / meaning |
 | --- | --- | --- | --- |
@@ -147,14 +148,14 @@ the public browser snapshot; only aggregate subgroup metrics are exported.
 | `changed_edge_ids` | array[string] | — | Edges whose treatment/cost changed |
 | `additional_cycle_by_od` | object | trips | Increment attributed by the declared response model |
 | `additional_cycle_trips` | number | trips | Sum of the OD-level increments |
-| `od_low_stress_share_delta`, `demand_weighted_od_low_stress_share_delta` | number/null | share | Marginal SPAN OD low-stress connectivity share under the complete stated denominator; null when full-network rerouting has not executed |
+| `od_low_stress_share_delta`, `demand_weighted_od_low_stress_share_delta` | number/null | share | Marginal SPAN OD low-stress connectivity share under the complete stated denominator; null when full-network rerouting has not run |
 | `annual_benefit_nzd` | number | NZD/year and stated price base | Incremental monetised categories only |
 | `screening_bcr` | number/null | ratio | Present-value benefits divided by present-value costs |
-| `uncertainty_*` | number/null | field unit | Clearly named conditional interval metrics |
+| `uncertainty_*` | number/null | field unit | Named conditional interval metrics |
 | `data_completeness` | number/null | share | Share of required candidate evidence present under the declared rule |
 | `routing_coverage` | number/null | share | Share of the affected OD market successfully recomputed |
 | `frontier_stability` | number/null | share | Fraction of declared uncertainty runs in which the candidate remains non-dominated |
-| `rank_stability` | number/null | share | Declared top-k inclusion frequency or other explicitly named rank-stability measure |
+| `rank_stability` | number/null | share | Declared top-k inclusion frequency or another named rank-stability measure |
 | `sensitivity_range` | number/null | declared unit | Range of the named outcome across the declared parameter/structural design |
 | `warnings` | array[string] | — | Data, topology, extrapolation, or interpretation flags |
 
@@ -201,6 +202,6 @@ the public browser snapshot; only aggregate subgroup metrics are exported.
 | `runtime` | object | Python, dependency, operating-system, JVM, Java, R5, and other recorded runtime versions where applicable |
 | `stages` | object | Status, content fingerprint, timing, metrics, error, and checksummed outputs for every stage |
 
-The public release dossier supplements the run manifest with source titles,
-publisher URLs, snapshot dates, licences, and the checksum of each dependency
-lock. It must not infer those rights from a file's presence.
+The public release dossier adds source titles, publisher URLs, snapshot dates,
+licences and the checksum of each dependency lock to the run manifest. Rights
+must not be inferred from a file being present.

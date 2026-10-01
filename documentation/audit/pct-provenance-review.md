@@ -9,16 +9,16 @@ the PCT-related function in the legacy CDI workspace
 
 ## Decision
 
-The standalone implementation may remain under the project MIT software
-licence, subject to preserving the citations and notices listed below. The
-review found an independently structured Python implementation of a published
-mathematical model; it did not find copied R or application source from the
-AGPL PCT website or the GPL-3 `pct` package.
+The standalone implementation may stay under the project MIT software
+licence, provided the citations and notices listed below are kept. The review
+found an independently structured Python implementation of a published
+mathematical model. It found no copied R or application source from the AGPL
+PCT website or the GPL-3 `pct` package.
 
-This is a project provenance decision, not legal advice. It must be revisited
-if PCT application/package source is copied into the repository, if a generated
-file embeds that source, or if the implementation is replaced from a third-party
-codebase.
+This is a project provenance decision, not legal advice. Revisit it if PCT
+application or package source is copied into the repository, if a generated
+file embeds that source, or if the implementation is replaced from a
+third-party codebase.
 
 ## Sources reviewed
 
@@ -41,7 +41,7 @@ codebase.
 
 ## What is carried from the published method
 
-The following are methodological facts or mathematical content recorded with
+These methodological facts and mathematical content are carried over with
 attribution:
 
 - the logistic functional form;
@@ -51,10 +51,10 @@ attribution:
 - percentage-gradient and kilometre units; and
 - the 30 km upper distance cap used by the maintained reference implementation.
 
-The public documentation must continue to describe these as PCT scenarios
-developed for England, not calibrated predictions for Auckland. The separate
-8% commute sensitivity is a CIW policy sensitivity and is not a PCT or Auckland
-Transport forecast.
+Public documentation must keep describing these as PCT scenarios developed
+for England, not calibrated predictions for Auckland. The separate 8% commute
+sensitivity is a CIW policy sensitivity, not a PCT or Auckland Transport
+forecast.
 
 ## Independent implementation findings
 
@@ -102,9 +102,9 @@ dependency or import. A whitespace- and number-normalised line comparison of
 the standalone PCT section with the legacy helper returned a SequenceMatcher
 ratio of 0.014085 and no exact block longer than one punctuation-only line.
 The broader non-comment file comparison returned 0.009940 and the same
-one-line maximum. This is reproducible technical provenance evidence, not a
-legal determination. It closes the source-similarity check for this exact
-source state and must be repeated if the implementation changes before a tag.
+one-line maximum. These results close the source-similarity check for this
+exact source state. Repeat the check if the implementation changes before a
+tag.
 
 ## Licence boundary
 

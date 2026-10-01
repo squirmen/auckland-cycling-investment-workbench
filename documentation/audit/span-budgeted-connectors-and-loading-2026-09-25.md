@@ -1,24 +1,24 @@
 # SPAN: budgeted connectors and smaller candidate loading
 
 25 September 2026. Follow-up to the [short-link diagnosis](span-candidate-coverage-2026-09-25.md).
-The connector results below remain experiments. The loading change preserves
-the published model values; neither change has been deployed in this pass.
+The connector results below are experiments. The loading change keeps the
+published model values. Neither change was deployed in this pass.
 
 ## Short connections within a budget
 
 The new `--budget-short-connectors` option tests whole excluded short chains in
-an additional budgeted portfolio, on the same sampled journeys as the original
+a second budgeted portfolio, on the same sampled journeys as the original
 experiment. It does not replace the original portfolio, route assignment or
-browser report. Every selected short project is charged once, including when
-several journeys share it.
+browser report. Each selected short project is charged once, even when several
+journeys share it.
 
-Original feasible route columns are retained and checked against the expanded
-graph. This prevents a capped search from discarding known alternatives when
-more projects become available. All three methods receive the same resulting
-route union. Each route is independently checked for directed continuity,
-endpoints, required projects, turn prohibitions, intersection stress and delays,
-distance, travel time and cost. Every reported served journey must have a fully
-funded checked route.
+Original feasible route columns are kept and checked against the expanded
+graph, so a capped search cannot discard known alternatives when more projects
+become available. All three methods receive the same resulting route union.
+Each route is checked on its own for directed continuity, endpoints, required
+projects, turn prohibitions, intersection stress and delays, distance, travel
+time and cost. Every journey reported as served must have a fully funded,
+checked route.
 
 ### Paired results at a NZ$20m cap
 
@@ -31,15 +31,15 @@ funded checked route.
 
 The first three areas each use 24 sampled records; Shelly Beach has only one
 eligible record. The objective maximises their retained eligible-demand weights,
-not the number of records served. These are **not additional cyclists**, observed
-trips or area-wide estimates. They must not be expanded into forecasts.
+not the number of records served. These are not additional cyclists, observed
+trips or area-wide estimates, and must not be expanded into forecasts.
 
 The package optimiser and whole-route greedy method tie on served weight,
 journey count and cost in all four NZ$20m tests. Single-project greedy connects
 two Ponsonby records and none in the other areas. There is still no evidence
-here of an optimiser advantage over the strong whole-route greedy baseline.
+here that the optimiser does better than the strong whole-route greedy baseline.
 
-### Important limits
+### Limits
 
 Budgeted connector searches hit the 15,000-label cap for 15/24 Ponsonby records,
 16/24 Hospital Road records and 18/24 Grand Drive records. Shelly Beach's single
@@ -50,34 +50,35 @@ Search convergence needs more work before these results can support planning.
 
 The 4 km crops, exact source directions, LTS ≤ 2 threshold, 1.5-times-shortest
 in-crop distance limit, 30-minute limit and assumed crossing delays are unchanged.
-Partial chains crossing the boundary are not restored. The original provisional
-NZ$6,000/m screening rate is used for short works; real crossing treatments,
-fixed project costs, street widths and engineering feasibility are not established.
+Partial chains crossing the boundary are not restored. Short works use the
+original provisional NZ$6,000/m screening rate. Real crossing treatments, fixed
+project costs, street widths and engineering feasibility are not established.
 
 The [aggregate report](span-budgeted-connectors-2026-09-25.json) records original
-and connector-enabled portfolios separately, source and implementation hashes,
-search limits and checked-witness counts. The public summary explicitly selects
-aggregate fields so future private journey diagnostics cannot be copied through
-automatically. Source runs and published rankings remain unchanged.
+and connector-enabled portfolios separately, with source and implementation
+hashes, search limits and checked-witness counts. The public summary copies only
+named aggregate fields, so private journey diagnostics added later cannot pass
+into it automatically. Source runs and published rankings are unchanged.
 
 ## Smaller candidate data, with the same model values
 
-The release build now produces a versioned compact candidate file alongside the
-canonical GeoJSON. Repeated metric objects use a shared table, with field names
-defined once by the format version. No coordinates or numeric values are rounded,
-and no scenarios or purposes are dropped. Each distinct metric is validated once
-on decoding and kept immutable when shared.
+The release build now writes a versioned compact candidate file alongside the
+canonical GeoJSON. Repeated metric objects go in a shared table, with field
+names defined once by the format version. No coordinates or numeric values are
+rounded, and no scenarios or purposes are dropped. Each distinct metric is
+validated once on decoding and kept immutable when shared.
 
 The manifest binds the compact bytes to both their own SHA-256 and the canonical
 source layer's SHA-256. The browser checks these bindings and the feature count
-before using the result. It does not also download the canonical file. A corrupt
-compact file fails explicitly; there is no unchecked fallback. Older exports
-without the descriptor keep their existing verified GeoJSON loading path.
+before using the result, and does not also download the canonical file. A
+corrupt compact file is rejected with an error; there is no unchecked fallback.
+Older exports without the descriptor keep their existing verified GeoJSON
+loading path.
 
 Every browser-validated field in all 12,580 candidates was compared exactly after
 decoding, including metrics, geometry, route use and network context. Canonical
-GeoJSON remains bundled for reproducibility and retains its original checksum.
-The build stops if the metric schema changes without updating the format.
+GeoJSON is still bundled for reproducibility and keeps its original checksum.
+The build stops if the metric schema changes without a format update.
 
 | Measure | Canonical representation | Compact representation |
 | --- | ---: | ---: |
@@ -90,7 +91,7 @@ That is about 59% less uncompressed JSON, 11% less estimated gzip transfer,
 24% less decode time and 37% lower peak process memory in this local test.
 These are not total page-load, browser-heap or real-phone measurements. Timing
 excludes hashing, networking, filesystem reads, compression and map rendering.
-The candidate dataset is still large; staged loading remains a useful next step.
+The candidate dataset is still large, so staged loading is a useful next step.
 
 [Raw measurements, order and limitations](span-candidate-loading-2026-09-25.json).
 The browser layout is unchanged: no extra controls, notices or research page.
@@ -110,8 +111,8 @@ The local release archive passes packaging and integrity checks, but is not depl
 Next: test search-cap convergence on paired journeys, check crossing-specific
 treatments and costs, and reduce initial browser work further through staged
 data loading. Demand calibration, independent spatial support and external
-comparative validation remain priorities; more connected sample records alone
-do not establish better real-world investment decisions.
+comparative validation remain priorities. More connected sample records do not
+by themselves establish better real-world investment decisions.
 
 ## Reproduce
 

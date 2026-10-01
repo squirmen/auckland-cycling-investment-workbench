@@ -16,7 +16,7 @@ GitHub release.
 | Members | `data/ASSET_NOTICE.json`, `data/manifest.json`, and six GeoJSON layers |
 | Appraisal capability | `research_only`; candidate BCR intervals are exposed only with the declared caveats |
 | Equity capability | `available`; aggregate NZDep decile 8–10 origin objective only |
-| Low-stress connectivity | Intentionally unreported; all Auckland point-estimate fields remain null |
+| Low-stress connectivity | Not reported; all Auckland point-estimate fields are null |
 
 The packager verifies every run-declared output, normalises tar metadata and
 gzip time for deterministic bytes, rejects paths outside `data/`, and verifies
@@ -34,18 +34,17 @@ research-snapshot limitations.
 | `programmes.geojson` | `09c9a73f978e76c58213b4dcfa941f20ad6eb9625d65be70665c866b92a232c1` | Include 2,017 strategic/planned/committed features; Future Connect is not presented as funded |
 | `counters.geojson` | `16b019e47e36a8c4237ae7a101485c854387b9157c40a4cc2f67afb1aae44ecd` | Include 73 approximate July 2026 plausibility sites; not predictive validation |
 | `safety.geojson` | `95bb96e3f3a023215d6d274e764def4392f664ec60e176cc152660c2985a5852` | Include 250 disclosure-safe 500 m cells; raw CAS records remain excluded |
-| `manifest.json` | `8166ea14b64b6ca36410c4915ffbd66f8c7568db777a8923bb54f918d0a95d40` | Include; checksums, licences, capabilities, warnings and validation status are explicit |
+| `manifest.json` | `8166ea14b64b6ca36410c4915ffbd66f8c7568db777a8923bb54f918d0a95d40` | Include; records checksums, licences, capabilities, warnings and validation status |
 
 The authoritative decision chain is
 [`public-layer-rights.csv`](public-layer-rights.csv). Redistribution permission
-does not make a result decision-ready: the asset remains a research snapshot,
+does not make a result decision-ready. The asset remains a research snapshot,
 cycle counters remain a plausibility check, appraisal remains indicative, and
-full-network low-stress connectivity remains reserved for the separate
-sabbatical research integration.
+full-network low-stress connectivity is not reported.
 
 ## Publication gate
 
 The existing `v1.0.0` release and Pages configuration point to the previous
-public snapshot. Replacing that asset or deployment requires a separately
-reviewed staging set, commit, push, pull request, release asset and Pages
-approval. This document records local evidence only.
+public snapshot. Replacing that asset or deployment needs its own reviewed
+staging set, commit, push, pull request, release asset and Pages approval.
+This document records local evidence only.

@@ -1,14 +1,14 @@
 # White-paper limitation checklist
 
-This checklist governs the executive brief and technical paper. The fuller
-method limitation statement is in `../methodology/limitations.md`.
+This checklist applies to the executive brief and technical paper. The full
+method limitations are in `../methodology/limitations.md`.
 
 ## Claims boundary
 
 - [ ] Label the Auckland outputs as a **research snapshot**, identify the exact
   run manifest, and state that counter validation, manual audit, local economic
-  evidence, and public-release clearance remain incomplete. Keep the miniature
-  fixture explicitly labelled synthetic wherever it is shown.
+  evidence, and public-release clearance remain incomplete. Mark the miniature
+  fixture as synthetic wherever it is shown.
 - [ ] Describe PCT outputs and the 8% commute case as scenarios, not forecasts or
   adopted targets.
 - [ ] Describe corridor effects as conditional model comparisons, not causal
@@ -55,11 +55,11 @@ method limitation statement is in `../methodology/limitations.md`.
   scenario against today's counters.
 - [ ] Publish counter coverage, exclusions, bias, MAE, RMSE, association,
   calibration, and spatial residuals, including poor results.
-- [ ] Call parameter/scenario ensembles what they are; do not present subjective
-  ranges as complete predictive probabilities.
+- [ ] Describe parameter and scenario ensembles as ensembles; do not present
+  subjective ranges as complete predictive probabilities.
 - [ ] Show structural and spatial alternatives, not only parameter variation.
-- [ ] Report rank acceptability and decision-class changes rather than precise
-  deterministic ranks alone.
+- [ ] Report rank acceptability and decision-class changes, not deterministic
+  ranks alone.
 
 ## Economics and delivery
 
@@ -67,7 +67,7 @@ method limitation statement is in `../methodology/limitations.md`.
 - [ ] Include ramp-up, capital, maintenance, renewals, asset life, and residual
   value, with the applicable MBCM version.
 - [ ] Apply the stepped non-commercial discount schedule and report the required
-  8% sensitivity, unless the activity is explicitly classified otherwise.
+  8% sensitivity, unless the activity is classified otherwise.
 - [ ] Disclose excluded benefits and costs and guard against double counting.
 - [ ] State that generated edge sets are not surveyed designs and omit property,
   utilities, structures, consenting, consultation, and delivery constraints

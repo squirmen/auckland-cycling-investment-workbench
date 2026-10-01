@@ -36,12 +36,13 @@ skips the initial file and loads the full set once.
 These are local Node measurements. They exclude the network, hashing and map
 drawing, and are not browser or phone timings.
 
-The manifest binds the initial file to its own SHA-256, the canonical layer's
-SHA-256, its link count and its scope. The browser checks all four, and checks
-that every build-order link is present, before using it. A modified file is
-refused; there is no silent fallback to another file. If the later full load
-fails, the build order stays on screen and the action can be repeated. The
-packaging script repeats the same checks before an archive is written.
+The manifest ties the initial file to its own SHA-256, the canonical layer's
+SHA-256, its link count and its scope. Before using the file, the browser
+checks these four values and confirms that every build-order link is present.
+A modified file is refused, with no silent fallback to another file. If the
+later full load fails, the build order stays on screen and the action can be
+retried. The packaging script repeats the same checks before an archive is
+written.
 
 ## Tighter search bounds are safe but change little
 
@@ -51,8 +52,8 @@ street. The new `--connector-stress-bounds` option uses only streets that are
 low-stress already or could be made low-stress by an available project. The
 shortest legal distance that defines the detour limit is unchanged.
 
-Every acceptable route still lies inside the relaxed graph, so no acceptable
-route is pruned. Tests compare complete searches with and without the new bounds
+Every acceptable route still lies inside this relaxed graph, so no acceptable
+route is pruned. Tests run complete searches with and without the new bounds
 on 20 random graphs with turn bans, crossing projects and preference costs, and
 require identical results.
 
@@ -65,11 +66,11 @@ On the four area samples at the 15,000-label limit:
 | Grand Drive | 18 → 17 of 24 | 260,100 → 246,557 | 460 → 460 | unchanged: 3 records, NZ$16.93m |
 | Shelly Beach Road | 0 → 0 of 1 | 19 → 19 | 0 → 0 | unchanged: none |
 
-One more Grand Drive search finishes. Nothing else changes materially, so loose
-distance bounds are not what stops these searches. A likely cause is the number
-of project combinations along similar routes; that has not been measured. The
-option stays off by default. Search convergence is still open, and the next
-step is to test a different way of generating routes, not a tighter bound.
+One more Grand Drive search finishes. Nothing else changes much, so loose
+distance bounds are not what stops these searches. A likely cause, not yet
+measured, is the number of project combinations along similar routes. The
+option stays off by default. Search convergence is still open; the next step is
+to test a different way of generating routes, not a tighter bound.
 
 Records are sampled commute records, not extra cyclists.
 

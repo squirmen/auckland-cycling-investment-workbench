@@ -1,7 +1,7 @@
 # Uncertainty framework
 
-SPAN avoids compressing all uncertainty into one interval. Each source
-has a different interpretation and mitigation.
+SPAN does not compress all uncertainty into one interval. Each class below is
+interpreted and handled differently.
 
 | Class | Examples | Principal treatment | What remains outside it |
 | --- | --- | --- | --- |
@@ -9,36 +9,35 @@ has a different interpretation and mitigation.
 | Parameter | PCT coefficients, stress multipliers, elasticity, costs, values, discount rate | documented distributions/ranges and global sensitivity | omitted mechanisms |
 | Structural | trip-purpose restriction, one best path versus path set, induced-demand model, static land use | competing model specifications | unknowable future system change |
 | Spatial | geography aggregation, centroid/snap choice, topology errors, MAUP | alternative zones/snaps, audit samples, topology warnings | all positional and boundary uncertainty |
-| Scenario | target share, implementation year, programme interactions | clearly named scenarios, never probability claims without basis | political and delivery uncertainty |
+| Scenario | target share, implementation year, programme interactions | named scenarios, never probability claims without basis | political and delivery uncertainty |
 | Computational | finite simulation draws, tie handling, numerical tolerance | fixed seeds, convergence checks, deterministic ties | software defects, addressed separately by tests |
 
 ## Confidentiality-bound scenarios
 
 **Status for `run-313e0277521633d3`:** not yet run. The routing stage uses one
-interpretation, with suppressed bicycle cells at their lower bound. The design
-below is what the paired runs must do.
+interpretation, with suppressed bicycle cells at their lower bound. The paired
+runs must follow the design below.
 
-The lower, point, and upper interpretations of disclosure-controlled counts are
-to be run end to end. Eligible-total and bicycle-subset values are selected or drawn
-jointly so bicycle never exceeds total stated. The resulting range is not a
-frequentist confidence interval; it answers how results change across declared
-interpretations compatible with the published table. Spatial correlation
-introduced by disclosure control may remain. The full-origin SA2 margin is not
-used to close or rescale the internal OD table unless an exact universe
-reconciliation has been demonstrated; otherwise its uncertainty comparison is
-reported as a soft validation diagnostic.
-Structurally absent table-121988 rows are not sampled as if they were explicit
-suppressed cells. When no compatible publisher total bounds their mass, that
-coverage gap remains outside the numerical ensemble and is reported as an
-unresolved structural limitation.
+Each of the lower, point and upper interpretations of disclosure-controlled
+counts is to be run end to end. Eligible-total and bicycle-subset values are
+selected or drawn jointly, so bicycle never exceeds total stated. The resulting
+range is not a frequentist confidence interval. It shows how results change
+across declared interpretations that fit the published table. Spatial
+correlation introduced by disclosure control may remain.
+
+The full-origin SA2 margin is not used to close or rescale the internal OD
+table unless an exact universe reconciliation has been shown; otherwise the
+comparison is reported as a soft validation diagnostic. Structurally absent
+table-121988 rows are not sampled as if they were suppressed cells. When no
+compatible publisher total bounds their mass, the gap stays outside the
+numerical ensemble and is reported as an unresolved structural limitation.
 
 ## Parameter uncertainty
 
 Use a reproducible seeded Latin-hypercube design over declared marginal
-distributions or bounded ranges. Preserve
-logical dependencies: for example, higher capital unit cost should propagate to
-renewal cost, and values with a shared price base should use the same update
-factor.
+distributions or bounded ranges. Keep logical dependencies: for example, a
+higher capital unit cost should carry through to renewal cost, and values with
+a shared price base should use the same update factor.
 
 For each outcome report:
 
@@ -49,8 +48,9 @@ For each outcome report:
 - the assumed parameter distributions and correlations.
 
 The default design has 1,000 draws and seed 20260301. Convergence is checked
-against additional draws and seeds. These are parameter/scenario ensembles
-unless the distributions have empirical probability meaning.
+against additional draws and seeds. The results describe a parameter/scenario
+ensemble, not probabilities, unless the distributions have an empirical
+probability meaning.
 
 ## Structural scenarios
 
@@ -69,17 +69,17 @@ At minimum, compare:
 Results that reverse across plausible structures are model-dependent and must
 be described as such.
 
-## Spatial robustness
+## Spatial sensitivity
 
 Assess sensitivity to OD representative points, snap thresholds, network
 vintage, route alternatives, and analysis geography. Publish the number and
-demand share of unsnapped or unreachable pairs. Maps use uncertainty hatching
-or separately labelled evidence components where exact-looking colours would
-imply unsupported spatial precision.
+demand share of unsnapped or unreachable pairs. Where exact-looking colours
+would imply more spatial precision than the data support, maps use uncertainty
+hatching or separately labelled evidence components.
 
 ## Decision communication
 
-Every candidate card and table should separate:
+Every candidate card and table should show these separately:
 
 - central conditional estimate;
 - interval or sensitivity range and its type;
@@ -90,6 +90,6 @@ Every candidate card and table should separate:
 - structural warnings; and
 - the run and scenario to which the evidence applies.
 
-Avoid decimal precision beyond the underlying evidence. A screening BCR near a
-decision threshold is not decisive when construction costs and behavioural
-response are weakly evidenced.
+Do not report more decimal places than the evidence supports. A screening BCR
+near a decision threshold is not decisive when construction costs and
+behavioural response are weakly evidenced.

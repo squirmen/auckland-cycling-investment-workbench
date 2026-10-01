@@ -4,10 +4,10 @@
 Journal DOI, title, author, year, venue, volume, and pagination metadata were
 checked against the DOI landing page, publisher record, Crossref metadata, or
 an institutional repository record through 25 August 2026. Reports without a
-DOI use their official publisher URL. Verification establishes bibliographic
+DOI use their official publisher URL. These checks confirm bibliographic
 identity, not study quality or permission to redistribute a local copy.
 
-`evidence-matrix.csv` records what each source can support, its important
+`evidence-matrix.csv` records what each source can support, its main
 limitations, access status, and whether a legally redistributable copy is stored
 locally. It is an evidence map, not a quality score or systematic review.
 
@@ -27,7 +27,7 @@ The following corrections are intentional:
   `10.1287/mnsc.17.11.712`; the path-size-logit lineage includes Ben-Akiva and
   Bierlaire (1999), DOI `10.1007/978-1-4615-5203-1_2`.
 - NZTA General Circular 26/01 records the May 2026 changes and applicability of
-  MBCM v1.7.5. Discounting remains governed by the separate General Circular
+  MBCM v1.7.5. Discounting is still set by the separate General Circular
   25/01: a stepped non-commercial schedule and a required 8% sensitivity, not
   the historical constant 4% rate in Auckland's 2022 programme business case.
 - No verifiable record was found for the previously noted “Saxe and Miller
@@ -50,10 +50,9 @@ The following corrections are intentional:
 
 - `open/` contains only unmodified article copies with an explicit licence that
   permits sharing; its README records licence evidence and checksums.
-- `restricted/` contains citation and acquisition metadata only. Do not commit
-  downloaded subscription copies, even when obtained through institutional
-  access.
+- `restricted/` contains citation and acquisition metadata only. Subscription
+  copies are not committed, even when obtained through institutional access.
 - A free-to-read page is not necessarily licensed for redistribution.
-- Credentials are never recorded in this project. An authorised reader signs
-  in directly through their institution and keeps any restricted copy outside
-  the repository.
+- No credentials are recorded in this project. An authorised reader signs in
+  through their own institution and keeps any restricted copy outside the
+  repository.

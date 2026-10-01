@@ -36,13 +36,12 @@ Measured from Auckland on 30 September against the 24 September deployment:
   total, so the limit was per visitor, not per file. The same computer received
   5.5 MB/s from a content-delivery test file. About an hour later the host
   was sending 0.9–2.2 MB/s, so its speed varies.
-
 - Scripts were sent at full size with no cache lifetime. The host labels them
   `text/javascript`, which the compression and cache rules did not list. That
   was 0.31 MB for the page's own script and 1.47 MB for the background map's.
 
-So the number of bytes before the first view is what decides how long a visitor
-waits, and the server's own compression was not the bottleneck.
+So the bytes sent before the first view decide how long a visitor waits. The
+server's own compression was not the bottleneck.
 
 ## Fewer bytes before the first view
 
@@ -191,8 +190,9 @@ on the live site, at desktop and phone sizes. A browser test now removes the
 stylesheet and checks that the map still fills the window. Chrome was not
 affected: it holds the script until the stylesheet is in.
 
-The release check did not catch this because it runs in Chrome. Checking in
-WebKit before promotion is now part of the handoff notes.
+The release check did not catch this because it runs in Chrome. The
+[server handoff](span-server-handoff.md) now includes a WebKit check before
+promotion.
 
 ## Verification
 
