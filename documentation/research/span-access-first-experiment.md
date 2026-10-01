@@ -5,8 +5,9 @@ travel-demand model, transport recommendation or claim of algorithmic novelty.
 
 **17 September update:** the [current methodology review](methodology-review-2026-09.md)
 documents the expanded 169-record run, explicit route preferences, fresh
-fixed-demand assignment, planner exports and the implemented CRANC file-exchange
-boundary. The 12-record results below are the historical first pilot. Statements
+fixed-demand assignment, planner exports and the CRANC file-exchange boundary
+(its panel was removed on 24 September; see
+[the integration guide](cranc-integration.md)). The 12-record results below are the historical first pilot. Statements
 below about absent preference routing or an uninspected CRANC archive describe
 that earlier implementation, not the current research page.
 

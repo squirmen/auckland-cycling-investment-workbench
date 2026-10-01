@@ -163,9 +163,11 @@ It would not, by itself, solve sparse demand or uncalibrated uptake.
 
 ## CRANC
 
-Both supplied archives were inspected read-only. SPAN now exports a comparison
-request and can import a scoped, attributed accessibility comparison locally.
-It does not execute CRANC, copy its coefficients into SPAN, transmit ODs or claim
+Both supplied archives were inspected read-only. When this review was written,
+SPAN exported a comparison request and could import a scoped, attributed
+accessibility comparison locally. That panel was removed on 24 September; the
+validators remain in `web/src/cranc.ts`, unused by the app. SPAN
+does not execute CRANC, copy its coefficients into SPAN, transmit ODs or claim
 to have implemented investment scenarios in CRANC. The native service interfaces
 and Auckland transfer issue are documented in [the integration review](cranc-integration.md).
 
