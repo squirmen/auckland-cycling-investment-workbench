@@ -10,7 +10,7 @@ SPAN was first released in 2026 as the Auckland Cycling Investment Workbench
 (CIW). The command-line tool and Python package keep the `ciw` name.
 
 [Open SPAN](https://span.tfwelch.com)
-· [Download v2.0.1](https://github.com/squirmen/spending-priorities-active-networks/releases/tag/v2.0.1)
+· [Download v2.0.2](https://github.com/squirmen/spending-priorities-active-networks/releases/tag/v2.0.2)
 · [Read the method](documentation/methodology/methodology.md)
 
 ![SPAN showing a NZ$100m build order of 12 cycling upgrades under the 8% commute sensitivity, with Beach Road selected: its cost, its connection points and the low-stress streets it joins.](documentation/screenshots/span/span-link-detail.webp)
