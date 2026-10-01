@@ -377,6 +377,11 @@ export class SpanMap {
     }
     try {
       const result = this.networkGraph.scoreSketchNodes(nodeIds);
+      // A restored corridor's points are where drawing carries on from.
+      this.sketchPoints = nodeIds.flatMap((nodeId): [number, number][] => {
+        const coordinate = this.networkGraph?.nodeCoordinates.get(nodeId);
+        return coordinate ? [coordinate] : [];
+      });
       this.drawSketch(result);
       this.callbacks.onSketchChanged(result);
     } catch (error) {
@@ -716,6 +721,7 @@ export class SpanMap {
   private handleSketchClick(event: L.LeafletMouseEvent): void {
     if (this.connectedMode) return;
     if (!this.state?.sketching || !this.networkGraph) return;
+    if (this.sketchPoints.length >= MAX_SKETCH_POINTS) return;
     this.sketchPoints.push([event.latlng.lng, event.latlng.lat]);
     L.circleMarker(event.latlng, sketchPoint()).addTo(this.sketchGroup);
     if (this.sketchPoints.length < 2) {
@@ -745,6 +751,9 @@ export class SpanMap {
     }
   }
 }
+
+/** The most points a drawn corridor keeps, the same limit a shared address restores. */
+export const MAX_SKETCH_POINTS = 50;
 
 export function classify(value: number, breaks: readonly number[]): number {
   const index = breaks.findIndex((edge) => value < edge);

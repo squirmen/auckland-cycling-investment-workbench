@@ -78,6 +78,15 @@ export class ConnectedJourneys {
     } catch (error) {
       status.textContent = error instanceof Error ? error.message : "Journey results could not be loaded.";
       status.classList.add("error-text");
+      // A failed download is tried again on the next visit to this tab, or now with the button.
+      this.loading = undefined;
+      const retry = create("button", { type: "button", className: "secondary", text: "Try again" });
+      retry.addEventListener("click", () => {
+        status.classList.remove("error-text");
+        status.textContent = "Loading the journey results…";
+        this.loading = this.load();
+      });
+      status.append(" ", retry);
     }
   }
 

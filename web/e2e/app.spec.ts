@@ -88,9 +88,9 @@ test("uses the selected goal in the value view and keeps an out-of-budget select
   await expect(page.locator("#candidate-title")).toHaveText("Central protected crossing");
   await expect(page.locator("#candidate-detail > .facts")).toBeVisible();
   await expect(page.getByRole("heading", { name: "What would be built" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Parameter sensitivity" })).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: "Parameter tests" })).not.toBeVisible();
   await page.locator("#candidate-evidence > summary").click();
-  await expect(page.getByRole("heading", { name: "Parameter sensitivity" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Parameter tests" })).toBeVisible();
   await expect(page.locator("#candidate-detail")).toContainText("Build cost");
   await expect(page.locator("#candidate-detail")).toContainText("$800k");
   await expect(page.locator("#budget-output")).toHaveText("$500k");
@@ -214,8 +214,11 @@ test("supports keyboard tab, goal and candidate selection", async ({ page }, tes
   await point.press("Space");
   await expect(page.locator("#link-card")).toBeVisible();
   await expect(page.locator("#candidate-title")).toHaveText("Central protected crossing");
+  // Focus goes to the card that opened, and back to the same point when it closes.
+  await expect(page.locator("#candidate-title")).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(page.locator("#link-card")).toBeHidden();
+  await expect(point).toBeFocused();
 
   const goal = page.getByRole("radio", { name: "Cycling to work" });
   await goal.focus();
