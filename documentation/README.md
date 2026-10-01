@@ -22,69 +22,24 @@ Current SPAN additions:
 - [Complete-route experiment](research/span-access-first-experiment.md)
 - [Research methodology review](research/methodology-review-2026-09.md)
 
-```text
-documentation/
-├── audit/
-│   ├── audit-resolution-matrix.md
-│   ├── auckland-real-stage-evidence.md
-│   ├── container-reproduction.md
-│   ├── pct-provenance-review.md
-│   ├── public-layer-rights.csv
-│   ├── release-dossier.md
-│   ├── release-readiness.md
-│   ├── run-manifest-evidence.md
-│   ├── test-evidence.md
-│   └── ui-ux-review.md
-├── equations/
-│   ├── README.md
-│   ├── notation.tex
-│   ├── confidentiality.tex
-│   ├── pct-uptake.tex
-│   ├── target-allocation.tex
-│   ├── purpose-demand.tex
-│   ├── routing-impedance.tex
-│   ├── counterfactual.tex
-│   ├── equity.tex
-│   ├── economics.tex
-│   ├── connectivity.tex
-│   ├── uncertainty.tex
-│   └── validation.tex
-├── methodology/
-│   ├── methodology.md
-│   ├── data-dictionary.md
-│   ├── parameters.md
-│   ├── validation.md
-│   ├── uncertainty.md
-│   └── limitations.md
-├── references/
-│   ├── README.md
-│   ├── library.bib
-│   ├── evidence-matrix.csv
-│   ├── open/
-│   │   └── README.md
-│   └── restricted/
-│       ├── README.md
-│       └── manifest.csv
-├── screenshots/
-│   ├── README.md
-│   ├── manifest.csv
-│   ├── full/
-│   ├── web/
-│   └── thumbnails/
-└── white-paper/
-    ├── outline.md
-    ├── claims-evidence-matrix.md
-    ├── figures-and-tables.md
-    ├── journal-mapping.md
-    └── limitations.md
-```
+| Folder | What it holds |
+| --- | --- |
+| `methodology/` | The normative method, parameters, validation, uncertainty and limitations |
+| `research/` | SPAN research notes: the CRANC integration guide, junction delays and Connected journeys, crossing-cost evidence, the September method review |
+| `audit/` | Dated evidence: release records, reviews, experiments and the server handoff |
+| `equations/` | LaTeX for the model's equations |
+| `references/` | The bibliography and evidence matrix |
+| `screenshots/` | Release screenshots and their manifest |
+| `white-paper/` | Editorial plans for the paper, not results |
+
+`roadmap.md` holds the ordered work and its status.
 
 The methodology documents are normative for interpretation. The white-paper
 files are editorial plans, not results. The Auckland research snapshot
-`run-313e0277521633d3` underpins the public SPAN research beta; commit
-`92e2f12` was deployed to [span.tfwelch.com](https://span.tfwelch.com) on
-1 October 2026, replacing `0937175` from 24 September. The model values are
-the same run. Public availability does not make its derived values
+`run-313e0277521633d3` underpins the public SPAN research beta; release
+v2.0.0 (commit `2d9db50`) was deployed to [span.tfwelch.com](https://span.tfwelch.com)
+on 1 October 2026, after `701fc6e`, `2a97084` and `92e2f12` earlier that day and
+`0937175` from 24 September. The model values are the same run. Public availability does not make its derived values
 decision-ready or its uptake estimates calibrated. New audit outputs are
 repository evidence, not changes to that deployed model.
 Release and validation gates are recorded in

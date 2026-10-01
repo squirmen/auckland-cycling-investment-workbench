@@ -7,7 +7,7 @@ SHA-256. Commit `701fc6e` was deployed to [span.tfwelch.com](https://span.tfwelc
 on 1 October 2026 at 00:26 NZDT. Commit `2a97084` replaced it at 01:01 to fix a
 blank map in Safari that the first deployment exposed; see below. Commit
 `92e2f12` followed at 01:32 with the table export, the print and chart fixes
-and the icons, and is the release now live.
+and the icons. Release v2.0.0 (commit `2d9db50`, same data) replaced it at 11:56.
 
 ## Result
 
@@ -234,7 +234,8 @@ WebKit before promotion is now part of the handoff notes.
   live site.
 - The third archive (`92e2f12`, 52 files, SHA-256
   `beb425e2422bf43df0d0cb1c55f8a2ef4c6ef98c586246df9534f2cd6c63f67c`) went
-  through the same steps, WebKit included, and is the release now live.
+  through the same steps, WebKit included. v2.0.0 replaced it at 11:56 the same
+  day.
 
 ## Reproduce
 

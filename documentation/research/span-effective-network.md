@@ -8,8 +8,7 @@ separate legacy Python PCT workbench in the parent `car_dependency` project.
 
 ## What is implemented
 
-The main explorer has an optional **Intersections and crossing delays · beta**
-overlay. It includes all 1,289 records from the Auckland Transport Controlled
+The main explorer has an optional **Intersections** layer (a beta). It includes all 1,289 records from the Auckland Transport Controlled
 Intersections inventory downloaded on 17 September 2026. The source is the
 [AT RoadingService layer](https://services2.arcgis.com/JkPEgZJGxhSjYOo0/ArcGIS/rest/services/RoadingService/FeatureServer/2),
 recorded under CC BY 4.0. Street topology is derived from OpenStreetMap under
@@ -132,45 +131,7 @@ Connected journeys in the main SPAN workspace uses the default sensitivity.
 The full comparison remains bundled as `data/delay-comparison.json`. The local
 audit contains the exact junction and arc identities.
 
-## Server handoff
+## Deployment
 
-The resulting `release-assets/span-effective-network-beta.zip` is a complete
-static **SPAN** site, with one map workspace, an old-URL redirect, hashed assets, browser data,
-method notes and Apache `.htaccess`. No Python server, raw source topology,
-person-level data or OD ledger is included. The companion JSON records archive
-and per-file SHA-256 hashes. Creating the archive does not deploy anything.
-
-The archive also holds a brotli copy (`name.br`) of each script, style and data
-file over 1 kB. Each copy is decoded and compared with its source before the
-archive is written, and has its own SHA-256 in the record. The bundled
-`.htaccess` serves a copy to browsers that accept brotli and the original to
-the rest. `--no-brotli` leaves the copies out.
-
-Extract the archive into a separate staging directory, preserve hidden files,
-and ensure files are web-readable. Check every file against the record. Test
-the main map, intersection toggle/popups, Connected journeys, route export and
-documentation from the staging copy; `SPAN_CHECK_BASE_URL=<staging URL> node
-web/scripts/check-span-release.mjs` runs the same checks against it. That check
-runs in Chrome. Open the staging copy in Safari or WebKit as well, at a desktop
-and a phone size, and confirm the map is drawn: a fault on 1 October showed only
-there.
-
-The SPAN document root also holds other things: STAND under `parking/` and the
-certificate files under `.well-known/`. Do not replace the whole directory.
-Move SPAN's own entries (`index.html`, `research.html`, `.htaccess`, `CNAME`,
-the two marks, the two PNG icons, `span-preview.jpg`, `span-release.json`,
-`assets/`, `data/` and `documentation/`) into a rollback directory and move the staged ones in, with
-the page last. Leave everything else where it is, and confirm afterwards that
-it has not changed. STAND relies on SPAN's root `.htaccess` for its types,
-compression and cache times, so keep those directives.
-
-A package built without STAND has no `parking/` folder; leave the live one in
-place. A package built after STAND's `make publish` includes it (see
-`parking/README.md` in the repository); `parking/` is then one of the entries
-to swap, and the check afterwards should open `/parking/uoa/` as well. The package gives STAND no brotli copies, because its
-own `.htaccess` sets headers by file name.
-
-Use HTTPS because browser data-integrity checks require a secure context.
-Apache must permit the bundled settings; on other servers configure equivalent
-MIME types, compression and cache behaviour. Do not use the parent project's
-`pct-preview-deploy.zip` or `ataa` deployment instructions for SPAN.
+How the site is packaged and deployed is in
+[the server handoff notes](../audit/span-server-handoff.md) in the repository.
