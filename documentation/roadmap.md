@@ -42,6 +42,20 @@ the host, which sent between 0.5 and 2 MB a second to Auckland during testing. B
 remain necessary. Do not present unrestricted diagnostics as affordable
 programmes or connected sample records as new cyclists.
 
+## Known issues in the published data (found 2 October 2026)
+
+These need a new export of the same run, reviewed before it replaces the live
+data. The interface and method notes now describe them; the numbers are
+unchanged.
+
+| Issue | Effect | Fix |
+| --- | --- | --- |
+| Whole-life cost falls back to capital cost for 271 links with no positive commute response | Those links look about 29% cheaper over 40 years; 5 of 25 School, 5 of 17 Everyday and 3 of 16 Stations best-value links are among them | Compute present-value lifecycle cost for every link, independent of demand |
+| The shown benefit–cost ratio is the median of draws with a 1.5–8% discount rate | About 0.84 times the principal-schedule ratio; 34 links reach 1.0 at the principal rate, 20 as shown | Publish the principal and 8% ratios; label the draw range separately |
+| Parameter draws scale every link by the same factors | Best-value and top-50 shares are 0% or 100% by construction (now hidden) | Vary response, routing or costs per link, or drop the shares |
+| Deprived-areas demand is not written to the start-point layer | The layer is empty for that goal | Add NZDep decile 8–10 commute origins to the cell export |
+| Confidentiality-bound and target-share reruns were not run | No envelope for suppressed counts or the 8% share | Run the paired lower and upper cases |
+
 ## First implementation: fixed-support influence audit
 
 Implemented and run on 24 September:
